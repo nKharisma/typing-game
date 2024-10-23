@@ -46,4 +46,23 @@ app.post('/api/signup', async (req, res, next) =>
     res.status(200).json({ id: result.insertedId }); // Send the newly created user's ID
 });
 
+app.post('/api/login', async (req, res, next) => 
+{
+    
+    const { login, password } = req.body;
+    
+    const db = client.db();
+    const user = await db.collection('Users').findOne({ Login: login, Password: password });
+    
+    if (!user) {
+        return res.status(400).json({ error: 'Invalid login or password' });
+    }
+    
+    //send user info if login is successful.
+    res.status(200).json({ 
+        id: user._id, 
+        name: user.Name, 
+        email: user.Email 
+    });
+});
 app.listen(5000); // Start Node + Express server on port 5000s 
