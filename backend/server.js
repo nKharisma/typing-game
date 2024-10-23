@@ -58,7 +58,7 @@ app.post('/api/login', async (req, res, next) =>
         return res.status(400).json({ error: 'Invalid login or password' });
     }
     
-    //send user info if login is successful
+    //send user info if login is successful.
     res.status(200).json({ 
         id: user._id, 
         name: user.Name, 
