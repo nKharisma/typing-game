@@ -46,4 +46,4 @@ app.post('/api/signup', async (req, res, next) =>
     res.status(200).json({ id: result.insertedId }); // Send the newly created user's ID
 });
 
-app.listen(5000); // Start Node + Express server on port 5000s 
+app.listen(80); // Start Node + Express server on port 5000s 
