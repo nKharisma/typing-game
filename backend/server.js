@@ -65,4 +65,4 @@ app.post('/api/login', async (req, res, next) =>
         email: user.Email 
     });
 });
-app.listen(5000); // Start Node + Express server on port 5000s 
+app.listen(80); // Start Node + Express server on port 5000s 
