@@ -22,14 +22,14 @@ async function connectDB() {
         const usersCursor = usersCollection.find();  // find() returns a cursor for all matching documents
         await usersCursor.forEach((user: any) => console.log(user));  // Loop through the cursor and print each document
 
-	console.log("\n\n");
+        console.log("\n\n");
 
         // Retrieve all documents from playerData collection
         console.log("Player Data:");
         const playerDataCursor = playerDataCollection.find();  // find() returns a cursor for all documents
         await playerDataCursor.forEach((playerData: any) => console.log(playerData));
 
-	console.log("\n\n");
+        console.log("\n\n");
 
         // Retrieve all documents from leaderboard collection
         console.log("Leaderboard:");
