@@ -28,11 +28,11 @@ app.use((req, res, next) =>
 
 app.post('/api/signup', async (req, res, next) =>
 {
-    // Incoming: Name, Email, Login, Password
+    // Incoming: First name, Last name, Login, Password
     // Outgoing: id, error
 
-    const {name, email, login, password} = req.body;
-    const newUser = {Name: name, Email: email, Login: login, Password: password};
+    const {firstName, lastName, email, login, password} = req.body;
+    const newUser = {FirstName: firstName, LastName: lastName, Email: email, Login: login, Password: password};
 
     const db = client.db();
     const existingUser = await db.collection('Users').findOne({ Login: login });
