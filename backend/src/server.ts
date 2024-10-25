@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+const path = require('path');
+
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cl=Cluster0"
 const client = new (require('mongodb').MongoClient(url));
 client.connect;
@@ -64,6 +66,9 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
         email: user.Email 
     });
 });
+
+// Serve static files from the React app's build directory
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
