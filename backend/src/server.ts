@@ -2,17 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cl=Cluster0"
-
-const client = new MongoClient(url);
+const client = new (require('mongodb').MongoClient(url));
 client.connect;
 
+const port = 3000;
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use((req, res, next) => 
+app.use((req: any, res: any, next: any) => 
 {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
@@ -26,7 +25,7 @@ app.use((req, res, next) =>
     next();
 });
 
-app.post('/api/signup', async (req, res, next) =>
+app.post('/api/signup', async (req: any, res: any, next: any) =>
 {
     // Incoming: First name, Last name, Login, Password
     // Outgoing: id, error
@@ -46,7 +45,7 @@ app.post('/api/signup', async (req, res, next) =>
     res.status(200).json({ id: result.insertedId }); // Send the newly created user's ID
 });
 
-app.post('/api/login', async (req, res, next) => 
+app.post('/api/login', async (req: any, res: any, next: any) => 
 {
     
     const { login, password } = req.body;
@@ -65,4 +64,7 @@ app.post('/api/login', async (req, res, next) =>
         email: user.Email 
     });
 });
-app.listen(80); // Start Node + Express server on port 5000s 
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
