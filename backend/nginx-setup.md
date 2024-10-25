@@ -147,3 +147,19 @@ sudo systemctl status certbot.timer
 ---
 
 Your Express app is now accessible via HTTPS!
+
+## NOTE:
+
+Default Server Block
+If there’s a default configuration (often named default or 000-default) in /etc/nginx/sites-enabled, it could interfere. Try disabling it:
+
+```bash
+Copy code
+sudo rm /etc/nginx/sites-enabled/default
+```
+Then reload NGINX:
+
+```bash
+Copy code
+sudo systemctl reload nginx
+```
