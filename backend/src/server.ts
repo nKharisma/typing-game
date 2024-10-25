@@ -4,8 +4,9 @@ const cors = require('cors');
 
 const path = require('path');
 
+const { MongoClient: MongoDBClient } = require('mongodb');
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cl=Cluster0"
-const client = new (require('mongodb').MongoClient(url));
+const client = new MongoDBClient(url);
 client.connect;
 
 const port = 3000;
