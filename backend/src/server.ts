@@ -4,9 +4,10 @@ const cors = require('cors');
 
 const path = require('path');
 
-const { MongoClient: MongoDBClient } = require('mongodb');
+const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const client = new MongoDBClient(url);
+const client = new MongoClient(url);
+client.connect();
 
 const port = 3000;
 const app = express();
@@ -30,8 +31,6 @@ app.use((req: any, res: any, next: any) =>
 
 app.post('/api/signup', async (req: any, res: any, next: any) =>
 {
-    await client.connect();
-
     // Incoming: First name, Last name, Login, Password
     // Outgoing: id, error
 
@@ -41,18 +40,11 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     const db = client.db("LargeProject");
     const existingUser = await db.collection('Users').findOne({ Login: login });
 
-    const newDocument = {
-        name : 'John',
-        age : 30,
-        email: '321@email.com'
-    };
-
     if (existingUser) {
         return res.status(400).json({ error: 'User with this login already exists' });
     }
 
-    const result = await db.collection('Users').insertOne(newDocument);
-    await db.collection('Users').insertOne(newUser);
+    const result = await db.collection('Users').insertOne(newUser);
 
     // Send the newly created user's ID
     res.status(200).json(
@@ -60,8 +52,6 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
             id: result.insertedId,
             name: login
         });
-
-    await client.close();
 });
 
 app.post('/api/login', async (req: any, res: any, next: any) => 
