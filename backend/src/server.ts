@@ -49,8 +49,7 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     // Send the newly created user's ID
     res.status(200).json(
         {
-            id: result.insertedId,
-            name: login
+            id: result.insertedId
         });
 });
 
