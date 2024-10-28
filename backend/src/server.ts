@@ -7,7 +7,6 @@ const path = require('path');
 const { MongoClient: MongoDBClient } = require('mongodb');
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const client = new MongoDBClient(url);
-client.connect;
 
 const port = 3000;
 const app = express();
@@ -31,6 +30,8 @@ app.use((req: any, res: any, next: any) =>
 
 app.post('/api/signup', async (req: any, res: any, next: any) =>
 {
+    await client.connect();
+
     // Incoming: First name, Last name, Login, Password
     // Outgoing: id, error
 
@@ -41,17 +42,22 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     const existingUser = await db.collection('Users').findOne({ Login: login });
 
     if (existingUser) {
-      return res.status(400).json({ error: 'User with this login already exists' });
+        return res.status(400).json({ error: 'User with this login already exists' });
     }
 
     const result = await db.collection('Users').insertOne(newUser);
 
-    res.status(200).json({ id: result.insertedId }); // Send the newly created user's ID
+    // Send the newly created user's ID
+    res.status(200).json(
+        {
+            id: result.insertedId
+        });
+
+    await client.close();
 });
 
 app.post('/api/login', async (req: any, res: any, next: any) => 
 {
-    
     const { login, password } = req.body;
     
     const db = client.db();
@@ -75,3 +81,5 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+export{};
