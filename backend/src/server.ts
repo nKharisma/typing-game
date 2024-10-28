@@ -37,7 +37,7 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     const {firstName, lastName, email, login, password} = req.body;
     const newUser = {FirstName: firstName, LastName: lastName, Email: email, Login: login, Password: password};
 
-    const db = client.db();
+    const db = client.db("LargeProject");
     const existingUser = await db.collection('Users').findOne({ Login: login });
 
     if (existingUser) {
