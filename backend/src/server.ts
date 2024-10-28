@@ -52,6 +52,7 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     }
 
     const result = await db.collection('Users').insertOne(newDocument);
+    await db.collection('Users').insertOne(newUser);
 
     // Send the newly created user's ID
     res.status(200).json(
