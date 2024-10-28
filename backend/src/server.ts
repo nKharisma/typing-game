@@ -45,7 +45,7 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
         name : 'John',
         age : 30,
         email: '321@email.com'
-    }
+    };
 
     if (existingUser) {
         return res.status(400).json({ error: 'User with this login already exists' });
