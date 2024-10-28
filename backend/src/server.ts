@@ -41,11 +41,17 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     const db = client.db("LargeProject");
     const existingUser = await db.collection('Users').findOne({ Login: login });
 
+    const newDocument = {
+        name : 'John',
+        age : 30,
+        email: '321@email.com'
+    }
+
     if (existingUser) {
         return res.status(400).json({ error: 'User with this login already exists' });
     }
 
-    const result = await db.collection('Users').insertOne(newUser);
+    const result = await db.collection('Users').insertOne(newDocument);
 
     // Send the newly created user's ID
     res.status(200).json(
