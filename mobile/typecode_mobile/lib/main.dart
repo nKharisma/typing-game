@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:typecode_mobile/screens/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,27 +13,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.blue[900],
-        appBar: AppBar(
-          title: Center(
-            child: Text(
-              'I LOVE COP4331'
-            )
-          ),
-          backgroundColor: Colors.blue,
-        ),
-        body: Center(
-          child: Text(
-            'TYPE CODE', 
-            style: TextStyle(
-              color: Colors.white
-            ),
-          ),
-        ),
-      ),
-    );
+      
+      home: LoginPage()
 
+    );
   }
 }
 
