@@ -9,14 +9,14 @@ const App = () => {
         <nav>
           <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="/about">LoginPage</a></li>
+            <li><a href="/LoginPage">LoginPage</a></li>
           </ul>
         </nav>
 
         {/* Define Routes here */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<LoginPage />} />
+          <Route path="/LoginPage" element={<LoginPage />} />
         </Routes>
       </div>
     </Router>
