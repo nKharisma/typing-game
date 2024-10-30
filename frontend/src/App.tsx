@@ -1,9 +1,25 @@
-import './styles/App.css'
-import LoginPage from './pages/LoginPage'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import LoginPage from './pages/LoginPage';
 
-function App() {
+const App = () => {
   return (
-    <LoginPage/>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">LoginPage</a></li>
+          </ul>
+        </nav>
+
+        {/* Define Routes here */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<LoginPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
