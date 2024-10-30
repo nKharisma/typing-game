@@ -31,35 +31,39 @@ app.use((req: any, res: any, next: any) =>
 
 app.post('/api/signup', async (req: any, res: any, next: any) =>
 {
-    // Incoming: First name, Last name, Login, Password
-    // Outgoing: id, error
-
-    const {firstName, lastName, email, login, password} = req.body;
-    const newUser = {FirstName: firstName, LastName: lastName, Email: email, Login: login, Password: password};
-
+    const { firstName, lastName, email, login, password } = req.body;
+    const newUser = { FirstName: firstName, LastName: lastName, Email: email, Login: login, Password: password };
+    
     const db = client.db("LargeProject");
-    //const existingUser = await db.collection('Users').findOne({ Login: login });
-    const existingUser = await db.collection('Users').findOne({ $or: [ { Login: login }, { Email: email } ]});
-
+    
+    // Check if login or email is already in use, case-insensitively
+    const existingUser = await db.collection('Users').findOne({ 
+        $or: [
+            { Login: { $regex: `^${login}$`, $options: 'i' } }, 
+            { Email: { $regex: `^${email}$`, $options: 'i' } }
+        ]
+    });
+    
     if (existingUser) 
     {
-        //return res.status(400).json({ error: 'User with this login already exists' });
-        if (existingUser.Login === login && existingUser.Email === email)
+        if (existingUser.Login.toLowerCase() === login.toLowerCase() && existingUser.Email.toLowerCase() === email.toLowerCase()) {
             return res.status(400).json({ error: 'Both login and email are already in use' });
-        else if (existingUser.Login === login) 
+        } else if (existingUser.Login.toLowerCase() === login.toLowerCase()) {
             return res.status(400).json({ error: 'User with this login already exists' });
-        else if (existingUser.Email === email) 
+        } else if (existingUser.Email.toLowerCase() === email.toLowerCase()) {
             return res.status(400).json({ error: 'User with this email already exists' });
+        }
     }
-
+    
+    // Insert new user if no conflicts are found
     const result = await db.collection('Users').insertOne(newUser);
-
-    // Send the newly created user's ID
-    res.status(200).json(
-        {
-            id: result.insertedId
-        });
+    
+    res.status(200).json({
+        id: result.insertedId
+    });
 });
+    
+
 
 app.post('/api/login', async (req: any, res: any, next: any) => 
 {
