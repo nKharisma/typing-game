@@ -1,28 +1,26 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 const App = () => {
   return (
     <BrowserRouter>
       <div>
+        {/* Temporary shitty navbar, just to test pages */}
         <nav>
           <ul>
             <li><Link to="/">Home</Link></li>
-            <li><Link to="/LoginPage">Login Page</Link></li>
-          </ul>
-        </nav>
-        <nav>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/LoginPage">LoginPage</a></li>
+            <li><Link to="/Login">Login Page</Link></li>
+            <li><Link to="/Register">Register Page</Link></li>
           </ul>
         </nav>
 
-        {/* Define Routes here */}
+        {/* Define Routes to Pages here */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/LoginPage" element={<LoginPage />} />
+          <Route path="/Login" element={<LoginPage />} />
+          <Route path="/Register" element={<RegisterPage />} />
         </Routes>
       </div>
     </BrowserRouter>
