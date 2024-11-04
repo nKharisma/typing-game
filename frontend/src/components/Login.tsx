@@ -4,62 +4,67 @@ import '../css/login.css';
 
 function Login()
 {
-
-    const app_name = 'typecode.app'
-    function buildPath(route:string) : string
-    {
-        if (process.env.NODE_ENV != 'development') 
-        {
-            return 'http://' + app_name +  ':5000/' + route;
-        }
-        else
-        {        
-            return 'http://localhost:5000/' + route;
-        }
-    }
+  const app_name = 'typecode.app'
+  function buildPath(route: string) : string
+  {
+      if (process.env.NODE_ENV != 'development') 
+      {
+          return 'https://' + app_name +  ':5000/' + route;
+      }
+      else
+      {        
+          return 'http://localhost:3000/' + route;
+      }
+  }
 
   const [message,setMessage] = useState('');
   const [loginName,setLoginName] = React.useState('');
   const [loginPassword,setPassword] = React.useState('');
   const [activeTab, setActiveTab] = React.useState('login');
 
-    async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
-    {
-        event.preventDefault();
+  async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
+  {
+      event.preventDefault();
 
-        const obj = {login:loginName,password:loginPassword};
-        const js = JSON.stringify(obj);
-  
-        try
-        {    
-            const response = await fetch(buildPath('api/login'),
-                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-  
-            const res = JSON.parse(await response.text());
-  
-            if( res.id <= 0 )
+      const obj = {login:loginName,password:loginPassword};
+      const js = JSON.stringify(obj);
+
+      try
+      {    
+          const response = await fetch(
+            buildPath('api/login'),
             {
-                setMessage('User/Password combination incorrect');
+              method: 'POST',
+              body: js,
+              headers: {'Content-Type': 'application/json'}
             }
-            else
-            {
-                const user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                localStorage.setItem('user_data', JSON.stringify(user));
-  
-                setMessage('');
-                window.location.href = '/cards';
-            }
-        }
-        catch(error: unknown)
-        {
-            if (error instanceof Error) {
-                alert(error.toString());
-            } else {
-                alert('An unknown error occurred');
-            }
-            return;
-        }    
-      };
+          );
+
+          const res = JSON.parse(await response.text());
+
+          if( res.id <= 0 )
+          {
+              setMessage('User/Password combination incorrect');
+          }
+          else
+          {
+              const user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+              localStorage.setItem('user_data', JSON.stringify(user));
+
+              setMessage('');
+              window.location.href = '/cards';
+          }
+      }
+      catch(error: unknown)
+      {
+          if (error instanceof Error) {
+              alert(error.toString());
+          } else {
+              alert('An unknown error occurred');
+          }
+          return;
+      }    
+    };
 
     function handleSetLoginName( e: React.ChangeEvent<HTMLInputElement> ) : void
     {
