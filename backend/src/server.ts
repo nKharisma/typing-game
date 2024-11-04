@@ -57,7 +57,7 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
 {
     const { login, password } = req.body;
     
-    const db = client.db();
+    const db = client.db("LargeProject");
     const user = await db.collection('Users').findOne({ Login: login, Password: password });
     
     if (!user) {
