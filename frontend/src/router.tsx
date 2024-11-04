@@ -6,10 +6,11 @@ import DashboardLayout from './layouts/dashboard-layout'
 
 // Import the components
 import HomePage from './routes/home'
-import SignInPage from './routes/sign-in'
 import SignUpPage from './routes/sign-up'
 import DashboardPage from './routes/dashboard'
 import ProfilePage from './routes/dashboard.profile'
+import LoginPage from './routes/login-page'
+import './index.css'
 
 const createRouter = () => createBrowserRouter([
   {
@@ -17,7 +18,7 @@ const createRouter = () => createBrowserRouter([
     element: <RootLayout />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/sign-in/*", element: <SignInPage /> },
+      { path: "/sign-in/*", element: <LoginPage /> },
       { path: "/sign-up/*", element: <SignUpPage /> },
       {
         element: <DashboardLayout />,

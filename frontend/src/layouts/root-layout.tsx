@@ -4,7 +4,7 @@ export default function RootLayout() {
   const devIsSignedIn = false;
 
   const conditionalHeader = (signedIn: boolean) => {
-    if (signedIn) {
+    if (!signedIn) {
       return (
         <div>
           <div>
@@ -13,6 +13,7 @@ export default function RootLayout() {
           <div className="header-options-container">
             <Link className="sign-in-btn" to="/sign-in">Sign In</Link>
             <Link className="sign-up-btn" to="/sign-up">Sign Up</Link>
+            <Link to="/dashboard">Dashboard</Link>
           </div>
         </div>
       );
