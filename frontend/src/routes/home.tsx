@@ -17,6 +17,11 @@ export default function HomePage() {
 
   return (!isLoaded) ? <Loading /> : (
     <div>
+      <section className="wrapper">
+            <div id='star1'></div>
+            <div id='star2'></div>
+            <div id='star3'></div>
+        </section>
       <h1>This is the home page</h1>
     </div>
   )

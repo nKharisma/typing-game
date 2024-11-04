@@ -71,6 +71,11 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <section className="wrapper">
+        <div id='star1'></div>
+        <div id='star2'></div>
+        <div id='star3'></div>
+      </section>
       <h1>Data from API:</h1>
       <p>{JSON.stringify(leaderboardData, null, 2)}</p>
       <br />
