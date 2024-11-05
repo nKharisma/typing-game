@@ -26,6 +26,9 @@ app.use((req: any, res: any, next: any) =>
         'Access-Control-Allow-Methods',
         'GET, POST, PATCH, DELETE, OPTIONS'
     );
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
     next();
 });
 
@@ -83,16 +86,16 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
 // Make sure that any request that does not matches a static file
 // in the build folder, will just serve index.html. Client side routing is
 // going to make sure that the correct content will be loaded.
-app.use((req: any, res: any, next: any) => {
-  if (/(.ico|.js|.css|.jpg|.png|.map|.svg)$/i.test(req.path)) {
-    next();
-  } else {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    res.sendFile(path.resolve('./client/dist/index.html'));
-  }
-});
+// app.use((req: any, res: any, next: any) => {
+//   if (/(.ico|.js|.css|.jpg|.png|.map|.svg)$/i.test(req.path)) {
+//     next();
+//   } else {
+//     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//     res.header('Expires', '-1');
+//     res.header('Pragma', 'no-cache');
+//     res.sendFile(path.resolve('./client/dist/index.html'));
+//   }
+// });
 
 app.use(express.static(path.resolve('./client/dist')));
 
