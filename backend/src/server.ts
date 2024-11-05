@@ -72,12 +72,35 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
     });
 });
 
-// Serve static files from the React app's build directory
-app.use(express.static(path.join(__dirname, 'client/dist')));
-// Catch all to allow client-side routing
-app.get('*', (req: any, res: any) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+// // Serve static files from the React app's build directory
+// app.use(express.static(path.join(__dirname, 'client/dist')));
+// // Catch all to allow client-side routing
+// app.get('*', (req: any, res: any) => {
+//   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+// });
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Make sure that any request that does not matches a static file
+// in the build folder, will just serve index.html. Client side routing is
+// going to make sure that the correct content will be loaded.
+app.use((req: any, res: any, next: any) => {
+  if (/(.ico|.js|.css|.jpg|.png|.map|.svg)$/i.test(req.path)) {
+    next();
+  } else {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    res.sendFile(path.resolve('./client/dist/index.html'));
+  }
 });
+
+app.use(express.static(path.resolve('./client/dist')));
+
+app.use((req: any, res: any) => {
+    res.status(200).send('We are under construction... check back soon!');
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
