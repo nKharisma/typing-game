@@ -74,6 +74,10 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
 
 // Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, 'client/dist')));
+// Catch all to allow client-side routing
+app.get('*', (req: any, res: any) => {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
