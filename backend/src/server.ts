@@ -101,6 +101,10 @@ app.use((req: any, res: any, next: any) => {
 
 app.use(express.static(path.resolve('./client/dist')));
 
+app.get('*', (req: any, res: any) => {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
+
 app.use((req: any, res: any) => {
     res.status(200).send('We are under construction... check back soon!');
 });
