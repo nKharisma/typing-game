@@ -9,7 +9,7 @@ function Login()
     {
         if (process.env.NODE_ENV != 'development') 
         {
-            return `https://${app_name}/${route}`;
+            return 'http://' + app_name +  ':5000/' + route;
         }
         else
         {        
