@@ -35,7 +35,7 @@ function Register()
   
 		try
 		{    
-			const response = await fetch(buildPath('api/register'),
+			const response = await fetch(buildPath('api/signup'),
 				{method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
 			const res = JSON.parse(await response.text());
@@ -50,7 +50,7 @@ function Register()
 				localStorage.setItem('user_data', JSON.stringify(user));
   
 				setMessage('');
-				window.location.href = '/dashboard';
+				window.location.href = '/login';
 			}
 		}
 		catch(error: unknown)
