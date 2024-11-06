@@ -9,7 +9,7 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-const port = 3000;
+const port = 5000;
 const app = express();
 app.set('trust proxy', 1);
 app.use(cors());

@@ -1,3 +1,5 @@
+import Register from "../components/Register";
+
 export default function SignUpPage() {
 
   return (
@@ -7,7 +9,7 @@ export default function SignUpPage() {
       <div id='star2'></div>
       <div id='star3'></div>
     </section>
-      <p>Sign up page</p>
+      <Register/>
     </div>
   );
 }
