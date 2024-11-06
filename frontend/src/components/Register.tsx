@@ -35,12 +35,7 @@ function Register()
   
 		try
 		{    
-			const response = await fetch(
-<<<<<<< HEAD
-        buildPath('api/signup'),
-=======
-        buildPath('api/register'),
->>>>>>> 8203d01 (Test)
+			const response = await fetch(buildPath('api/signup'),
 				{
           method:'POST',
           body:js,
