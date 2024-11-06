@@ -24,9 +24,9 @@ function Login()
     const [activeTab, setActiveTab] = React.useState('login');
     const navigate = useNavigate();
 
-    async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
-    {
-        event.preventDefault();
+  async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
+  {
+      event.preventDefault();
 
         const obj = {login:loginName,password:loginPassword};
         const js = JSON.stringify(obj);
