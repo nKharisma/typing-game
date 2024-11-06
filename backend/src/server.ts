@@ -13,7 +13,11 @@ client.connect();
 const port = 5000;
 const app = express();
 app.set('trust proxy', 1);
-app.use(cors());
+app.use(cors({
+    origin: 'https://typecode.app', 
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+}));
 app.use(bodyParser.json());
 
 app.use((req: any, res: any, next: any) => 
