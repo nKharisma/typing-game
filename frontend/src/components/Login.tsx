@@ -28,7 +28,7 @@ function Login()
   {
       event.preventDefault();
 
-        const obj = {Login:loginName,Password:loginPassword};
+        const obj = {login:loginName,password:loginPassword};
         const js = JSON.stringify(obj);
 
         console.log('Request payload:', js);

@@ -56,12 +56,10 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
 
 app.post('/api/login', async (req: any, res: any, next: any) => 
 {
-    const { Login, Password } = req.body;
-    console.log('Received request:', req.body);
-
+    const { login, password } = req.body;
     
     const db = client.db("LargeProject");
-    const user = await db.collection('Users').findOne({ Login, Password });
+    const user = await db.collection('Users').findOne({ Login: login, Password: password });
     
     if (!user) {
         return res.status(400).json({ error: 'Invalid login or password' });
