@@ -54,7 +54,7 @@ function Login()
     if (data.id <= 0) {
         setMessage('User/Password combination incorrect');
     } else {
-        const user = { firstName: data.firstName, lastName: data.lastName, id: data.id };
+        const user = { firstName: data.FirstName, lastName: data.LastName, id: data.id };
         localStorage.setItem('user_data', JSON.stringify(user));
         setMessage('');
         navigate('/dashboard');
