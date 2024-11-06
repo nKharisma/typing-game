@@ -35,7 +35,8 @@ function Register()
   
 		try
 		{    
-			const response = await fetch(buildPath('api/signup'),
+			const response = await fetch(
+        buildPath('api/signup'),
 				{
           method:'POST',
           body:js,
