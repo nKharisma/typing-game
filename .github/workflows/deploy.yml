@@ -30,6 +30,12 @@ jobs:
         mkdir -p ./backend/src/client/dist
         cp -r ./frontend/dist/* ./backend/src/client/dist/
 
+    - name: Compile backend
+      working-directory: ./backend
+      run: |
+        npm install
+        tsc
+
     - name: Install Rsync if Not Installed
       run: |
         if ! command -v rsync &> /dev/null; then
