@@ -1,7 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:typecode_mobile/screens/profile_page.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,6 +13,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Create TextEditingController instances
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +31,7 @@ class _LoginPageState extends State<LoginPage> {
                 'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
               ),
             ),
-            SizedBox(
-              height: 100,
-            ),
+            SizedBox(height: 100),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
@@ -43,27 +47,18 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 50,
-            ),
+            SizedBox(height: 50),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                  ),
+                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   Expanded(
                     child: TextFormField(
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      controller: usernameController, // Attach the controller
+                      style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.person_outline,
-                          color: Colors.grey,
-                        ),
+                        prefixIcon: Icon(Icons.person_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -71,15 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Colors.white),
                         ),
                         hintText: 'Enter your username',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                        
-                        /*labelText: 'Username',
-                        labelStyle: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                        ),*/
+                        hintStyle: TextStyle(color: Colors.white),
                       ),
                       keyboardType: TextInputType.text,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -88,27 +75,18 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 50,
-            ),
+            SizedBox(height: 50),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                  ),
+                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   Expanded(
                     child: TextFormField(
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      controller: passwordController, // Attach the controller
+                      style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.lock_outline,
-                          color: Colors.grey,
-                        ),
+                        prefixIcon: Icon(Icons.lock_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -116,16 +94,9 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Colors.white),
                         ),
                         hintText: 'Enter your password',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                        
-                        /*labelText: 'Username',
-                        labelStyle: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                        ),*/
+                        hintStyle: TextStyle(color: Colors.white),
                       ),
+                      //obscureText: true, // Mask the password input
                       keyboardType: TextInputType.text,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                     ),
@@ -133,21 +104,64 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 50,
-            ),
+            SizedBox(height: 50),
             BottomButton(
-            buttonTitle: 'Login', 
-            onTap: () {
-              
-              Navigator.push(
+              buttonTitle: 'Login',
+              /*onTap:() {
+                Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MainAppPage(),
                 )
               );
-            },
-          ),
+              },*/
+              
+              onTap: () async {
+                print(usernameController.text);
+                print(passwordController.text);
+                final response = await http.post(
+                  Uri.parse('https://typecode.app/api/login'), // replace with your API URL
+                  headers: <String, String>{
+                    'Content-Type': 'application/json',
+                  },
+                  body: jsonEncode(<String, String>{
+                    'login': usernameController.text.trim(), // Use the input value
+                    'password': passwordController.text.trim() // Use the input value
+                  }),
+                );
+                
+                if (response.statusCode == 200) {
+                  final user = jsonDecode(response.body);
+                  // Login successful, navigate to the main app page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MainAppPage(),
+                    ),
+                  );
+                } else {
+                  // Handle login failure by showing an alert dialog
+                  print(response.statusCode);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Login Failed'),
+                        content: Text(jsonDecode(response.body)['error']),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -188,4 +202,10 @@ class BottomButton extends StatelessWidget {
     );
   }
 }
+
+/*labelText: 'Username',
+                        labelStyle: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          color: Colors.white,
+                        ),*/
 

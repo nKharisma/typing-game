@@ -50,12 +50,12 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
           NavigationDestination(
             selectedIcon: Icon(Icons.people),
             icon: Icon(Icons.people_outline),
-            label: 'Profile',
+            label: 'Leaderboard',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.settings),
             icon: Icon(Icons.settings_outlined),
-            label: 'Profile',
+            label: 'Settings',
           ),
         ],
       ),
@@ -132,25 +132,25 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
         ),
 
         /// Notifications page
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.notifications_sharp),
-                  title: Text('Notification 1'),
-                  subtitle: Text('This is a notification'),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.notifications_sharp),
-                  title: Text('Notification 2'),
-                  subtitle: Text('This is a notification'),
-                ),
-              ),
-            ],
+        Container(
+          color: Colors.black,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      foregroundImage: NetworkImage(
+                        'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
+                      ),
+                    ),
+                    SizedBox(width: 100,),
+                    
+                  ],
+                )
+              ],
+            ),
           ),
         ),
 
