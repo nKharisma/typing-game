@@ -163,3 +163,42 @@ Then reload NGINX:
 Copy code
 sudo systemctl reload nginx
 ```
+
+Final working sites-available/typecode.app
+```Nginx
+server {
+    listen 80;
+    server_name typecode.app www.typecode.app;
+
+    # Redirect all HTTP requests to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.typecode.app;
+
+    ssl_certificate /etc/letsencrypt/live/typecode.app/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/typecode.app/privkey.pem;
+
+    # Redirect HTTPS traffic
+    return 301 https://typecode.app$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name typecode.app;
+
+    ssl_certificate /etc/letsencrypt/live/typecode.app/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/typecode.app/privkey.pem;
+
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
