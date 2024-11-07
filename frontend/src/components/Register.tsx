@@ -67,7 +67,7 @@ function Register()
 				alert('An unknown error occurred');
 			}
 			return;
-		}    
+		}
 	}
 	
 	function handleInputChange(setter: React.Dispatch<React.SetStateAction<string>>): (e: React.ChangeEvent<HTMLInputElement>) => void {
