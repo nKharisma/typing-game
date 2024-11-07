@@ -56,7 +56,7 @@ function Register()
 				localStorage.setItem('user_data', JSON.stringify(user));
   
 				setMessage('');
-				window.location.href = '/login';
+				window.location.href = '/sign-in';
 			}
 		}
 		catch(error: unknown)

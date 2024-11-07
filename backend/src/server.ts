@@ -46,7 +46,7 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     const existingUser = await db.collection('Users').findOne({ Login: login });
     
     if (existingUser) {
-        return res.status(400).json({ error: 'User with this login already exists' });
+        return res.status(300).json({ error: 'User with this login already exists' });
     }
     
     const result = await db.collection('Users').insertOne(newUser);
