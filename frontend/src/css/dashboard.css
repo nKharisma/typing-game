@@ -53,6 +53,9 @@ body {
 	font-family: monospace;
 }
 
+.menuOptions .menu-text {
+	padding-left: 30px;
+}
 .terminal-form {
 	position: relative;
 	width: 100%;

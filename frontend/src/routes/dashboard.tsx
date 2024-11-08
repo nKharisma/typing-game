@@ -10,10 +10,10 @@ function Dashboard()
 	
 	
 	const menuOptions = [
-		{ option: 'new game', description: '1  new game' },
-		{ option: 'settings', description: '2 settings' },
-		{ option: 'about us', description: '3 about us' },
-		{ option: 'logout', description: '4 logout' }
+		{ option: 'new game', description: '1', text: 'new game' },
+		{ option: 'settings', description: '2', text: 'settings' },
+		{ option: 'about us', description: '3', text: 'about us' },
+		{ option: 'logout', description: '4', text: 'logout' }
 	];
 	
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,11 +61,14 @@ function Dashboard()
 	        <div className='terminal-container'>
 	        <span className='welcome-message'></span>
 			  <div className='terminal-header'>main.tsx</div>
-	        <div className='menuOptions'>
-	        {menuOptions.map((option) => (
-	          <div key={option.option}>{option.description}</div>
-	        ))}
-	      </div>
+			  <div className="menuOptions">
+        {menuOptions.map((option) => (
+          <div key={option.option}>
+            <span className="menu-number">{option.description}</span>
+            <span className="menu-text">{option.text}</span>
+          </div>
+        ))}
+      </div>
 	          <div className='output-results'>
 	            {output.map((line, index) => (
 	              <div key={index}>{line}</div>
