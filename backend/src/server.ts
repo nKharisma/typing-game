@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -88,6 +89,26 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
         accessToken: accessToken
     });
 });
+
+app.post('/api/getUser', async (req: any, res: any, next: any) => 
+{
+	const { id } = req.body;
+
+	var objectId = ObjectId.createFromHexString(id)
+
+	const db = client.db("LargeProject");
+    const user = await db.collection('Users').findOne({ _id: objectId });
+
+	if (!user) {
+        return res.status(400).json({ error: 'User with the given id does not exist' });
+    }
+
+	res.status(200).json({ 
+        name: `${user.FirstName} ${user.LastName}`, 
+		login: user.Login,
+        email: user.Email,
+    });
+})
 
 // Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, 'client/dist')));
