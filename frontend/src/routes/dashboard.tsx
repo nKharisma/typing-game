@@ -1,88 +1,89 @@
-import { useState, useEffect } from "react";
+import React, { useState} from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/dashboard.css';
 
-export default function DashboardPage() {
-  const [leaderboardData, setLeaderboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const getToken = async () => {
-    return "JWT TOKEN";
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch("https://typecode.app/api/leaderboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            mode: 'cors',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const result = await response.json();
-        setLeaderboardData(result);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [getToken]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  const items = [
-    {
-      score: 4253,
-      username: "Bill",
-    },
-    {
-      score: 8902,
-      name: "Jill",
-    },
-    {
-      score: 6492,
-      username: "Will",
-    },
-    {
-      score: 1325,
-      username: "Kill",
-    },
-    {
-      score: 8907,
-      username: "pill",
-    },
-  ];
-
-  const leaderboardCards = items.map((item) => (
-    <div key={item.score} className="leaderboard-card">
-      <p className="leaderboard-card-score">{item.score}</p>
-      <p className="leaderboard-card-name">{item.username}</p>
-    </div>
-  ));
-
-  return (
-    <div>
-      <section className="wrapper">
-        <div id='star1'></div>
-        <div id='star2'></div>
-        <div id='star3'></div>
-      </section>
-      <h1>Data from API:</h1>
-      <p>{JSON.stringify(leaderboardData, null, 2)}</p>
-      <br />
-      <div className="leaderboard-card-container">{leaderboardCards}</div>
-      <hr></hr>
-      <h1 className="dashboard-title">Dashboard page</h1>
-      <p>This is a protected page.</p>
-    </div>
-  );
+function Dashboard()
+{
+	const [input, setInput] = useState('');
+	const [output, setOutput] = useState<string[]>([]);
+	const navigate = useNavigate();
+	
+	
+	const menuOptions = [
+		{ option: 'new game', description: '1  new game' },
+		{ option: 'settings', description: '2 settings' },
+		{ option: 'about us', description: '3 about us' },
+		{ option: 'logout', description: '4 logout' }
+	];
+	
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setInput(e.target.value);
+	};
+	
+	const handleInputSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault(); 
+		handleOption(input.trim().toLowerCase());
+		setInput('');
+	};
+	
+	const handleOption = (option: string) => {
+		switch (option) {
+			case 'new game':
+				setOutput([...output, 'Starting a new game...']);
+				navigate('/new-game');
+				break;
+			case 'settings':
+				setOutput(['Navigating to settings...']);
+				navigate('/settings');
+				break;
+			case 'about us':
+				setOutput(['Navigating to about us...']);
+				navigate('/about-us');
+				break;
+			case 'logout':
+				setOutput(['Logging out...']);
+				navigate('/');
+				break;
+			default:
+				setOutput(['Invalid option']);
+				break;
+		}
+	};
+	
+	return (
+		<div className='container'>
+		  <section className="wrapper">
+            <div id='star1'></div>
+            <div id='star2'></div>
+            <div id='star3'></div>
+        </section>
+        <div className='terminal-wrapper'>
+	        <div className='terminal-container'>
+	        <span className='welcome-message'></span>
+			  <div className='terminal-header'>main.tsx</div>
+	        <div className='menuOptions'>
+	        {menuOptions.map((option) => (
+	          <div key={option.option}>{option.description}</div>
+	        ))}
+	      </div>
+	          <div className='output-results'>
+	            {output.map((line, index) => (
+	              <div key={index}>{line}</div>
+	            ))}
+	          </div>
+	          <form onSubmit={handleInputSubmit} className='terminal-form'>
+			  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAALFJREFUSEvt1MERwjAMBMBTJ5QSOoFKSCeUAp1AJxc0k0ceYSLpPJiH88kjnqznfLKh02OdXAz4Z8mPqP83apITgDuAs5m9qztNnTHJE4DXijlaxlOwgyTnz+um4mm4FV6CW+BlWMUlWMFbwD5al03Zrmb2PBozCSZZQn1TZVhBy7CKluAWaBpe7+lHtkh7RUufMUlvsF+ZofZ+a3caPhqT6PcBR5OS142o5QijP+gW9QIRTVIf9c6pFgAAAABJRU5ErkJggg==" alt="dash"/>
+				<input className='terminal-input'
+				  type="text"
+				  value={input}
+				  onChange={handleInputChange}
+				  title="Input"
+				 />
+	          </form>
+	        </div>
+	        </div>
+		</div>
+	);
 }
+
+export default Dashboard;
