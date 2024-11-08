@@ -52,8 +52,8 @@ function Register()
 			}
 			else
 			{
-				const user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-				localStorage.setItem('user_data', JSON.stringify(user));
+				// const user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+				// localStorage.setItem('user_data', JSON.stringify(user));
   
 				setMessage('');
 				window.location.href = '/sign-in';

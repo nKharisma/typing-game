@@ -2,6 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const path = require('path');
 
@@ -55,7 +57,8 @@ app.post('/api/signup', async (req: any, res: any, next: any) =>
     res.status(200).json(
         {
             id: result.insertedId
-        });
+        }
+    );
 });
 
 app.post('/api/login', async (req: any, res: any, next: any) => 
@@ -68,17 +71,24 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
     if (!user) {
         return res.status(400).json({ error: 'Invalid login or password' });
     }
+
+    const userInfo = { 
+        id: user._id, 
+        name: user.Name, 
+        email: user.Email 
+    };
+
+    const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET)
     
     //send user info if login is successful.
     res.status(200).json({ 
         id: user._id, 
         name: user.Name, 
-        email: user.Email 
+        email: user.Email,
+        accessToken: accessToken
     });
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////
-// Hosting react files attempt 1
 // Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, 'client/dist')));
 // Catch all to allow client-side routing
@@ -86,39 +96,33 @@ app.get('*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////
-// Make sure that any request that does not matches a static file
-// in the build folder, will just serve index.html. Client side routing is
-// going to make sure that the correct content will be loaded.
-// app.use((req: any, res: any, next: any) => {
-//   if (/(.ico|.js|.css|.jpg|.png|.map|.svg)$/i.test(req.path)) {
-//     next();
-//   } else {
-//     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-//     res.header('Expires', '-1');
-//     res.header('Pragma', 'no-cache');
-//     res.sendFile(path.resolve('./client/dist/index.html'));
-//   }
-// });
-//
-// app.use(express.static(path.resolve('./client/dist')));
-//
-// app.get('/sign-in', (req: any, res: any) => {
-//   res.status(200).send("Temporary message");
-// });
-//
-// app.get('*', (req: any, res: any) => {
-//   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
-// });
-//
-// app.use((req: any, res: any) => {
-//     res.status(200).send('We are under construction... check back soon!');
-// });
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// Function to call as middleware in endpoints for JWT authentication
+function authenticateToken(req: any, res: any, next: any) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) // No token at all
+  {
+    return res.sendStatus(401);
+  }
+  const token = authHeader.split(' ')[1];
+  if (!token) // Doesn't have correct format
+  {
+    return res.sendStatus(401);
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err: any, user: any) => {
+    if (err)  // Invalid token
+    {
+      return res.sendStatus(403);
+    }
+    // Any endpoints using this middleware have access to user information 
+    // req.user, for example req.user._id or req.user.name
+    req.user = user;
+    next();
+  });
+
+}
 
 export{};
