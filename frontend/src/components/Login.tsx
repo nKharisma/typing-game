@@ -55,8 +55,9 @@ function Login()
         setMessage('User/Password combination incorrect');
     } else {
         const user = {
-          firstName: data.FirstName,
-          lastName: data.LastName,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          login: data.login,
           id: data.id,
           accessToken: data.accessToken
         };

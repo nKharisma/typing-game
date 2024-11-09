@@ -17,25 +17,11 @@ const port = 5000;
 const app = express();
 app.set('trust proxy', 1);
 app.use(cors({
-    origin: 'https://typecode.app', 
+    origin: ['https://typecode.app', 'http://localhost:5173'], //if your frontend is running on a different port, add it here
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 app.use(bodyParser.json());
-
-app.use((req: any, res: any, next: any) => 
-{
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PATCH, DELETE, OPTIONS'
-    );
-    next();
-});
 
 app.post('/api/signup', async (req: any, res: any, next: any) =>
 {
@@ -74,18 +60,14 @@ app.post('/api/login', async (req: any, res: any, next: any) =>
     }
 
     const userInfo = { 
-        id: user._id, 
-        name: user.Name, 
-        email: user.Email 
+        id: user._id,
     };
 
     const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET)
     
     //send user info if login is successful.
     res.status(200).json({ 
-        id: user._id, 
-        name: user.Name, 
-        email: user.Email,
+        id: user._id,
         accessToken: accessToken
     });
 });
