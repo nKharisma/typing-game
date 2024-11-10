@@ -1,8 +1,10 @@
+import Login from "../components/Login";
+
 export default function SignInPage() {
 
-  return (
-    <div className="sign-in-page-container">
-      <p>Sign in page</p>
-    </div>
-  );
-}
+	return(
+		<div>
+			<Login/>
+		</div>
+		);
+};

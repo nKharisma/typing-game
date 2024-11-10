@@ -24,9 +24,9 @@ function Login()
     const [activeTab, setActiveTab] = React.useState('login');
     const navigate = useNavigate();
 
-  async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
-  {
-      event.preventDefault();
+    async function doLogin(event: React.FormEvent<HTMLFormElement>) : Promise<void>
+    {
+        event.preventDefault();
 
         const obj = {login:loginName,password:loginPassword};
         const js = JSON.stringify(obj);
@@ -49,26 +49,26 @@ function Login()
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-    const data = await response.json();
-    console.log(data);
-    if (data.id <= 0) {
-        setMessage('User/Password combination incorrect');
-    } else {
-        const user = {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          login: data.login,
-          id: data.id,
-          accessToken: data.accessToken
-        };
-        localStorage.setItem('user_data', JSON.stringify(user));
-        setMessage('');
-        navigate('/dashboard');
-    }
-} catch (error) {
-    console.error('Failed to fetch:', error);
-    alert('Failed to fetch. Please try again later.');
-}
+            const data = await response.json();
+            console.log(data);
+            if (data.id <= 0) {
+                setMessage('User/Password combination incorrect');
+            } else {
+                const user = {
+                  firstName: data.firstName,
+                  lastName: data.lastName,
+                  login: data.login,
+                  id: data.id,
+                  accessToken: data.accessToken
+                };
+                localStorage.setItem('user_data', JSON.stringify(user));
+                setMessage('');
+                navigate('/dashboard');
+            }
+        } catch (error) {
+            console.error('Failed to fetch:', error);
+            alert('Failed to fetch. Please try again later.');
+        }
     };
 
     function handleSetLoginName( e: React.ChangeEvent<HTMLInputElement> ) : void
