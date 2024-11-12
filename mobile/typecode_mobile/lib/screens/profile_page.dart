@@ -74,7 +74,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
           ),
         ),*/
 
-        //Profile page
+        // Profile page
         Container(
           color: Colors.black,
           child: SafeArea(
@@ -131,7 +131,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
           ),
         ),
 
-        /// Notifications page
+        /// Leaderboard page
         Container(
           color: Colors.black,
           child: SafeArea(
@@ -154,7 +154,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
           ),
         ),
 
-        /// Messages page
+        // Settings page
         ListView.builder(
           reverse: true,
           itemCount: 2,

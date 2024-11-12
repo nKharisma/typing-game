@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:typecode_mobile/screens/profile_page.dart';
+import 'package:typecode_mobile/screens/signup_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -58,7 +59,8 @@ class _LoginPageState extends State<LoginPage> {
                       controller: usernameController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person_outline, color: Colors.grey),
+                        prefixIcon:
+                            Icon(Icons.person_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -86,7 +88,8 @@ class _LoginPageState extends State<LoginPage> {
                       controller: passwordController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline, color: Colors.grey),
+                        prefixIcon:
+                            Icon(Icons.lock_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -104,7 +107,35 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            SizedBox(height: 50),
+            SizedBox(height: 30),
+            Row(
+              children: [
+                SizedBox(width: 27,),
+                Text(
+                  "Don't have an account? ",
+                  style: TextStyle(
+                    color: Colors.white,
+                    //decoration: TextDecoration.underline,
+                  ),
+                ),
+                InkWell(
+                    child: Text(
+                      'Register here',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignupPage(),
+                          ));
+                    }),
+              ],
+            ),
+            SizedBox(height: 15,),
             BottomButton(
               buttonTitle: 'Login',
               /*onTap:() {
@@ -115,21 +146,24 @@ class _LoginPageState extends State<LoginPage> {
                 )
               );
               },*/
-              
+
               onTap: () async {
                 print(usernameController.text);
                 print(passwordController.text);
                 final response = await http.post(
-                  Uri.parse('https://typecode.app/api/login'), // replace with your API URL
+                  Uri.parse(
+                      'https://typecode.app/api/login'), // replace with your API URL
                   headers: <String, String>{
                     'Content-Type': 'application/json',
                   },
                   body: jsonEncode(<String, String>{
-                    'login': usernameController.text.trim(), // Use the input value
-                    'password': passwordController.text.trim() // Use the input value
+                    'login':
+                        usernameController.text.trim(), // Use the input value
+                    'password':
+                        passwordController.text.trim() // Use the input value
                   }),
                 );
-                
+
                 if (response.statusCode == 200) {
                   final user = jsonDecode(response.body);
                   // Login successful, navigate to the main app page
