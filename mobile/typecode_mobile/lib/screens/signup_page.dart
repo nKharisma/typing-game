@@ -18,8 +18,9 @@ class _SignupPageState extends State<SignupPage> {
     final TextEditingController firstnameController = TextEditingController();
     final TextEditingController lastnameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
     final TextEditingController usernameController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    
     
     return Scaffold(
       backgroundColor: Colors.black,
@@ -122,18 +123,18 @@ class _SignupPageState extends State<SignupPage> {
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   Expanded(
                     child: TextFormField(
-                      controller: passwordController, // Attach the controller
+                      controller: usernameController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.lock_outline, color: Colors.grey),
+                            Icon(Icons.person_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        hintText: 'Enter your password',
+                        hintText: 'Enter your username',
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                       //obscureText: true, // Mask the password input
@@ -152,18 +153,18 @@ class _SignupPageState extends State<SignupPage> {
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   Expanded(
                     child: TextFormField(
-                      controller: usernameController, // Attach the controller
+                      controller: passwordController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.person_outline, color: Colors.grey),
+                            Icon(Icons.lock_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        hintText: 'Enter your username',
+                        hintText: 'Enter your password',
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                       keyboardType: TextInputType.text,
