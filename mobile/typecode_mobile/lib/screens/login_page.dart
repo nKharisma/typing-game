@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     'Login',
                     style: TextStyle(
+                      fontFamily: 'VCR',
                       color: Colors.white,
                       fontSize: 24,
                     ),

@@ -21,25 +21,38 @@ class _SignupPageState extends State<SignupPage> {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     
+    double width = MediaQuery.sizeOf(context).width;
+    double percent = 0.85;
     
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        
+      ),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 150,),
+            CircleAvatar(
+              radius: 50,
+              foregroundImage: NetworkImage(
+                'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
+              ),
+            ),
+            SizedBox(height: 80,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Row(
                 children: [
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
+                  SizedBox(
+                    width: width * percent,
                     child: TextFormField(
                       controller: firstnameController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.person_outline, color: Colors.grey),
+                            Icon(Icons.person_4_outlined, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -62,13 +75,14 @@ class _SignupPageState extends State<SignupPage> {
               child: Row(
                 children: [
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
+                  SizedBox(
+                    width: width * percent,
                     child: TextFormField(
                       controller: lastnameController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.lock_outline, color: Colors.grey),
+                            Icon(Icons.person_4_outlined, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -92,13 +106,14 @@ class _SignupPageState extends State<SignupPage> {
               child: Row(
                 children: [
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
+                  SizedBox(
+                    width: width * percent,
                     child: TextFormField(
                       controller: emailController, // Attach the controller
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         prefixIcon:
-                            Icon(Icons.person_outline, color: Colors.grey),
+                            Icon(Icons.mail_outline, color: Colors.grey),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                         ),
@@ -121,7 +136,8 @@ class _SignupPageState extends State<SignupPage> {
               child: Row(
                 children: [
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
+                  SizedBox(
+                    width: width * percent,
                     child: TextFormField(
                       controller: usernameController, // Attach the controller
                       style: TextStyle(color: Colors.white),
@@ -151,7 +167,8 @@ class _SignupPageState extends State<SignupPage> {
               child: Row(
                 children: [
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
+                  SizedBox(
+                    width: width * percent,
                     child: TextFormField(
                       controller: passwordController, // Attach the controller
                       style: TextStyle(color: Colors.white),
