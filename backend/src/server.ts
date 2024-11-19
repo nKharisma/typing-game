@@ -114,6 +114,66 @@ app.post('/api/getPlayerData', async (req: any, res: any, next: any) => {
 	});
 })
 
+// TENTATIVE LEADERBOARD ENDPOINT
+app.post('/api/getLeaderboard', async (req: any, res: any, next: any) => {
+	// Incoming: 
+	// sortBy - string specifying what score value to rank by
+	// limit - amount of users to send back
+	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
+	const { sortBy, limit } = req.body;
+
+	// Valid sorting fields
+	const validSortingFields = [
+		'HighScore',
+		'WordsPerMinute',
+		'TotalWordsTyped',
+		'Accuracy', 
+		'LevelsCompleted'
+	];
+
+	if(!validSortingFields.includes(sortBy)){
+		return res.status(400).json({
+			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
+		});
+	}
+
+	// Set the sorting options
+	const sortingOptions: { [key: string]: number } = {}
+	sortingOptions[`PlayerData.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
+
+	const db = client.db("LargeProject");
+
+	const users = await db.collection('TestUsers').find(
+		{}, // Return all entries
+		{ 
+			Login: 1,
+			FirstName: 1,
+			LastName: 1,
+			PlayerData: 1
+		}
+	) // Return these specific values
+	.sort(sortingOptions) // Sort by
+	.limit(limit) // Limit the output to this # of entries 
+	.toArray();
+
+	// create the leaderboard
+	const leaderboard = users.map((user: { 
+		_id: any; 
+		FirstName: any; 
+		LastName: any; 
+		Login: any; 
+		PlayerData: { toObject: () => any; }; }
+	) => ({
+		id: user._id,
+		name: `${user.FirstName} ${user.LastName}`,
+		login: user.Login,
+		playerData: user.PlayerData
+	}));
+
+	// Return the leaederboard
+	res.status(200).json({ leaderboard });
+})
+
 // Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, 'client/dist')));
 // Catch all to allow client-side routing
