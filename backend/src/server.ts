@@ -88,8 +88,30 @@ app.post('/api/getUser', async (req: any, res: any, next: any) =>
 	res.status(200).json({ 
         name: `${user.FirstName} ${user.LastName}`, 
 		login: user.Login,
-        email: user.Email,
+        email: user.Email
     });
+})
+
+app.post('/api/getPlayerData', async (req: any, res: any, next: any) => {
+	const { id } = req.body;
+
+	var objectId = ObjectId.createFromHexString(id)
+
+	const db = client.db("LargeProject");
+    const user = await db.collection('PlayerData').findOne({ _id: objectId });
+
+	if (!user) {
+        return res.status(400).json({ error: 'User with the given id does not exist' });
+    }
+
+	res.status(200).json({
+		score: user.score,
+		highscore: user.highScore,
+		wordsPerMinute: user.wordsPerMinute,
+		totalWordsTyped: user.totalWordsTyped,
+		accuracy: user.accuracy,
+		levelsCompleted: user.levelsCompleted
+	});
 })
 
 // Serve static files from the React app's build directory
