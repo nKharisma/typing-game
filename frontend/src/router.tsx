@@ -10,6 +10,8 @@ import SignUpPage from './routes/sign-up'
 import SignInPage from './routes/sign-in'
 import DashboardPage from './routes/dashboard'
 import ProfilePage from './routes/dashboard.profile'
+import LoginPage from './routes/login-page'
+import NewGame from './routes/new_game'
 import './index.css'
 
 const createRouter = () => createBrowserRouter([
@@ -26,6 +28,7 @@ const createRouter = () => createBrowserRouter([
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/dashboard/profile", element: <ProfilePage /> },
+          { path: "dashboard/new-game", element: <NewGame /> },
         ]
       },
       { path: "/*", element: <HomePage />},
