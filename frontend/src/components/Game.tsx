@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../css/game.css';
 import {v4 as uuidv4} from 'uuid';
+import { miniPrograms } from '../program-snippets';
 
 interface Bug {
   id: string;
@@ -61,67 +62,67 @@ function Game() {
 	}, []);
 	
 	useEffect(() => {
-	  console.log('Active Bug ID:', activeBug);
+    console.log('Active Bug ID:', activeBug);
 	}, [activeBug]);
 	
 	useEffect(() => {
-	  localStorage.setItem('score', score.toString());
+    localStorage.setItem('score', score.toString());
 	}, [score]);
 	
 	useEffect(() => {
-	  if(waveCleared && !gameOver) {
-	    const waveDelay = 5000;
-	    setTimeout(startWaves, waveDelay);
-	  }
+    if(waveCleared && !gameOver) {
+      const waveDelay = 4000;
+      setTimeout(startWaves, waveDelay);
+    }
 	}, [waveCleared, gameOver]);
 	
 	const startWaves = () => {
-	  const spawnNextWave = () => {
-	    if(!gameOver) {
-	        const bugsPerWave = Math.floor(Math.random() * 10) + 1;
-	        setWaveCleared(false);
-	        spawnWave(bugsPerWave);
-	      }
-	  };
-	  
-	  spawnNextWave();
+    const spawnNextWave = () => {
+    if(!gameOver) {
+	        const bugsPerWave = Math.floor(Math.random() * 10);
+          setWaveCleared(false);
+          spawnWave(bugsPerWave);
+	    }
+    };
+  
+    spawnNextWave();
 	};
 	
 	const spawnWave = (count: number) => {
+    const lines = generateRandomCode();
     let spawnedBugs = 0;
     const interval = setInterval(() => {
-      if (spawnedBugs < count) {
-        spawnBug();
+      if (spawnedBugs < count && spawnedBugs < lines.length) {
+        spawnBug(lines[spawnedBugs]);
         spawnedBugs++;
       } else {
         clearInterval(interval);
       }
-    }, 5000); // Spawn a bug every 500ms
+    }, 5000); // 5 seconds
   };
 	
-	const spawnBug = () => {
+	const spawnBug = (line: string) => {
     const gameContainer = gameContainerRef.current;
     if (!gameContainer) return;
     
     const bugElement = document.createElement('div');
     bugElement.className = 'bug';
-    bugElement.style.left = `${Math.random() * 100}vw`; 
+    bugElement.style.left = `${Math.random() * 100}vw`;
   
     const bugText = document.createElement('div');
     bugText.className = 'bug-text';
-      const word = generateRandomCode();
-      word.split('').forEach(char => {
-          const spanElement = document.createElement('span');
-          spanElement.textContent = char;
-          bugText.appendChild(spanElement);
-      });
+    line.split('').forEach(char => {
+      const spanElement = document.createElement('span');
+      spanElement.textContent = char;
+      bugText.appendChild(spanElement);
+    });
       bugElement.appendChild(bugText);
   
       gameContainer.appendChild(bugElement);
   
       const bug: Bug = {
           id: uuidv4(),
-          text: word,
+          text: line,
           element: bugElement,
       };
       
@@ -133,7 +134,6 @@ function Game() {
           gameContainer.removeChild(bugElement);
           setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
       });
-      
 	};
 	
 	/*
@@ -162,27 +162,33 @@ function Game() {
   const gameContainer = gameContainerRef.current;
   if (!gameContainer) return;
 
-  // If there's no active bug, find a matching bug based on the input
+  const bugs = Array.from(gameContainer.getElementsByClassName('bug')) as HTMLElement[];
+
   if (!activeBug) {
-    const matchingBugs = Array.from(gameContainer.getElementsByClassName('bug')).filter(bugElement => {
+    const matchingBugs = bugs.filter(bugElement => {
       const bugText = bugElement.querySelector('.bug-text') as HTMLElement;
-      return bugText.textContent?.startsWith(input) ?? false; // Check if the input matches the start of the bug text
+      return bugText.textContent?.startsWith(input) ?? false;
     });
-    
+
     console.log('Matching Bugs:', matchingBugs);
 
     if (matchingBugs.length > 0) {
-    const activeBugElement = matchingBugs[0] as HTMLElement;
-      setActiveBug(activeBugElement.dataset.id || null); // Set the first matching bug as active
+      const activeBugElement = matchingBugs[0] as HTMLElement;
+      setActiveBug(activeBugElement.dataset.id || null);
       console.log('Active Bug ID:', activeBugElement.dataset.id);
-      return; // Exit early since we just set the active bug
+      
+      const bugText = activeBugElement.querySelector('.bug-text') as HTMLElement;
+      const spans = Array.from(bugText.children) as HTMLElement[];
+      if (input[0] === spans[0].textContent) {
+        spans[0].classList.add('correct');
+        console.log('Correct:', spans[0].textContent);
+      }
     } else {
-      setActiveBug(null); // Reset active bug if no match
+      setActiveBug(null);
     }
   }
 
-  // Now we can safely check for the active bug using its unique ID
-  const activeBugElement = Array.from(gameContainer.getElementsByClassName('bug')).find(bugElement => (bugElement as HTMLElement).dataset.id === activeBug);
+  const activeBugElement = bugs.find(bug => bug.dataset.id === activeBug);
   
   if (activeBugElement) {
     const bugText = activeBugElement.querySelector('.bug-text') as HTMLElement;
@@ -193,7 +199,6 @@ function Game() {
     while (inputIndex < input.length && currentIndex < spans.length) {
       if (input[inputIndex] === spans[currentIndex].textContent) {
         spans[currentIndex].classList.add('correct');
-        spans[currentIndex].classList.remove('incorrect');
         currentIndex++;
       } else {
         spans[currentIndex].classList.remove('correct');
@@ -201,7 +206,6 @@ function Game() {
       inputIndex++;
     }
 
-    // If all spans are matched, remove the bug
     if (currentIndex === spans.length) {
       gameContainer.removeChild(activeBugElement);
       setTypedWord('');
@@ -213,16 +217,15 @@ function Game() {
       setBugs(prevBugs => {
         const updatedBugs = prevBugs.filter(b => b.id !== (activeBugElement as HTMLElement).dataset.id);
         if (updatedBugs.length === 0) {
-          setWaveCleared(true); // Set waveCleared to true when all bugs are removed
+          setWaveCleared(true);
         }
         return updatedBugs;
       });
-      setActiveBug(null); // Reset active bug
+      setActiveBug(null);
     }
   }
 };
 
-	
 	/*
 	const handleProjectile = (targetElement: HTMLElement) => {
 	  if(!playerShipRef.current) return;
@@ -254,8 +257,11 @@ function Game() {
 	}*/
 
 	const generateRandomCode = () => {
-    const code = ['int randomNum = 42;', 'System.out.println("Hello, World!");', 'const pi = 3.14;', 'let name = "John Doe";', 'print("This is a bug!");'];
-    return code[Math.floor(Math.random() * code.length)];
+    const languages = Object.keys(miniPrograms);
+    const randomLanguage = languages[Math.floor(Math.random() * languages.length)] as keyof typeof miniPrograms;
+    const snippets = miniPrograms[randomLanguage];
+    const randomSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+    return randomSnippet.lines;
 	};
 
 	return (
