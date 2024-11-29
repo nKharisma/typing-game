@@ -4,8 +4,7 @@ export const miniPrograms = {
 			id: 1,
 			lines: [
 				"function greeting(name) {",
-				" return 'Hello, ' + name + '!';",
-				"}",
+				"return 'Hello, ' + name + '!';",
 				'console.log(greeting("World"));',
 			],
 		},
@@ -13,7 +12,7 @@ export const miniPrograms = {
 			id: 2,
 			lines: [
 				"function add(a, b) {",
-				" return a + b;",
+				"return a + b;",
 				'console.log(add(1, 2));',
 			],
 		},
@@ -21,7 +20,7 @@ export const miniPrograms = {
 			id: 3,
 			lines: [
 				"function subtract(a, b) {",
-				" return a - b;",
+				"return a - b;",
 				'console.log(subtract(5, 3));',
 			],
 		},
@@ -29,8 +28,8 @@ export const miniPrograms = {
 			id: 4,
 			lines: [
 				"function loop() {",
-				" for (let i = 0; i < 5; i++) {",
-				" console.log(i);",
+				"for (let i = 0; i < 5; i++) {",
+				"console.log(i);",
 			],
 		},
 	],
@@ -39,8 +38,7 @@ export const miniPrograms = {
 			id: 1,
 			lines: [
 				"def greeting(name):",
-				" return 'Hello, ' + name + '!'",
-				"",
+				"return 'Hello, ' + name + '!'",
 				"print(greeting('World'))",
 			],
 		},
@@ -48,7 +46,7 @@ export const miniPrograms = {
 			id: 2,
 			lines: [
 				"def multiply(a, b):",
-				" return a * b",
+				"return a * b",
 				'print(multiply(2, 3))',
 			],
 		},
@@ -56,7 +54,7 @@ export const miniPrograms = {
 			id: 3,
 			lines: [
 				"def divide(a, b):",
-				" return a / b",
+				"return a / b",
 				'print(divide(10, 2))',
 			],
 		},
@@ -64,10 +62,10 @@ export const miniPrograms = {
 			id: 4,
 			lines : [
 				"def while_loop():",
-				" i = 0",
-				" while i < 5:",
-				" print(i)",
-				" i += 1",
+				"i = 0",
+				"while i < 5:",
+				"print(i)",
+				"i += 1",
 			],	
 		},
 	],

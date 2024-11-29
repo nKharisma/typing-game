@@ -24,14 +24,14 @@ function Game() {
   const [typedWord, setTypedWord] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   //const playerShipRef = useRef<HTMLDivElement>(null);
-  const [bugs, setBugs] = useState<Bug[]>([]);
+  const setBugs = useState<Bug[]>([])[1];
   const [activeBug, setActiveBug] = useState<string | null>(null);
   //const [projectiles, setProjectiles] = useState<Projectile[]>([]);
   const [score, setScore] = useState(() => {
     const savedScore = localStorage.getItem('score');
     return savedScore ? parseInt(savedScore, 10) : 0;
   });
-  const [gameOver, setGameOver] = useState(false);
+  const gameOver = false;
   const [waveCleared, setWaveCleared] = useState(false);
   /*
   const [totalWords, setTotalWords] = useState(0);
@@ -79,9 +79,17 @@ function Game() {
 	const startWaves = () => {
     const spawnNextWave = () => {
     if(!gameOver) {
-	        const bugsPerWave = Math.floor(Math.random() * 10);
+	        const gameContainer = gameContainerRef.current;
+	        if(!gameContainer) return;
+	        
+	        const currentBugs = gameContainer.getElementsByClassName('bug').length;
+	        const maxBugs = 10;
+	        const bugsToSpawn = Math.min(maxBugs - currentBugs, Math.floor(Math.random() * 10) + 1);
+	        
+	        if(bugsToSpawn > 0) {
           setWaveCleared(false);
-          spawnWave(bugsPerWave);
+          spawnWave(bugsToSpawn);
+          }
 	    }
     };
   
@@ -104,10 +112,45 @@ function Game() {
 	const spawnBug = (line: string) => {
     const gameContainer = gameContainerRef.current;
     if (!gameContainer) return;
-    
+  
+    const gameContainerWidth = gameContainer.offsetWidth;
+    const bugWidth = 50; // Assuming each bug has a width of 50px
+    const minLeft = 0;
+    const maxLeft = gameContainerWidth - bugWidth;
+  
+    let leftPosition;
+    let isOverlapping;
+  
+    // Create a temporary element to measure the text width
+    const tempBugText = document.createElement('div');
+    tempBugText.className = 'bug-text';
+    tempBugText.style.position = 'absolute';
+    tempBugText.style.visibility = 'hidden';
+    tempBugText.style.whiteSpace = 'nowrap';
+    tempBugText.textContent = line;
+    document.body.appendChild(tempBugText);
+    const textWidth = tempBugText.offsetWidth;
+    document.body.removeChild(tempBugText);
+  
+    do {
+      leftPosition = Math.random() * (maxLeft - minLeft) + minLeft;
+      isOverlapping = false;
+  
+      // Check for overlapping with existing bugs
+      const existingBugs = gameContainer.getElementsByClassName('bug');
+      for (let i = 0; i < existingBugs.length; i++) {
+        const existingBug = existingBugs[i] as HTMLElement;
+        const existingBugLeft = parseFloat(existingBug.style.left);
+        if (Math.abs(existingBugLeft - leftPosition) < bugWidth) {
+          isOverlapping = true;
+          break;
+        }
+      }
+    } while (isOverlapping || leftPosition + textWidth > gameContainerWidth);
+  
     const bugElement = document.createElement('div');
     bugElement.className = 'bug';
-    bugElement.style.left = `${Math.random() * 100}vw`;
+    bugElement.style.left = `${leftPosition}px`;
   
     const bugText = document.createElement('div');
     bugText.className = 'bug-text';
@@ -116,9 +159,9 @@ function Game() {
       spanElement.textContent = char;
       bugText.appendChild(spanElement);
     });
-      bugElement.appendChild(bugText);
   
-      gameContainer.appendChild(bugElement);
+    bugElement.appendChild(bugText);
+    gameContainer.appendChild(bugElement);
   
       const bug: Bug = {
           id: uuidv4(),
@@ -134,6 +177,7 @@ function Game() {
           gameContainer.removeChild(bugElement);
           setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
       });
+      
 	};
 	
 	/*
@@ -163,13 +207,16 @@ function Game() {
   if (!gameContainer) return;
 
   const bugs = Array.from(gameContainer.getElementsByClassName('bug')) as HTMLElement[];
+  console.log('Bugs:', bugs.map(bug => bug.textContent));
 
   if (!activeBug) {
     const matchingBugs = bugs.filter(bugElement => {
       const bugText = bugElement.querySelector('.bug-text') as HTMLElement;
-      return bugText.textContent?.startsWith(input) ?? false;
+      const bugTextContent = bugText.textContent?.trim(); // Trim the bug text
+      console.log(`Comparing input "${input}" with bug text "${bugTextContent}"`);
+      return input.split('').some(char => bugTextContent?.startsWith(char));
     });
-
+    
     console.log('Matching Bugs:', matchingBugs);
 
     if (matchingBugs.length > 0) {
@@ -179,10 +226,7 @@ function Game() {
       
       const bugText = activeBugElement.querySelector('.bug-text') as HTMLElement;
       const spans = Array.from(bugText.children) as HTMLElement[];
-      if (input[0] === spans[0].textContent) {
-        spans[0].classList.add('correct');
-        console.log('Correct:', spans[0].textContent);
-      }
+      spans[0].classList.add('correct');
     } else {
       setActiveBug(null);
     }
@@ -193,8 +237,16 @@ function Game() {
   if (activeBugElement) {
     const bugText = activeBugElement.querySelector('.bug-text') as HTMLElement;
     const spans = Array.from(bugText.children) as HTMLElement[];
+    
+    console.log('Spans:', spans);
     let currentIndex = 0;
     let inputIndex = 0;
+
+    // Check if the first letter is already marked as correct
+    if (spans[0].classList.contains('correct')) {
+      currentIndex = 1;
+      inputIndex = 1;
+    }
 
     while (inputIndex < input.length && currentIndex < spans.length) {
       if (input[inputIndex] === spans[currentIndex].textContent) {
