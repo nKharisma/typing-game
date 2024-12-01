@@ -74,7 +74,7 @@ export default function DashboardPage()
 		switch (option) {
 			case 'new game':
 				setOutput([...output, 'Starting a new game...']);
-				navigate('dashboard/new-game');
+				navigate('/dashboard/new-game');
 				break;
 			case 'settings':
 				setOutput(['Navigating to settings...']);
@@ -96,11 +96,6 @@ export default function DashboardPage()
 	
 	return (
 		<div className='container'>
-		  <section className="wrapper">
-            <div id='star1'></div>
-            <div id='star2'></div>
-            <div id='star3'></div>
-        </section>
         <div className='terminal-wrapper'>
 	        <div className='terminal-container'>
 	        <span className='welcome-message'>{userName}:$ type an option below to start</span>
