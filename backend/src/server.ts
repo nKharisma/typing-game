@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import { addUser, updateUser, getUserFromEmail, deleteUser } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
+import { ObjectId as MongoDbObjectId } from 'mongodb';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -343,8 +344,121 @@ expressServer.post('/api/v1/user/delete-user', authenticateToken, async (req: an
   res.status(204).json({ message: 'Deleted user successfully' });
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Refresh tokens stored in cookies, and shorten access token length to 15m
 
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// TypeCode endpoints.
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const client = new MongoClient(url);
+client.connect();
+
+expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
+{
+	const { id } = req.body;
+
+	var objectId = MongoDbObjectId.createFromHexString(id)
+
+	const db = client.db("LargeProject");
+  const user = await db.collection('Users').findOne({ _id: objectId });
+
+	if (!user) {
+    return res.status(400).json({ error: 'User with the given id does not exist' });
+  }
+
+	res.status(200).json({ 
+    name: `${user.FirstName} ${user.LastName}`, 
+    login: user.Login,
+    email: user.Email
+  });
+})
+
+expressServer.post('/api/getPlayerData', async (req: any, res: any, next: any) => {
+	const { id } = req.body;
+
+	var objectId = MongoDbObjectId.createFromHexString(id)
+
+	const db = client.db("LargeProject");
+  const user = await db.collection('PlayerData').findOne({ _id: objectId });
+
+	if (!user) {
+    return res.status(400).json({ error: 'User with the given id does not exist' });
+  }
+
+	res.status(200).json({
+		score: user.score,
+		highscore: user.highScore,
+		wordsPerMinute: user.wordsPerMinute,
+		totalWordsTyped: user.totalWordsTyped,
+		accuracy: user.accuracy,
+		levelsCompleted: user.levelsCompleted
+	});
+})
+
+// TENTATIVE LEADERBOARD ENDPOINT
+expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) => {
+	// Incoming: 
+	// sortBy - string specifying what score value to rank by
+	// limit - amount of users to send back
+	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
+	const { sortBy, limit } = req.body;
+
+	// Valid sorting fields
+	const validSortingFields = [
+		'HighScore',
+		'WordsPerMinute',
+		'TotalWordsTyped',
+		'Accuracy', 
+		'LevelsCompleted'
+	];
+
+	if(!validSortingFields.includes(sortBy)){
+		return res.status(400).json({
+			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
+		});
+	}
+
+	// Set the sorting options
+	const sortingOptions: { [key: string]: number } = {}
+	sortingOptions[`PlayerData.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
+
+	const db = client.db("LargeProject");
+
+	const users = await db.collection('TestUsers').find(
+		{}, // Return all entries
+		{ 
+			Login: 1,
+			FirstName: 1,
+			LastName: 1,
+			PlayerData: 1
+		}
+	) // Return these specific values
+	.sort(sortingOptions) // Sort by
+	.limit(limit) // Limit the output to this # of entries 
+	.toArray();
+
+	// create the leaderboard
+	const leaderboard = users.map((user: { 
+		_id: any; 
+		FirstName: any; 
+		LastName: any; 
+		Login: any; 
+		PlayerData: { toObject: () => any; }; }
+	) => ({
+		id: user._id,
+		name: `${user.FirstName} ${user.LastName}`,
+		login: user.Login,
+		playerData: user.PlayerData
+	}));
+
+	// Return the leaederboard
+	res.status(200).json({ leaderboard });
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Make sure that any request that does not matches a static file
