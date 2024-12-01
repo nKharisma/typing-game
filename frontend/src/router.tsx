@@ -14,6 +14,7 @@ import SendPasswordResetPage from './pages/SendPasswordResetPage'
 import ValidatePasswordResetPage from './pages/ValidatePasswordResetPage'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
+import NewGamePage from './pages/NewGamePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // CSS Imports
@@ -39,6 +40,7 @@ export default function createRouter() {
             children: [
               { path: '/dashboard', element: <DashboardPage /> },
               { path: '/dashboard/profile', element: <ProfilePage /> },
+              { path: '/dashboard/new-game', element: <NewGamePage /> },
             ]
           },
           { path: '/*', element: <NotFoundPage />},
