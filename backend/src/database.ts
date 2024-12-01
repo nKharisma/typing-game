@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 import { dbConnectionConfig } from './config';
 
 // The maximum length of a string in the database (60 chars since bcrypt's hash function outputs 60 chars).
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   emailCodeAttempts: { type: Number, required: true },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'Users');
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Utility functions
@@ -106,7 +106,7 @@ type UpdateUserParams = {
 
 async function updateUser(
   updateParams: UpdateUserParams,
-  userID: string
+  _id: ObjectId
 ): Promise<[string | null, any]> {
   // Validate string fields to be correct length.
   const fieldsToValidate = Object.fromEntries(
@@ -120,7 +120,7 @@ async function updateUser(
   }
 
   try {
-    const result = await User.findByIdAndUpdate(userID, updateParams, { new: true });
+    const result = await User.findByIdAndUpdate(_id, updateParams, { new: true });
     return [null, result];
   } catch (err: any) {
     return [err.message, null];
@@ -146,15 +146,10 @@ async function getUserFromEmail(email: string): Promise<[string | null, any]> {
 }
 
 // Delete user based on userId.
-async function deleteUser(userId: string): Promise<[string | null, any]> {
-  // Validate string fields to be correct length.
-  const validationError = validateStringFieldLengths({ userId });
-  if (validationError) {
-    return [validationError, null];
-  }
+async function deleteUser(_id: ObjectId): Promise<[string | null, any]> {
   // Query database.
   try {
-    const result = await User.findByIdAndDelete(userId);
+    const result = await User.findByIdAndDelete(_id);
     return [null, result];
   } catch (err: any) {
     return [err.message, null];
