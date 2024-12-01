@@ -1,5 +1,4 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -15,7 +14,17 @@ html {
     height: 100%;
     overflow: hidden;
     background: radial-gradient(ellipse at bottom, #151d27 0%,#090a0f 100%);
-    font-family: monospace;
+}
+
+@font-face {
+	font-family: 'Better-VCR';
+	src: url('../fonts/Better-VCR.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	font-family: 'Better-VCR';
 }
 
 #star1 {
