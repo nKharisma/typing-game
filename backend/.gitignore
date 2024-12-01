@@ -1,5 +1,19 @@
-src/client/*
-src/**/*.js
-src/*.js
-node_modules/
+# Secret keys
 .env
+
+# Node
+node_modules
+
+# Compiled .ts files
+src/*.js
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
