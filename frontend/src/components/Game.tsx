@@ -9,24 +9,13 @@ interface Bug {
   element: HTMLElement;
 }
 
-/*
-interface Projectile {
-  id: number;
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
-  element: HTMLElement;
-}*/
-
 function Game() {
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [typedWord, setTypedWord] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  //const playerShipRef = useRef<HTMLDivElement>(null);
+  const playerShipRef = useRef<HTMLDivElement>(null);
   const setBugs = useState<Bug[]>([])[1];
   const [activeBug, setActiveBug] = useState<string | null>(null);
-  //const [projectiles, setProjectiles] = useState<Projectile[]>([]);
   const [score, setScore] = useState(() => {
     const savedScore = localStorage.getItem('score');
     return savedScore ? parseInt(savedScore, 10) : 0;
@@ -114,8 +103,8 @@ function Game() {
     if (!gameContainer) return;
   
     const gameContainerWidth = gameContainer.offsetWidth;
-    const bugWidth = 50; // Assuming each bug has a width of 50px
-    const minLeft = 0;
+    const bugWidth = 100; // Assuming each bug has a width of 50px
+    const minLeft = 150;
     const maxLeft = gameContainerWidth - bugWidth;
   
     let leftPosition;
@@ -180,6 +169,102 @@ function Game() {
       
 	};
 	
+	const shootProjectile = (targetElement: HTMLElement) => {
+    console.log('Shooting projectile at:', targetElement.textContent);
+  
+    const gameContainer = gameContainerRef.current;
+    if (!gameContainer) {
+      console.error('Game container not found');
+      return;
+    }
+  
+    const playerShip = playerShipRef.current;
+    if (!playerShip) {
+      console.error('Player ship not found');
+      return;
+    }
+  
+    const projectile = document.createElement('div');
+    projectile.className = 'projectile';
+    gameContainer.appendChild(projectile);
+  
+    const playerRect = playerShip.getBoundingClientRect();
+    const gameRect = gameContainer.getBoundingClientRect();
+    projectile.style.left = `${playerRect.left}px`;
+    projectile.style.top = `${playerRect.top}px`;
+  
+    console.log('Projectile initial position:', projectile.style.left, projectile.style.top);
+  
+    // Calculate the initial angle to rotate the projectile
+    const initialTargetRect = targetElement.getBoundingClientRect();
+    const initialTargetX = initialTargetRect.left - gameRect.left + initialTargetRect.width / 2;
+    const initialTargetY = initialTargetRect.top - gameRect.top + initialTargetRect.height / 2;
+  
+    const initialDeltaX = initialTargetX - (playerRect.left - gameRect.left + playerRect.width / 2);
+    const initialDeltaY = initialTargetY - (playerRect.top - gameRect.top);
+    const initialDistance = Math.sqrt(initialDeltaX * initialDeltaX + initialDeltaY * initialDeltaY);
+    const initialAngle = Math.atan2(initialDeltaY, initialDeltaX);
+  
+    console.log('Initial target position:', initialTargetX, initialTargetY);
+    console.log('Initial angle (radians):', initialAngle);
+  
+    // Apply initial rotation to the projectile
+    projectile.style.transform = `rotate(${initialAngle}rad)`;
+    projectile.style.transformOrigin = 'center';
+  
+    // Calculate a shorter distance to stop before the target
+  
+    // Calculate animation duration based on the shorter distance
+    const speed = 1000; // Pixels per second
+    const duration = (initialDistance / speed) * 1000; // Convert to milliseconds
+  
+    // Smooth projectile animation
+    const animation = projectile.animate(
+      [
+        { transform: `translate(0, 0) rotate(${initialAngle}rad)` },
+        { transform: `translate(${initialDeltaX}px, ${initialDeltaY}px) rotate(${initialAngle}rad)` },
+      ],
+      {
+        duration: duration,
+        easing: 'linear',
+      }
+    );
+  
+    animation.onfinish = () => {
+      gameContainer.removeChild(projectile);
+  
+      if (gameContainer.contains(targetElement)) {
+        gameContainer.removeChild(targetElement);
+      }
+    };
+  
+    const updateTargetPosition = () => {
+      const currentRect = projectile.getBoundingClientRect();
+      const currentX = currentRect.left + currentRect.width / 2;
+      const currentY = currentRect.top + currentRect.height / 2;
+  
+      const targetRect = targetElement.getBoundingClientRect();
+      const targetX = targetRect.left - gameRect.left + targetRect.width / 2;
+      const targetY = targetRect.top - gameRect.top + targetRect.height / 2;
+  
+      const deltaX = targetX - currentX;
+      const deltaY = targetY - currentY;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  
+      if (distance < 5) {
+        console.log('Projectile hit the target!');
+        gameContainer.removeChild(projectile);
+        gameContainer.removeChild(targetElement);
+        return;
+      }
+  
+      requestAnimationFrame(updateTargetPosition);
+    };
+  
+    requestAnimationFrame(updateTargetPosition);
+  };
+  
+	
 	/*
 	useEffect(() => {
 	  const gameLoop = () => {
@@ -207,7 +292,7 @@ function Game() {
   if (!gameContainer) return;
 
   const bugs = Array.from(gameContainer.getElementsByClassName('bug')) as HTMLElement[];
-  console.log('Bugs:', bugs.map(bug => bug.textContent));
+  //console.log('Bugs:', bugs.map(bug => bug.textContent));
 
   if (!activeBug) {
     const matchingBugs = bugs.filter(bugElement => {
@@ -242,7 +327,6 @@ function Game() {
     let currentIndex = 0;
     let inputIndex = 0;
 
-    // Check if the first letter is already marked as correct
     if (spans[0].classList.contains('correct')) {
       currentIndex = 1;
       inputIndex = 1;
@@ -259,7 +343,7 @@ function Game() {
     }
 
     if (currentIndex === spans.length) {
-      gameContainer.removeChild(activeBugElement);
+      shootProjectile(activeBugElement);
       setTypedWord('');
       setScore(prevScore => {
         const newScore = prevScore + 10;
@@ -278,36 +362,6 @@ function Game() {
   }
 };
 
-	/*
-	const handleProjectile = (targetElement: HTMLElement) => {
-	  if(!playerShipRef.current) return;
-	  
-	  const playerShipRect = playerShipRef.current.getBoundingClientRect();
-	  const bugTargetRect = targetElement.getBoundingClientRect();
-	  const newProjectile: Projectile = {
-	    id: Date.now(),
-      x: playerShipRect.left,
-      y: playerShipRect.top,
-      targetX: bugTargetRect.left,
-      targetY: bugTargetRect.top,
-      element: document.createElement('div')
-	  }
-	  
-	  newProjectile.element.className = 'projectile';
-	  setProjectiles(prevProjectiles => [...prevProjectiles, newProjectile]);
-	}
-	
-	
-	const calculateAccuracy = () => {
-	  return totalChars === 0 ? 0 : (correctChars / totalChars) * 100;
-	}
-	
-	const calculateWPM = () => {
-	  if(!startTime) return 0;
-	  const minutes = (new Date().getTime() - startTime.getTime()) / 60000;
-	  return totalWords / minutes;
-	}*/
-
 	const generateRandomCode = () => {
     const languages = Object.keys(miniPrograms);
     const randomLanguage = languages[Math.floor(Math.random() * languages.length)] as keyof typeof miniPrograms;
@@ -321,7 +375,7 @@ function Game() {
     <div className="stats">
       <div>Score: {score}</div>
     </div>
-    <div className='player-ship'></div>
+    <div className='player-ship' ref={playerShipRef}></div>
     <input
         type="text"
         value={typedWord}

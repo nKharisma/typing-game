@@ -53,6 +53,18 @@ body {
 	top: 90%;
 }
 
+.projectile {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	background: url('/assets/projectile012_scaled.png') no-repeat center center;
+	background-size: contain;
+	z-index: 1000;
+}
+
+.stats {
+	color: white;
+}
 @keyframes moveDown {
 	0% {
 		transform: translateY(0);
