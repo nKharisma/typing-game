@@ -26,9 +26,9 @@ expressServer.set('trust proxy', 1);
 // Morgan provides express easier docker HTTP logging that default logs to stdout.
 expressServer.use(morgan('dev'));
 // Allow requests from the following addresses, production and development.
-// www.your_domain.com is re-routed to your_domain.com by nginx setup.
+// www.typecode.app is re-routed to typecode.app by nginx setup.
 expressServer.use(cors({
-    origin: ['https://your_domain.com', `http://localhost:${devServerPort}`],
+    origin: ['https://typecode.app', `http://localhost:${devServerPort}`],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));

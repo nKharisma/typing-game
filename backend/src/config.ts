@@ -9,14 +9,7 @@ dotenv.config()
 // Function exports for 'database.ts'.
 
 const dbConnectionConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME, 
-  port: Number(process.env.DB_PORT),
-  waitForConnections: true,
-  connectionLimit: 1,
-  queueLimit: 0,
+  uri: 'mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 };
 const serverPort = 5000;
 const devServerPort = 5173;
