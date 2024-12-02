@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { useContext } from 'react';
 
 import { AuthContext } from '../contexts/AuthContext';
+import '../css/HeaderLayout.css'
 
 export default function HeaderLayout() {
   const { isAuthenticated } = useContext(AuthContext);
