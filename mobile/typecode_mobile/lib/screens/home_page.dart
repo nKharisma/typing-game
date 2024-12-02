@@ -1,17 +1,22 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-/// Flutter code sample for [NavigationBar].
-
-//void main() => runApp(const NavigationBarApp());
+String user = 'haha';
 
 class MainAppPage extends StatelessWidget {
-  const MainAppPage({super.key});
+  MainAppPage({super.key, required String userId}){
+    user = userId;
+    print(userId);
+    print(user);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       theme: ThemeData(useMaterial3: true),
       home: const MainAppNavigation(),
     );
@@ -27,6 +32,49 @@ class MainAppNavigation extends StatefulWidget {
 
 class _MainAppNavigationState extends State<MainAppNavigation> {
   int currentPageIndex = 0;
+
+  Map<String, dynamic>? userStats;
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserStats();
+  }
+  
+  Future<void> fetchUserStats() async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://typecode.app/api/getPlayerData'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'id': user // Pass the user ID in the request body
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          userStats = jsonDecode(response.body); // Parse the JSON response
+          isLoading = false;
+        });
+      } else {
+        // Handle errors, e.g., user not found
+        setState(() {
+          errorMessage = jsonDecode(response.body)['error'];
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Handle connection or parsing errors
+      setState(() {
+        errorMessage = 'An error occurred: $e';
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,20 +108,6 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
         ],
       ),
       body: <Widget>[
-        /// Home page
-        /*Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),*/
-
         // Profile page
         Container(
           color: Colors.black,
@@ -126,6 +160,24 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                     fontSize: 16,
                   ),
                 ),
+                isLoading
+                ? Center(child: CircularProgressIndicator())
+                : errorMessage != null
+                ? Center(child: Text(errorMessage!))
+                : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Score: ${userStats!['score']}', style: TextStyle(color: Colors.white),),
+                      Text('Highscore: ${userStats!['highscore']}', style: TextStyle(color: Colors.white),),
+                      Text('Words Per Minute: ${userStats!['wordsPerMinute']}', style: TextStyle(color: Colors.white),),
+                      Text('Total Words Typed: ${userStats!['totalWordsTyped']}', style: TextStyle(color: Colors.white),),
+                      Text('Accuracy: ${userStats!['accuracy']}%', style: TextStyle(color: Colors.white),),
+                      Text('Levels Completed: ${userStats!['levelsCompleted']}', style: TextStyle(color: Colors.white),),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -137,19 +189,8 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
           child: SafeArea(
             child: Column(
               children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      foregroundImage: NetworkImage(
-                        'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
-                      ),
-                    ),
-                    SizedBox(width: 100,),
-                    
-                  ],
-                )
-              ],
+                
+              ]
             ),
           ),
         ),

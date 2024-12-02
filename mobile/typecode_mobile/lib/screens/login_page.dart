@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:typecode_mobile/screens/profile_page.dart';
+import 'package:typecode_mobile/screens/home_page.dart';
 import 'package:typecode_mobile/screens/signup_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -167,11 +167,13 @@ class _LoginPageState extends State<LoginPage> {
 
                 if (response.statusCode == 200) {
                   final user = jsonDecode(response.body);
+                  print(user);
+                  String userId = user['id'];
                   // Login successful, navigate to the main app page
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MainAppPage(),
+                      builder: (context) => MainAppPage(userId: userId),
                     ),
                   );
                 } else {
