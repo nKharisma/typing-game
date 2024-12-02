@@ -1,5 +1,7 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { AuthContext } from '../contexts/AuthContext';
 import '../css/dashboard.css';
 
 export default function DashboardPage()
@@ -19,6 +21,7 @@ export default function DashboardPage()
 	const [output, setOutput] = useState<string[]>([]);
 	const [userName, setUserName] = useState('');
 	const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 	
 	useEffect(() => {
 		const getUsername = async () => {
@@ -72,20 +75,25 @@ export default function DashboardPage()
 	
 	const handleOption = (option: string) => {
 		switch (option) {
+      case '1':
 			case 'new game':
 				setOutput([...output, 'Starting a new game...']);
 				navigate('/dashboard/new-game');
 				break;
+      case '2':
 			case 'settings':
 				setOutput(['Navigating to settings...']);
 				navigate('/settings');
 				break;
+      case '3':
 			case 'about us':
 				setOutput(['Navigating to about us...']);
 				navigate('/about-us');
 				break;
+      case '4':
 			case 'logout':
 				setOutput(['Logging out...']);
+        logout();
 				navigate('/');
 				break;
 			default:
