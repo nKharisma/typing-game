@@ -8,10 +8,10 @@ export default function HeaderLayout() {
 
   return (
     <div>
-     <section className="wrapper">
-          <div id='star1'></div>
-          <div id='star2'></div>
-          <div id='star3'></div>
+      <section className="wrapper">
+        <div id='star1'></div>
+        <div id='star2'></div>
+        <div id='star3'></div>
       </section>
       <header className='header-container'>
         <div className = 'header-logo-container'>

@@ -141,74 +141,76 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register-page">
-      <h1 className="register-page__title">Register</h1>
-      
-      <form className="register-page__form" onSubmit={handleRegister}>
-        <div className="register-page__form-group">
-          <label htmlFor="firstName" className="register-page__label">First Name:</label>
-          <input
-            type="text"
-            id="firstName"
-            className={`register-page__input ${firstNameError ? 'register-page__input--error' : ''}`}
-            value={firstName}
-            onChange={(e) => handleFirstNameChange(e.target.value)}
-            maxLength={50}
-          />
-          {firstNameError && <div className="register-page__field-error">{firstNameError}</div>}
-        </div>
+    <div className="register-page__container">
+      <div className="register-page">
+        <h1 className="register-page__title">Register</h1>
+        
+        <form className="register-page__form" onSubmit={handleRegister}>
+          <div className="register-page__form-group">
+            <label htmlFor="firstName" className="register-page__label">First Name:</label>
+            <input
+              type="text"
+              id="firstName"
+              className={`register-page__input ${firstNameError ? 'register-page__input--error' : ''}`}
+              value={firstName}
+              onChange={(e) => handleFirstNameChange(e.target.value)}
+              maxLength={50}
+            />
+            {firstNameError && <div className="register-page__field-error">{firstNameError}</div>}
+          </div>
 
-        <div className="register-page__form-group">
-          <label htmlFor="lastName" className="register-page__label">Last Name:</label>
-          <input
-            type="text"
-            id="lastName"
-            className={`register-page__input ${lastNameError ? 'register-page__input--error' : ''}`}
-            value={lastName}
-            onChange={(e) => handleLastNameChange(e.target.value)}
-            maxLength={50}
-          />
-          {lastNameError && <div className="register-page__field-error">{lastNameError}</div>}
-        </div>
+          <div className="register-page__form-group">
+            <label htmlFor="lastName" className="register-page__label">Last Name:</label>
+            <input
+              type="text"
+              id="lastName"
+              className={`register-page__input ${lastNameError ? 'register-page__input--error' : ''}`}
+              value={lastName}
+              onChange={(e) => handleLastNameChange(e.target.value)}
+              maxLength={50}
+            />
+            {lastNameError && <div className="register-page__field-error">{lastNameError}</div>}
+          </div>
 
-        <div className="register-page__form-group">
-          <label htmlFor="email" className="register-page__label">Email:</label>
-          <input
-            type="text"
-            id="email"
-            className={`register-page__input ${emailError ? 'register-page__input--error' : ''}`}
-            value={email}
-            onChange={(e) => handleEmailChange(e.target.value)}
-            maxLength={50}
-          />
-          {emailError && <div className="register-page__field-error">{emailError}</div>}
-        </div>
+          <div className="register-page__form-group">
+            <label htmlFor="email" className="register-page__label">Email:</label>
+            <input
+              type="text"
+              id="email"
+              className={`register-page__input ${emailError ? 'register-page__input--error' : ''}`}
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              maxLength={50}
+            />
+            {emailError && <div className="register-page__field-error">{emailError}</div>}
+          </div>
 
-        <div className="register-page__form-group">
-          <label htmlFor="password" className="register-page__label">Password:</label>
-          <input
-            type="password"
-            id="password"
-            className={`register-page__input ${passwordErrors.length > 0 ? 'register-page__input--error' : ''}`}
-            value={password}
-            onChange={(e) => handlePasswordChange(e.target.value)}
-            maxLength={50}
-          />
-          {passwordErrors.length > 0 && (
-            <div className="register-page__field-error">
-              <ul>
-                {passwordErrors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+          <div className="register-page__form-group">
+            <label htmlFor="password" className="register-page__label">Password:</label>
+            <input
+              type="password"
+              id="password"
+              className={`register-page__input ${passwordErrors.length > 0 ? 'register-page__input--error' : ''}`}
+              value={password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
+              maxLength={50}
+            />
+            {passwordErrors.length > 0 && (
+              <div className="register-page__field-error">
+                <ul>
+                  {passwordErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
-        {generalError && <div className="register-page__field-error">{generalError}</div>}
-        <button type="submit" className="register-page__button">Register</button>
-      </form>
-      <p>Already have an account? <Link to='/login'>Login here.</Link></p>
+          {generalError && <div className="register-page__field-error">{generalError}</div>}
+          <button type="submit" className="register-page__button">Register</button>
+        </form>
+        <p>Already have an account? <Link to='/login'>Login here.</Link></p>
+      </div>
     </div>
   );
 };

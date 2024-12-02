@@ -30,6 +30,8 @@ body {
 #star1 {
     width: 1px;
     height: 1px;
+    position: absolute;
+    z-index: -1;
     background: transparent;
     animation: animStar 50s linear infinite;
     box-shadow: 779px 1331px #fff, 324px 42px #fff, 303px 586px #fff,
@@ -400,6 +402,8 @@ body {
 #star2 {
     width: 2px;
     height: 2px;
+    position: absolute;
+    z-index: -1;
     background: transparent;
     animation: animStar 100s linear infinite;
     box-shadow: 1448px 320px #fff, 1775px 1663px #fff, 332px 1364px #fff,
@@ -518,6 +522,8 @@ body {
 #star3 {
     width: 3px;
     height: 3px;
+    position: absolute;
+    z-index: -1;
     background: transparent;
     animation: animStar 150s linear infinite;
     box-shadow: 387px 1878px #fff, 760px 1564px #fff, 1487px 999px #fff,
