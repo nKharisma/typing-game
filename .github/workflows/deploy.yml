@@ -54,5 +54,5 @@ jobs:
         # Sync built project files to the server
         ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
         rsync -avz --exclude=".git" --exclude="node_modules" ./backend $SERVER_USER@$SERVER_HOST:$DEPLOY_PATH
-        ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "pm2 restart prod_server"
+        ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "pm2 restart prod"
 
