@@ -132,67 +132,69 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="verify-email-page">
-      <h1 className="verify-email-page__title">Verify Your Email</h1>
-      <p className="verify-email-page__info">We have sent a 6-digit code to your email!</p>
-      
-      <form className="verify-email-page__form" onSubmit={handleSubmit} noValidate>
-        <div className="verify-email-page__form-group">
-          <label htmlFor="emailCode" className="verify-email-page__label">Enter the code:</label>
-          <input
-            type="text"
-            id="emailCode"
-            className={`verify-email-page__input ${emailCodeError ? 'verify-email-page__input--error' : ''}`}
-            value={emailCode}
-            onChange={(e) => handleEmailCodeChange(e.target.value)}
-            maxLength={6}
-          />
-          {emailCodeError && (
-            <div id="emailCodeError" className="verify-email-page__field-error">
-              {emailCodeError}
-            </div>
-          )}
-        </div>
-
-        {generalError && <div className="verify-email-page__error">{generalError}</div>}
-
-        {/* Conditionally render the "Resend Code" button or submit button */}
-        {showResendButton ? (
-          <div className="verify-email-page__resend-section">
-            <button
-              type="button"
-              className="verify-email-page__button"
-              onClick={() => sendEmailCode({ forceResend: true })}
-            >
-              Resend Code
-            </button>
+    <div className="verify-email-page__container">
+      <div className="verify-email-page">
+        <h1 className="verify-email-page__title">Verify Your Email</h1>
+        <p className="verify-email-page__info">We have sent a 6-digit code to your email!</p>
+        
+        <form className="verify-email-page__form" onSubmit={handleSubmit} noValidate>
+          <div className="verify-email-page__form-group">
+            <label htmlFor="emailCode" className="verify-email-page__label">Enter the code:</label>
+            <input
+              type="text"
+              id="emailCode"
+              className={`verify-email-page__input ${emailCodeError ? 'verify-email-page__input--error' : ''}`}
+              value={emailCode}
+              onChange={(e) => handleEmailCodeChange(e.target.value)}
+              maxLength={6}
+            />
+            {emailCodeError && (
+              <div id="emailCodeError" className="verify-email-page__field-error">
+                {emailCodeError}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="verify-email-page__submit-section">
-            <button type="submit" className="verify-email-page__button">
-              Submit
-            </button>
-            <p className="verify-email-page__resend">
-              Not seeing the email?{' '}
-              <span
-                className="verify-email-page__resend-link"
+
+          {generalError && <div className="verify-email-page__error">{generalError}</div>}
+
+          {/* Conditionally render the "Resend Code" button or submit button */}
+          {showResendButton ? (
+            <div className="verify-email-page__resend-section">
+              <button
+                type="button"
+                className="verify-email-page__button"
                 onClick={() => sendEmailCode({ forceResend: true })}
               >
-                Resend code.
-              </span>
-            </p>
-          </div>
-        )}
-      </form>
+                Resend Code
+              </button>
+            </div>
+          ) : (
+            <div className="verify-email-page__submit-section">
+              <button type="submit" className="verify-email-page__button">
+                Submit
+              </button>
+              <p className="verify-email-page__resend">
+                Not seeing the email?{' '}
+                <span
+                  className="verify-email-page__resend-link"
+                  onClick={() => sendEmailCode({ forceResend: true })}
+                >
+                  Resend code.
+                </span>
+              </p>
+            </div>
+          )}
+        </form>
 
-      {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
-      {showAlreadyVerifiedPopup && (
-        <CountdownPopup
-          displayText="Your account is already verified, being redirected to login page..."
-          countdownTimeSeconds={5} // countdown from 5 seconds
-          navigateDestination="/login"
-        />
-      )}
+        {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
+        {showAlreadyVerifiedPopup && (
+          <CountdownPopup
+            displayText="Your account is already verified, being redirected to login page..."
+            countdownTimeSeconds={5} // countdown from 5 seconds
+            navigateDestination="/login"
+          />
+        )}
+      </div>
     </div>
   );
 };

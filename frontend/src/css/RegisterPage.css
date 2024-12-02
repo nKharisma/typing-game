@@ -1,7 +1,14 @@
+.register-page__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
 .register-page {
-  background-color: #ffffff;
+  background-color: rgb(12,13,18,0.95);
   padding: 40px 30px;
-  border-radius: 8px;
+  border: rgb(120, 120, 120) 10px 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 400px;
   box-sizing: border-box;
@@ -10,7 +17,7 @@
 .register-page__title {
   text-align: center;
   margin-bottom: 30px;
-  color: #333333;
+  color: #CCC;
 }
 
 .register-page__form-group {
@@ -20,7 +27,7 @@
 .register-page__label {
   display: block;
   margin-bottom: 8px;
-  color: #555555;
+  color: #BBB;
   font-size: 14px;
 }
 
@@ -86,7 +93,7 @@
 .register-page p {
   text-align: center;
   margin-top: 20px;
-  color: #666666;
+  color: #BBB;
   font-size: 14px;
 }
 

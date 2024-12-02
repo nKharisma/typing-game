@@ -166,77 +166,79 @@ export default function ValidatePasswordResetPage() {
   };
 
   return (
-    <div className="password-reset-page">
-      <h1 className="password-reset-page__title">Reset Your Password</h1>
-      <p className="password-reset-page__info">We have sent a 6-digit code to your email!</p>
-      
-      <form className="password-reset-page__form" onSubmit={handleSubmit} noValidate>
-        <div className="password-reset-page__form-group">
-          <label htmlFor="emailCode" className="password-reset-page__label">Enter the code:</label>
-          <input
-            type="text"
-            id="emailCode"
-            className={`password-reset-page__input ${emailCodeError ? 'password-reset-page__input--error' : ''}`}
-            value={emailCode}
-            onChange={(e) => handleEmailCodeChange(e.target.value)}
-            maxLength={6}
-          />
-          {emailCodeError && <div id="emailCodeError" className="password-reset-page__field-error">{emailCodeError}</div>}
-        </div>
+    <div className="password-reset-page__container">
+      <div className="password-reset-page">
+        <h1 className="password-reset-page__title">Reset Your Password</h1>
+        <p className="password-reset-page__info">We have sent a 6-digit code to your email!</p>
+        
+        <form className="password-reset-page__form" onSubmit={handleSubmit} noValidate>
+          <div className="password-reset-page__form-group">
+            <label htmlFor="emailCode" className="password-reset-page__label">Enter the code:</label>
+            <input
+              type="text"
+              id="emailCode"
+              className={`password-reset-page__input ${emailCodeError ? 'password-reset-page__input--error' : ''}`}
+              value={emailCode}
+              onChange={(e) => handleEmailCodeChange(e.target.value)}
+              maxLength={6}
+            />
+            {emailCodeError && <div id="emailCodeError" className="password-reset-page__field-error">{emailCodeError}</div>}
+          </div>
 
-        <div className="password-reset-page__form-group">
-          <label htmlFor="newPassword" className="password-reset-page__label">New Password:</label>
-          <input
-            type="password"
-            id="newPassword"
-            className={`password-reset-page__input ${newPasswordErrors.length > 0 ? 'password-reset-page__input--error' : ''}`}
-            value={newPassword}
-            onChange={(e) => handleNewPasswordChange(e.target.value)}
-            maxLength={50}
-          />
-          {newPasswordErrors.length > 0 && (
-            <div id="newPasswordError" className="password-reset-page__field-error">
-              <ul>
-                {newPasswordErrors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
+          <div className="password-reset-page__form-group">
+            <label htmlFor="newPassword" className="password-reset-page__label">New Password:</label>
+            <input
+              type="password"
+              id="newPassword"
+              className={`password-reset-page__input ${newPasswordErrors.length > 0 ? 'password-reset-page__input--error' : ''}`}
+              value={newPassword}
+              onChange={(e) => handleNewPasswordChange(e.target.value)}
+              maxLength={50}
+            />
+            {newPasswordErrors.length > 0 && (
+              <div id="newPasswordError" className="password-reset-page__field-error">
+                <ul>
+                  {newPasswordErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {generalError && <div className="password-reset-page__error">{generalError}</div>}
+
+          {/* Conditionally render the "Resend Code" button or submit button*/}
+          {showResendButton ? (
+            <div className="password-reset-page__resend-section">
+              <button className="password-reset-page__resend-button" onClick={sendEmailCode}>
+                Resend Code
+              </button>
+            </div>
+          ) : (
+            <div>
+              <button type="submit" className="password-reset-page__button">Submit</button>
+
+              <p className="password-reset-page__resend">
+                Not seeing the email?{' '}
+                <span className="password-reset-page__resend-link" onClick={sendEmailCode}>
+                  Resend code.
+                </span>
+              </p>
             </div>
           )}
-        </div>
+        </form>
 
-        {generalError && <div className="password-reset-page__error">{generalError}</div>}
 
-        {/* Conditionally render the "Resend Code" button or submit button*/}
-        {showResendButton ? (
-          <div className="password-reset-page__resend-section">
-            <button className="password-reset-page__resend-button" onClick={sendEmailCode}>
-              Resend Code
-            </button>
-          </div>
-        ) : (
-          <div>
-            <button type="submit" className="password-reset-page__button">Submit</button>
-
-            <p className="password-reset-page__resend">
-              Not seeing the email?{' '}
-              <span className="password-reset-page__resend-link" onClick={sendEmailCode}>
-                Resend code.
-              </span>
-            </p>
-          </div>
+        {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
+        {showNotVerifiedPopup && (
+          <CountdownPopup
+            displayText="Your account is not yet verified, being redirected to verification page..."
+            countdownTimeSeconds={5} // countdown from 5 seconds
+            navigateDestination="/verify-email"
+          />
         )}
-      </form>
-
-
-      {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
-      {showNotVerifiedPopup && (
-        <CountdownPopup
-          displayText="Your account is not yet verified, being redirected to verification page..."
-          countdownTimeSeconds={5} // countdown from 5 seconds
-          navigateDestination="/verify-email"
-        />
-      )}
+      </div>
     </div>
   );
 };

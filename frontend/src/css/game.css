@@ -5,18 +5,6 @@
 	scroll-behavior: smooth;
 }
 
-@font-face {
-	font-family: 'Better-VCR';
-	src: url('../fonts/Better-VCR.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-body {
-	height: 100%;
-	font-family: 'Better-VCR';
-}
-
 .bug-text {
 	color: white;
 	background-color: black;

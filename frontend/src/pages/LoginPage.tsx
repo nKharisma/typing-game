@@ -97,51 +97,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
-      <h1 className="login-page__title">Login</h1>
-      
-      <form className="login-page__form" onSubmit={handleLogin} noValidate>
-        <div className="login-page__form-group">
-          <label htmlFor="email" className="login-page__label">Email:</label>
-          <input
-            type="email"
-            id="email"
-            className={`login-page__input ${emailError ? 'login-page__input--error' : ''}`}
-            value={email}
-            onChange={(e) => handleEmailChange(e.target.value)}
-            maxLength={50}
+    <div className="login-page__container">
+      <div className="login-page">
+        <h1 className="login-page__title">Login</h1>
+        
+        <form className="login-page__form" onSubmit={handleLogin} noValidate>
+          <div className="login-page__form-group">
+            <label htmlFor="email" className="login-page__label">Email:</label>
+            <input
+              type="email"
+              id="email"
+              className={`login-page__input ${emailError ? 'login-page__input--error' : ''}`}
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              maxLength={50}
+            />
+            {emailError && <div id="emailError" className="login-page__field-error">{emailError}</div>}
+          </div>
+
+          <div className="login-page__form-group">
+            <label htmlFor="password" className="login-page__label">Password:</label>
+            <input
+              type="password"
+              id="password"
+              className={`login-page__input ${passwordError ? 'login-page__input--error' : ''}`}
+              value={password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
+              maxLength={50}
+            />
+            {passwordError && <div id="passwordError" className="login-page__field-error">{passwordError}</div>}
+          </div>
+
+          {generalError && <div className="login-page__error">{generalError}</div>}
+
+          <button type="submit" className="login-page__button">Login</button>
+        </form>
+        <p className="login-page__info">Don't have an account? <Link to='/register' className="login-page__link">Register here.</Link></p>
+        <p className="login-page__info">Forgot your password? <Link to='/send-password-reset' className="login-page__link">Reset it here.</Link></p>
+
+        {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
+        {showNotVerifiedPopup && (
+          <CountdownPopup
+            displayText="Your account is not yet verified, being redirected to verification page..."
+            countdownTimeSeconds={5} // countdown from 5 seconds
+            navigateDestination="/verify-email"
           />
-          {emailError && <div id="emailError" className="login-page__field-error">{emailError}</div>}
-        </div>
-
-        <div className="login-page__form-group">
-          <label htmlFor="password" className="login-page__label">Password:</label>
-          <input
-            type="password"
-            id="password"
-            className={`login-page__input ${passwordError ? 'login-page__input--error' : ''}`}
-            value={password}
-            onChange={(e) => handlePasswordChange(e.target.value)}
-            maxLength={50}
-          />
-          {passwordError && <div id="passwordError" className="login-page__field-error">{passwordError}</div>}
-        </div>
-
-        {generalError && <div className="login-page__error">{generalError}</div>}
-
-        <button type="submit" className="login-page__button">Login</button>
-      </form>
-      <p className="login-page__info">Don't have an account? <Link to='/register' className="login-page__link">Register here.</Link></p>
-      <p className="login-page__info">Forgot your password? <Link to='/send-password-reset' className="login-page__link">Reset it here.</Link></p>
-
-      {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
-      {showNotVerifiedPopup && (
-        <CountdownPopup
-          displayText="Your account is not yet verified, being redirected to verification page..."
-          countdownTimeSeconds={5} // countdown from 5 seconds
-          navigateDestination="/verify-email"
-        />
-      )}
+        )}
+      </div>
     </div>
   );
 };

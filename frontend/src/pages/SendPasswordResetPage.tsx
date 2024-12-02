@@ -88,35 +88,37 @@ export default function SendPasswordResetPage() {
     sendEmailCode();
   };
   return (
-    <div className="send-password-reset-page">
-      <h1 className="send-password-reset-page__title">Reset your Password</h1>
-      <form className="send-password-reset-page__form" onSubmit={handleSubmit} noValidate>
-        <div className="send-password-reset-page__form-group">
-          <label htmlFor="email" className="send-password-reset-page__label">Enter the email of your account:</label>
-          <input
-            type="email"
-            id="email"
-            className={`send-password-reset-page__input ${emailError ? 'send-password-reset-page__input--error' : ''}`}
-            value={email}
-            onChange={(e) => handleEmailChange(e.target.value)}
-            maxLength={60}
+    <div className="send-password-reset-page__container">
+      <div className="send-password-reset-page">
+        <h1 className="send-password-reset-page__title">Reset your Password</h1>
+        <form className="send-password-reset-page__form" onSubmit={handleSubmit} noValidate>
+          <div className="send-password-reset-page__form-group">
+            <label htmlFor="email" className="send-password-reset-page__label">Enter the email of your account:</label>
+            <input
+              type="email"
+              id="email"
+              className={`send-password-reset-page__input ${emailError ? 'send-password-reset-page__input--error' : ''}`}
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              maxLength={60}
+            />
+            {emailError && <div id="emailError" className="send-password-reset-page__field-error">{emailError}</div>}
+          </div>
+
+          {generalError && <p className="send-password-reset-page__error">{generalError}</p>}
+
+          <button type="submit" className="send-password-reset-page__button">Submit</button>
+        </form>
+
+        {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
+        {showNotVerifiedPopup && (
+          <CountdownPopup
+            displayText="Your account is not yet verified, being redirected to verification page..."
+            countdownTimeSeconds={5} // countdown from 5 seconds
+            navigateDestination="/verify-email"
           />
-          {emailError && <div id="emailError" className="send-password-reset-page__field-error">{emailError}</div>}
-        </div>
-
-        {generalError && <p className="send-password-reset-page__error">{generalError}</p>}
-
-        <button type="submit" className="send-password-reset-page__button">Submit</button>
-      </form>
-
-      {/* Conditionally render the "Countdown Popup" in case a user is already verified */}
-      {showNotVerifiedPopup && (
-        <CountdownPopup
-          displayText="Your account is not yet verified, being redirected to verification page..."
-          countdownTimeSeconds={5} // countdown from 5 seconds
-          navigateDestination="/verify-email"
-        />
-      )}
+        )}
+      </div>
     </div>
   );
 };
