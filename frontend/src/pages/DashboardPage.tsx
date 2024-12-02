@@ -2,20 +2,18 @@ import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/dashboard.css';
 
-function Dashboard()
+export default function DashboardPage()
 {
-	const app_name = 'typecode.app'
 	function buildPath(route:string) : string
-    {
-        if (process.env.NODE_ENV != 'development') 
-        {
-            return 'https://' + app_name +  '/' + route;
-        }
-        else
-        {        
-            return 'http://localhost:5000/' + route;
-        }
+  {
+    const { hostname } = window.location;
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000/' + route; // Set to your localhost backend URL
+    } else {
+      return 'https://typecode.app/' + route; // Set to your production backend URL
     }
+  }
 
 	const [input, setInput] = useState('');
 	const [output, setOutput] = useState<string[]>([]);
@@ -76,7 +74,7 @@ function Dashboard()
 		switch (option) {
 			case 'new game':
 				setOutput([...output, 'Starting a new game...']);
-				navigate('dashboard/new-game');
+				navigate('/dashboard/new-game');
 				break;
 			case 'settings':
 				setOutput(['Navigating to settings...']);
@@ -98,11 +96,6 @@ function Dashboard()
 	
 	return (
 		<div className='container'>
-		  <section className="wrapper">
-            <div id='star1'></div>
-            <div id='star2'></div>
-            <div id='star3'></div>
-        </section>
         <div className='terminal-wrapper'>
 	        <div className='terminal-container'>
 	        <span className='welcome-message'>{userName}:$ type an option below to start</span>
@@ -134,5 +127,3 @@ function Dashboard()
 		</div>
 	);
 }
-
-export default Dashboard;

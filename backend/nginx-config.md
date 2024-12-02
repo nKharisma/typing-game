@@ -150,25 +150,22 @@ Your Express app is now accessible via HTTPS!
 
 ## NOTE:
 
-Default Server Block
 If there’s a default configuration (often named default or 000-default) in /etc/nginx/sites-enabled, it could interfere. Try disabling it:
 
 ```bash
-Copy code
 sudo rm /etc/nginx/sites-enabled/default
 ```
 Then reload NGINX:
 
 ```bash
-Copy code
 sudo systemctl reload nginx
 ```
 
-Final working sites-available/typecode.app
+You may want to redirect www.your_domain.com traffic to your_domain.com, for CORS issues:
 ```Nginx
 server {
     listen 80;
-    server_name typecode.app www.typecode.app;
+    server_name your_domain.com www.your_domain.com;
 
     # Redirect all HTTP requests to HTTPS
     return 301 https://$host$request_uri;
@@ -176,21 +173,21 @@ server {
 
 server {
     listen 443 ssl;
-    server_name www.typecode.app;
+    server_name www.your_domain.com;
 
-    ssl_certificate /etc/letsencrypt/live/typecode.app/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/typecode.app/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/your_domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your_domain.com/privkey.pem;
 
     # Redirect HTTPS traffic
-    return 301 https://typecode.app$request_uri;
+    return 301 https://your_domain.com$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name typecode.app;
+    server_name your_domain.com;
 
-    ssl_certificate /etc/letsencrypt/live/typecode.app/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/typecode.app/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/your_domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your_domain.com/privkey.pem;
 
 
     location / {

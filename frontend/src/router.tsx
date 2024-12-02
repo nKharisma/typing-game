@@ -1,38 +1,51 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-// Import the layouts
-import RootLayout from './layouts/root-layout'
-import DashboardLayout from './layouts/dashboard-layout'
+// Layout Imports
+import HeaderLayout from './layouts/HeaderLayout'
+import AuthProtectedRoutesLayout from './layouts/AuthProtectedRoutesLayout'
 
-// Import the components
-import HomePage from './routes/home'
-import SignUpPage from './routes/sign-up'
-import SignInPage from './routes/sign-in'
-import DashboardPage from './routes/dashboard'
-import ProfilePage from './routes/dashboard.profile'
-import NewGame from './routes/new_game'
+// Page Imports
+import HomePage from './pages/HomePage'
+import AboutPage from './pages/AboutPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
+import SendPasswordResetPage from './pages/SendPasswordResetPage'
+import ValidatePasswordResetPage from './pages/ValidatePasswordResetPage'
+import DashboardPage from './pages/DashboardPage'
+import ProfilePage from './pages/ProfilePage'
+import NewGamePage from './pages/NewGamePage'
+import NotFoundPage from './pages/NotFoundPage'
+
+// CSS Imports
 import './index.css'
 
-const createRouter = () => createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/sign-in", element: <SignInPage /> },
-      { path: "/sign-up", element: <SignUpPage /> },
+export default function createRouter() {
+  return createBrowserRouter(
+    [
       {
-        element: <DashboardLayout />,
-        path: "/dashboard",
+        path: '/',
+        element: <HeaderLayout />,
         children: [
-          { path: "/dashboard", element: <DashboardPage /> },
-          { path: "/dashboard/profile", element: <ProfilePage /> },
-          { path: "dashboard/new-game", element: <NewGame /> },
+          { path: '/', element: <HomePage /> },
+          { path: '/about', element: <AboutPage /> },
+          { path: '/login', element: <LoginPage /> },
+          { path: '/register', element: <RegisterPage /> },
+          { path: '/verify-email', element: <VerifyEmailPage /> },
+          { path: '/send-password-reset', element: <SendPasswordResetPage /> },
+          { path: '/validate-password-reset', element: <ValidatePasswordResetPage /> },
+          {
+            element: <AuthProtectedRoutesLayout />,
+            path: '/dashboard',
+            children: [
+              { path: '/dashboard', element: <DashboardPage /> },
+              { path: '/dashboard/profile', element: <ProfilePage /> },
+              { path: '/dashboard/new-game', element: <NewGamePage /> },
+            ]
+          },
+          { path: '/*', element: <NotFoundPage />},
         ]
-      },
-      { path: "/*", element: <HomePage />},
+      }
     ]
-  },
-])
-
-export default createRouter;
+  );
+};

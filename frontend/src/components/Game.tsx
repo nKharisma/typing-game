@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../css/game.css';
 import {v4 as uuidv4} from 'uuid';
-import { miniPrograms } from '../program-snippets';
+import { miniPrograms } from '../utils/programSnippets';
 
 interface Bug {
   id: string;
