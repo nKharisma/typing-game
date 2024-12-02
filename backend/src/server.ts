@@ -475,7 +475,7 @@ expressServer.use((req: any, res: any, next: any) => {
   }
 });
 
-expressServer.use(express.static(path.resolve('./dist')));
+expressServer.use(express.static(path.resolve('./src/client/dist')));
 
 expressServer.use((_: any, res: any) => {
     res.status(200).send('We are under construction... check back soon!');
