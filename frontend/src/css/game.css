@@ -24,7 +24,7 @@ body {
 	position: absolute;
 	width: auto;
 	white-space: nowrap;
-	top: -13px;
+	top: -90%;
 	transform: translateX(-40%);
 	padding: 2px 5px;
 	border-radius: 2px;

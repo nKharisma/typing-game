@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import '../css/game.css';
 import {v4 as uuidv4} from 'uuid';
 import { miniPrograms } from '../utils/programSnippets';
+import { useNavigate } from 'react-router-dom';
 
 interface Bug {
   id: string;
@@ -10,6 +11,7 @@ interface Bug {
 }
 
 function Game() {
+  const navigate = useNavigate();
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [typedWord, setTypedWord] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -20,7 +22,8 @@ function Game() {
     const savedScore = localStorage.getItem('score');
     return savedScore ? parseInt(savedScore, 10) : 0;
   });
-  const gameOver = false;
+  const [gameOver, setGameOver] = useState(false);
+  const [bugsReachedBottom, setBugsReachedBottom] = useState(0);
   const [waveCleared, setWaveCleared] = useState(false);
   /*
   const [totalWords, setTotalWords] = useState(0);
@@ -57,6 +60,20 @@ function Game() {
 	useEffect(() => {
     localStorage.setItem('score', score.toString());
 	}, [score]);
+	
+	useEffect(() => {
+	  if(gameOver) {
+	    alert('Game Over!');
+	    navigate('/dashboard');
+	  }
+	}, [gameOver]);
+	
+	useEffect(() => {
+	  const maxBugsReachedBottom = 5;
+	  if(bugsReachedBottom >= maxBugsReachedBottom) {
+      setGameOver(true);
+    }
+	}, [bugsReachedBottom])
 	
 	useEffect(() => {
     if(waveCleared && !gameOver) {
@@ -165,6 +182,7 @@ function Game() {
       bugElement.addEventListener('animationend', () => {
           gameContainer.removeChild(bugElement);
           setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
+          setBugsReachedBottom(prevBugsReachedBottom => prevBugsReachedBottom + 1);
       });
       
 	};
