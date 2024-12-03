@@ -32,6 +32,25 @@ export const miniPrograms = {
 				"console.log(i);",
 			],
 		},
+		{
+			id: 5,
+			lines: [
+				"function reverseString(str) {",
+				"return str.split('').reverse().join('');",
+				'console.log(reverseString("hello"));',
+			],
+		},
+		{
+			id: 6,
+			lines: [
+				"function isPrime(num) {",
+				"if(num <= 1) return false;",
+				"for (let i = 2; i < num; i++) {",
+				"if(num % i === 0) return false;",
+				"return true;",
+				"console.log(isPrime(7));",
+			],
+		},
 	],
 	Python : [
 		{
@@ -68,6 +87,17 @@ export const miniPrograms = {
 				"i += 1",
 			],	
 		},
+		{
+			id: 5,
+			lines: [
+				"def fibonacci(n):",
+                "a, b = 0, 1",
+                "for _ in range(n):",
+                "print(a)",
+                "a, b = b, a + b",
+                "fibonacci(10)",
+			]
+		}
 	],
 	Java: [
 		{
