@@ -1,0 +1,30 @@
+.profile-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+@font-face {
+	font-family: 'Better-VCR';
+	src: url('../fonts/Better-VCR.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.profile-page__button {
+	background-color: rgba(255, 255, 255, 1);
+	background: transparent;
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+	border: 2px solid rgba(255, 255, 255, .25);
+	border-radius: 12px;
+
+  color: #FFF;
+  font-size: 40px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  box-sizing: border-box;
+  font-family: 'Better-VCR';
+}
