@@ -1,0 +1,41 @@
+#about-us {
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 20px;
+
+    background-color: rgba(255, 255, 255, 1);
+    background: transparent;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, .25);
+    border-radius: 12px;
+
+    color: #FFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#about-us ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#about-us li {
+    margin: 20px;
+    width: calc(33.33% - 20px);
+}
+
+#about-us img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+#about-us h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
