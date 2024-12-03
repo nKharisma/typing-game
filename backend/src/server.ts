@@ -249,7 +249,8 @@ expressServer.post('/api/v1/user/login', async (req: any, res: any) => {
     process.env.JWT_SECRET!,
     { expiresIn: "24h" }
   );
-  res.status(200).json({ message: 'Login successful', token });
+
+  res.status(200).json({ message: 'Login successful', id: getUserResult._id });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -413,7 +414,7 @@ expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) 
 		'HighScore',
 		'WordsPerMinute',
 		'TotalWordsTyped',
-		'Accuracy', 
+		'Accuracy',
 		'LevelsCompleted'
 	];
 
@@ -465,7 +466,7 @@ expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) 
 // in the build folder, will just serve index.html. Client side routing is
 // going to make sure that the correct content will be loaded.
 expressServer.use((req: any, res: any, next: any) => {
-  if (/(.ico|.js|.css|.jpg|.png|.map|.svg|.ttf)$/i.test(req.path) || req.path.startsWith('/api/')) {
+  if (/(.ico|.js|.css|.jpg|.png|.map|.svg|.ttf)$/i.test(req.path)) {
     next();
   } else {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
