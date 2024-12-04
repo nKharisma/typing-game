@@ -359,23 +359,33 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
+// expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
+// {
+// 	const { id } = req.body;
+//
+// 	var objectId = MongoDbObjectId.createFromHexString(id)
+//
+// 	const db = client.db("LargeProject");
+//   const user = await db.collection('Users').findOne({ _id: objectId });
+//
+// 	if (!user) {
+//     return res.status(400).json({ error: 'User with the given id does not exist' });
+//   }
+//
+// 	res.status(200).json({ 
+//     name: `${user.FirstName} ${user.LastName}`, 
+//     login: user.Login,
+//     email: user.Email
+//   });
+// })
+expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => 
 {
-	const { id } = req.body;
-
-	var objectId = MongoDbObjectId.createFromHexString(id)
-
-	const db = client.db("LargeProject");
-  const user = await db.collection('Users').findOne({ _id: objectId });
-
-	if (!user) {
-    return res.status(400).json({ error: 'User with the given id does not exist' });
-  }
+	const { email, firstName, lastName } = req.token;
 
 	res.status(200).json({ 
-    name: `${user.FirstName} ${user.LastName}`, 
-    login: user.Login,
-    email: user.Email
+        firstName: firstName, 
+        lastName: lastName, 
+        email: email
   });
 })
 
