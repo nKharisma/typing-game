@@ -97,7 +97,7 @@ function Game() {
 	    localStorage.setItem('accuracy', accuracy.toFixed(2));
 	    localStorage.setItem('wpm', wpm.toString());
 	  
-	    alert('Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}');
+	    alert(`Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}`);
 	    navigate('/dashboard');
 	  }
 	}, [gameOver]);
@@ -140,7 +140,7 @@ function Game() {
           setWaveCleared(false);
           spawnWave(bugsToSpawn);
           }
-	    }
+      }
     };
   
     spawnNextWave();
@@ -163,12 +163,20 @@ function Game() {
     const gameContainer = gameContainerRef.current;
     if (!gameContainer) return;
   
+    const bugImages = [
+      '/assets/tile007_scaled.png',
+      '/assets/tile008_scaled.png',
+      '/assets/tile009_scaled.png',
+    ];
+  
     const gameContainerWidth = gameContainer.offsetWidth;
+    console.log('Game Container Width:', gameContainerWidth);
     const minLeft = 0;
   
     let leftPosition;
     let isOverlapping;
   
+    // Measure text width for proper placement
     const tempBugText = document.createElement('div');
     tempBugText.className = 'bug-text';
     tempBugText.style.position = 'absolute';
@@ -177,9 +185,13 @@ function Game() {
     tempBugText.textContent = line;
     document.body.appendChild(tempBugText);
     const textWidth = tempBugText.offsetWidth;
+    console.log('Text Width:', textWidth);
     document.body.removeChild(tempBugText);
   
     const maxLeft = gameContainerWidth - textWidth;
+  
+    const maxAttempts = 100; // Prevent infinite loops
+    let attempts = 0;
   
     do {
       leftPosition = Math.random() * (maxLeft - minLeft) + minLeft;
@@ -191,19 +203,30 @@ function Game() {
         const existingBug = existingBugs[i] as HTMLElement;
         const existingBugLeft = parseFloat(existingBug.style.left);
         const existingBugWidth = existingBug.offsetWidth;
+  
+        // Check horizontal overlap
         if (
-          (leftPosition < existingBugLeft + existingBugWidth && leftPosition + textWidth > existingBugLeft) ||
-          (existingBugLeft < leftPosition + textWidth && existingBugLeft + existingBugWidth > leftPosition)
+          leftPosition < existingBugLeft + existingBugWidth &&
+          leftPosition + textWidth > existingBugLeft
         ) {
           isOverlapping = true;
           break;
         }
       }
-    } while (isOverlapping);
   
+      attempts++;
+    } while (isOverlapping && attempts < maxAttempts);
+  
+    // If max attempts are reached, log a warning
+    if (attempts === maxAttempts) {
+      console.warn('Could not find a non-overlapping position for the bug.');
+    }
+  
+    // Create the bug element
     const bugElement = document.createElement('div');
     bugElement.className = 'bug';
     bugElement.style.left = `${leftPosition}px`;
+    bugElement.style.backgroundImage = `url(${bugImages[Math.floor(Math.random() * bugImages.length)]})`;
   
     const bugText = document.createElement('div');
     bugText.className = 'bug-text';
@@ -216,22 +239,31 @@ function Game() {
     bugElement.appendChild(bugText);
     gameContainer.appendChild(bugElement);
   
-      const bug: Bug = {
-          id: uuidv4(),
-          text: line,
-          element: bugElement,
-      };
-      
-      bugElement.dataset.id = bug.id.toString();
-      
-      setBugs(prevBugs => [...prevBugs, bug]);
-      
-      bugElement.addEventListener('animationend', () => {
-          gameContainer.removeChild(bugElement);
-          setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
-      });
-      
-	};
+    // Add the bug to the state
+    const bug: Bug = {
+      id: uuidv4(),
+      text: line,
+      element: bugElement,
+    };
+  
+    bugElement.dataset.id = bug.id.toString();
+  
+    setBugs(prevBugs => [...prevBugs, bug]);
+  
+    // Remove bug when animation ends
+    bugElement.addEventListener('animationend', () => {
+      gameContainer.removeChild(bugElement);
+      setBugsReachedBottom(prev => {
+        const newBugsReachedBottom = prev + 1;
+        if(newBugsReachedBottom >= 5) {
+          setGameOver(true);
+        }
+        return newBugsReachedBottom;
+      })
+      setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
+    });
+  };
+  
 	
 	const shootProjectile = (targetElement: HTMLElement) => {
     console.log('Shooting projectile at:', targetElement.textContent);
@@ -461,6 +493,8 @@ function Game() {
         placeholder="Type the word"
         className="typing-input"
         autoFocus
+        ref={inputRef}
+        onBlur={() => inputRef.current?.focus()}
     />
     </div>
 	);
