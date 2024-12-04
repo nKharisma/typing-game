@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { addUser, updateUser, getUserFromEmail, deleteUser } from './database';
+import { addUser, updateUser, getUserFromEmail, getUserFromId, deleteUser } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -354,53 +354,29 @@ expressServer.post('/api/v1/user/delete-user', authenticateToken, async (req: an
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+// get player data endpoint.
+expressServer.post('/api/v1/user/get-player-data', async (req: any, res: any) => {
+  const { id } = req.body;
+
+  var objectId = MongoDbObjectId.createFromHexString(id);
+
+  const [getUserErr, getUserResult] = await getUserFromId(objectId);
+  if (respondIf(Boolean(getUserErr), res, 500, 'Failed to get user', getUserErr)) return;
+
+  res.status(200).json({ 
+    score: getUserResult.playerdata.score, 
+    highScore: getUserResult.playerdata.score,
+    wordsPerMinute: getUserResult.playerdata.wordsPerMinute,
+    totalWordsTyped: getUserResult.playerdata.totalWordsTyped,
+    accuracy: getUserResult.playerdata.accuracy,
+    levelsCompleted: getUserResult.playerdata.levelsCompleted})
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
 // Update player data endpoint.
 expressServer.post('/api/v1/user/update-player-data', authenticateToken, async (req: any, res: any) => {
   const { score, highScore, wordsPerMinute, totalWordsTyped, accuracy, levelsCompleted } = req.body;
   const _id: ObjectId = req.token._id;
-
-  // Build the updateParams object
-  const updateParams = {
-    playerdata: {}
-  };
-
-  // Assign the fields if they are provided and validate that they are numbers
-  if (score !== undefined) {
-    if (typeof score !== 'number') return res.status(400).json({ message: 'Score must be a number' });
-    updateParams.playerdata!.score = score;
-  }
-  if (highScore !== undefined) {
-    if (typeof highScore !== 'number') return res.status(400).json({ message: 'HighScore must be a number' });
-    updateParams.playerdata!.highScore = highScore;
-  }
-  if (wordsPerMinute !== undefined) {
-    if (typeof wordsPerMinute !== 'number') return res.status(400).json({ message: 'WordsPerMinute must be a number' });
-    updateParams.playerdata!.wordsPerMinute = wordsPerMinute;
-  }
-  if (totalWordsTyped !== undefined) {
-    if (typeof totalWordsTyped !== 'number') return res.status(400).json({ message: 'TotalWordsTyped must be a number' });
-    updateParams.playerdata!.totalWordsTyped = totalWordsTyped;
-  }
-  if (accuracy !== undefined) {
-    if (typeof accuracy !== 'number') return res.status(400).json({ message: 'Accuracy must be a number' });
-    updateParams.playerdata!.accuracy = accuracy;
-  }
-  if (levelsCompleted !== undefined) {
-    if (typeof levelsCompleted !== 'number') return res.status(400).json({ message: 'LevelsCompleted must be a number' });
-    updateParams.playerdata!.levelsCompleted = levelsCompleted;
-  }
-
-  // Validate that at least one field is being updated
-  if (Object.keys(updateParams.playerdata!).length === 0) {
-    return res.status(400).json({ message: 'No valid player data fields provided to update.' });
-  }
-
-  // Update the user in the database
-  const [err, result] = await updateUser(updateParams, _id);
-
-  if (respondIf(Boolean(err), res, 500, 'Failed to update player data', err)) return;
-
-  res.status(200).json({ message: 'Player data updated successfully', playerData: result.playerdata });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////

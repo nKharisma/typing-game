@@ -1,4 +1,5 @@
 import mongoose, { ObjectId } from 'mongoose';
+import { ObjectId as MongoDbObjectId } from 'mongodb';
 import { dbConnectionConfig } from './config';
 
 // The maximum length of a string in the database (60 chars since bcrypt's hash function outputs 60 chars).
@@ -183,6 +184,18 @@ async function getUserFromEmail(email: string): Promise<[string | null, any]> {
   }
 }
 
+// Get user based on _id and return their info
+async function getUserFromId(id: MongoDbObjectId): Promise<[string | null, any]> {
+  try {
+    const user = await User.findOne({ _id: id }).select(
+      '_id firstName lastName password emailVerified emailCode emailCodeTimeout emailCodeAttempts playerdata'
+    );
+    return [null, user];
+  } catch (err: any) {
+    return [err.message, null];
+  }
+}
+
 // Delete user based on userId.
 async function deleteUser(_id: ObjectId): Promise<[string | null, any]> {
   // Query database.
@@ -196,4 +209,4 @@ async function deleteUser(_id: ObjectId): Promise<[string | null, any]> {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Function exports for 'database.ts'.
-export { addUser, updateUser, getUserFromEmail, deleteUser };
+export { addUser, updateUser, getUserFromEmail, getUserFromId, deleteUser };
