@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 String user = 'haha';
 
 class MainAppPage extends StatelessWidget {
-  MainAppPage({super.key, required String userId}){
+  MainAppPage({super.key, required String userId}) {
     user = userId;
     print(userId);
     print(user);
@@ -16,7 +16,6 @@ class MainAppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
       theme: ThemeData(useMaterial3: true),
       home: const MainAppNavigation(),
     );
@@ -37,12 +36,26 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
   bool isLoading = true;
   String? errorMessage;
 
+  List<dynamic>? leaderboardData;
+  bool isLeaderboardLoading = true;
+  String? leaderboardErrorMessage;
+
+  String selectedSortBy = 'HighScore';
+  final List<String> sortByOptions = [
+    'HighScore',
+    'WordsPerMinute',
+    'TotalWordsTyped',
+    'Accuracy',
+    'LevelsCompleted',
+  ];
+
   @override
   void initState() {
     super.initState();
     fetchUserStats();
+    fetchLeaderboard();
   }
-  
+
   Future<void> fetchUserStats() async {
     try {
       final response = await http.post(
@@ -72,6 +85,43 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
       setState(() {
         errorMessage = 'An error occurred: $e';
         isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchLeaderboard() async {
+    setState(() {
+      isLeaderboardLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://typecode.app/api/getLeaderboard'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'sortBy': selectedSortBy, // Adjust as needed
+          'limit': 100, // Adjust the limit as needed
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Response body: ${response.body}');
+        setState(() {
+          leaderboardData = jsonDecode(response.body)['leaderboard'];
+          isLeaderboardLoading = false;
+        });
+      } else {
+        setState(() {
+          leaderboardErrorMessage = jsonDecode(response.body)['error'];
+          isLeaderboardLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        leaderboardErrorMessage = 'An error occurred: $e';
+        isLeaderboardLoading = false;
       });
     }
   }
@@ -115,7 +165,9 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: 150,),
+                SizedBox(
+                  height: 150,
+                ),
                 Row(
                   children: [
                     CircleAvatar(
@@ -152,7 +204,9 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                     ),
                   ],
                 ),
-                SizedBox(height: 50,),
+                SizedBox(
+                  height: 50,
+                ),
                 Text(
                   'my_stats.tsx',
                   style: TextStyle(
@@ -161,23 +215,45 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                   ),
                 ),
                 isLoading
-                ? Center(child: CircularProgressIndicator())
-                : errorMessage != null
-                ? Center(child: Text(errorMessage!))
-                : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Score: ${userStats!['score']}', style: TextStyle(color: Colors.white),),
-                      Text('Highscore: ${userStats!['highscore']}', style: TextStyle(color: Colors.white),),
-                      Text('Words Per Minute: ${userStats!['wordsPerMinute']}', style: TextStyle(color: Colors.white),),
-                      Text('Total Words Typed: ${userStats!['totalWordsTyped']}', style: TextStyle(color: Colors.white),),
-                      Text('Accuracy: ${userStats!['accuracy']}%', style: TextStyle(color: Colors.white),),
-                      Text('Levels Completed: ${userStats!['levelsCompleted']}', style: TextStyle(color: Colors.white),),
-                    ],
-                  ),
-                ),
+                    ? Center(child: CircularProgressIndicator())
+                    : errorMessage != null
+                        ? Center(
+                            child: Text(
+                            errorMessage!,
+                            style: TextStyle(color: Colors.white),
+                          ))
+                        : Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Score: ${userStats!['score']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Highscore: ${userStats!['highscore']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Words Per Minute: ${userStats!['wordsPerMinute']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Total Words Typed: ${userStats!['totalWordsTyped']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Accuracy: ${userStats!['accuracy']}%',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Levels Completed: ${userStats!['levelsCompleted']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
               ],
             ),
           ),
@@ -185,15 +261,102 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
 
         /// Leaderboard page
         Container(
-          color: Colors.black,
-          child: SafeArea(
-            child: Column(
-              children: [
-                
-              ]
-            ),
-          ),
+  color: Colors.black, // Background color for the entire screen
+  child: SafeArea(
+    child: Column(
+      children: [
+        const SizedBox(height: 20),
+        const Text(
+          'Leaderboard',
+          style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'VCR'),
         ),
+        const SizedBox(height: 10),
+        DropdownButton<String>(
+          value: selectedSortBy,
+          dropdownColor: Colors.grey[800],
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+          underline: Container(height: 1, color: Colors.white),
+          style: const TextStyle(color: Colors.white, fontFamily: 'VCR'),
+          items: sortByOptions.map((String option) {
+            return DropdownMenuItem<String>(
+              value: option,
+              child: Text(option),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                selectedSortBy = newValue;
+              });
+              fetchLeaderboard();
+            }
+          },
+        ),
+        const SizedBox(height: 20),
+        isLeaderboardLoading
+            ? const Center(child: CircularProgressIndicator())
+            : leaderboardErrorMessage != null
+                ? Center(
+                    child: Text(
+                      leaderboardErrorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: leaderboardData!.length,
+                      itemBuilder: (context, index) {
+                        final entry = leaderboardData![index];
+                        final rank = index + 1; // Calculate rank
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, // Add vertical spacing
+                            horizontal: 8.0, // Add horizontal spacing
+                          ),
+                          child: Material(
+                            color: Colors.white, // Background color for the tile
+                            borderRadius: BorderRadius.circular(8.0), // Optional: rounded corners
+                            elevation: 2.0, // Optional: adds shadow for a card effect
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              title: Text(
+                                '#$rank: ${entry['name']}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'VCR',
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'High Score: ${entry['playerData']['HighScore']}\n'
+                                    'Words Per Minute: ${entry['playerData']['WordsPerMinute']}\n'
+                                    'Total Words Typed: ${entry['playerData']['TotalWordsTyped']}\n'
+                                    'Accuracy: ${entry['playerData']['Accuracy']}\n'
+                                    'Levels Completed: ${entry['playerData']['LevelsCompleted']}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'VCR',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+      ],
+    ),
+  ),
+),
+
 
         // Settings page
         ListView.builder(

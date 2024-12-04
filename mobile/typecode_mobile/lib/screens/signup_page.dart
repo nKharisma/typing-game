@@ -49,7 +49,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: width * percent,
                     child: TextFormField(
                       controller: firstnameController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.person_4_outlined, color: Colors.grey),
@@ -79,7 +79,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: width * percent,
                     child: TextFormField(
                       controller: lastnameController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.person_4_outlined, color: Colors.grey),
@@ -110,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: width * percent,
                     child: TextFormField(
                       controller: emailController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.mail_outline, color: Colors.grey),
@@ -140,7 +140,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: width * percent,
                     child: TextFormField(
                       controller: usernameController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.person_outline, color: Colors.grey),
@@ -171,7 +171,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: width * percent,
                     child: TextFormField(
                       controller: passwordController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.lock_outline, color: Colors.grey),
