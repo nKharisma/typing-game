@@ -354,14 +354,28 @@ expressServer.post('/api/v1/user/delete-user', authenticateToken, async (req: an
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// get player data endpoint.
+// Get player data endpoint.
 expressServer.post('/api/v1/user/get-player-data', async (req: any, res: any) => {
   const { id } = req.body;
 
   var objectId = MongoDbObjectId.createFromHexString(id);
 
   const [getUserErr, getUserResult] = await getUserFromId(objectId);
-  if (respondIf(Boolean(getUserErr), res, 500, 'Failed to get user', getUserErr)) return;
+  
+  // Check if there was a database error fetching the user
+  if (getUserErr) {
+    return res.status(500).json({ message: 'Failed to get user', error: getUserErr });
+  }
+
+  // If no user is found for the given id
+  if (!getUserResult) {
+    return res.status(404).json({ error: 'User with the given id does not exist' });
+  }
+
+  // If user exists but playerdata is not defined for some reason
+  if (!getUserResult.playerdata) {
+    return res.status(404).json({ error: 'Player data not found for the given user' });
+  }
 
   res.status(200).json({ 
     score: getUserResult.playerdata.score, 
@@ -390,9 +404,25 @@ expressServer.post('/api/v1/user/update-player-data', async (req: any, res: any)
     }
   }
 
-  const [ updateAttemptErr, _updateAttemptResult ] = await updateUserMongo(newPlayerData, objectId)
+  const [ updateAttemptErr, updateAttemptResult ] = await updateUserMongo(newPlayerData, objectId)
 
-  res.status(200).json({ message: `${ _updateAttemptResult.email }'s player datas updated successfully`, playerData: _updateAttemptResult.playerdata });
+  // Check for database errors
+  if (updateAttemptErr) {
+    return res.status(500).json({ message: 'Failed to update player data', error: updateAttemptErr });
+  }
+
+  // Check if user was found and updated
+  if (!updateAttemptResult) {
+    return res.status(404).json({ message: 'User not found or playerdata not updated' });
+  }
+
+  // Check if the user actually has playerdata after update
+  if (!updateAttemptResult.playerdata) {
+    return res.status(404).json({ message: 'Player data not found in updated user document' });
+  }
+
+
+  res.status(200).json({ message: `${ updateAttemptResult.email }'s player datas updated successfully`, playerData: updateAttemptResult.playerdata });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
