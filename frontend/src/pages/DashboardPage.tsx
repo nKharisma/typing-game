@@ -25,26 +25,40 @@ export default function DashboardPage()
 	
 	useEffect(() => {
 		const getUsername = async () => {
-			const userData = localStorage.getItem('user_data');
-			if (!userData) {
-				console.error('User data not found');
+			// const userData = localStorage.getItem('user_data');
+			// if (!userData) {
+			// 	console.error('User data not found');
+			// 	return;
+			// }
+			// 
+			// const user = JSON.parse(userData);
+			// const userId = user.id;
+    
+      const authToken = localStorage.getItem('authToken');
+			if (!authToken) {
+				console.error('Auth token not found');
 				return;
 			}
 			
-			const user = JSON.parse(userData);
-			const userId = user.id;
-			
 			try {
+				// const response = await fetch(buildPath('api/getUser'), {
+				// 	method: 'POST',
+				// 	headers: {
+				// 	'Content-Type': 'application/json',
+				// 	},
+				// 	body: JSON.stringify({ id: userId }),
+				// });
 				const response = await fetch(buildPath('api/getUser'), {
 					method: 'POST',
 					headers: {
-					'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
 					},
-					body: JSON.stringify({ id: userId }),
 				});
 				const data = await response.json();
 				if(response.ok) {
-					setUserName(data.login);
+          console.log(data);
+					setUserName(data.lastName.toLowerCase() + data.firstName.toLowerCase()[0]);
 				}else {
 					console.error('Error fetching user data');
 				}
@@ -106,7 +120,7 @@ export default function DashboardPage()
 		<div className='container'>
         <div className='terminal-wrapper'>
 	        <div className='terminal-container'>
-	        <span className='welcome-message'>{userName}:$ type an option below to start</span>
+	        <span className='welcome-message'>{userName}:~$ type an option below to start</span>
 			  <div className='terminal-header'>main.tsx</div>
 			  <div className="menuOptions">
         {menuOptions.map((option) => (

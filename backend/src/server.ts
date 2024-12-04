@@ -112,8 +112,8 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const { firstName, lastName, email, password } = req.body;
 
   // Validate account with email does not already exist.
-  const [ getUserErr, _getUserResult ] = await getUserFromEmail(email);
-  const accountExists: boolean = Boolean(getUserErr) && !_getUserResult;
+  const [ getUserErr, getUserResult ] = await getUserFromEmail(email);
+  const accountExists: boolean = !(getUserErr) && Boolean(getUserResult);
   if (respondIf(accountExists, res, 400, 'Account already exists with that email. Please try logging in.', getUserErr)) return;
   // Validate password requirements.
   if (respondIf(!isValidPassword(password), res, 400, 'Password does not meet requirements')) return;
@@ -249,7 +249,8 @@ expressServer.post('/api/v1/user/login', async (req: any, res: any) => {
     process.env.JWT_SECRET!,
     { expiresIn: "24h" }
   );
-  res.status(200).json({ message: 'Login successful', token });
+
+  res.status(200).json({ message: 'Login successful', token: token, id: getUserResult._id });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -358,23 +359,33 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
+// expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
+// {
+// 	const { id } = req.body;
+//
+// 	var objectId = MongoDbObjectId.createFromHexString(id)
+//
+// 	const db = client.db("LargeProject");
+//   const user = await db.collection('Users').findOne({ _id: objectId });
+//
+// 	if (!user) {
+//     return res.status(400).json({ error: 'User with the given id does not exist' });
+//   }
+//
+// 	res.status(200).json({ 
+//     name: `${user.FirstName} ${user.LastName}`, 
+//     login: user.Login,
+//     email: user.Email
+//   });
+// })
+expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => 
 {
-	const { id } = req.body;
-
-	var objectId = MongoDbObjectId.createFromHexString(id)
-
-	const db = client.db("LargeProject");
-  const user = await db.collection('Users').findOne({ _id: objectId });
-
-	if (!user) {
-    return res.status(400).json({ error: 'User with the given id does not exist' });
-  }
+	const { email, firstName, lastName } = req.token;
 
 	res.status(200).json({ 
-    name: `${user.FirstName} ${user.LastName}`, 
-    login: user.Login,
-    email: user.Email
+        firstName: firstName, 
+        lastName: lastName, 
+        email: email
   });
 })
 
@@ -413,7 +424,7 @@ expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) 
 		'HighScore',
 		'WordsPerMinute',
 		'TotalWordsTyped',
-		'Accuracy', 
+		'Accuracy',
 		'LevelsCompleted'
 	];
 
@@ -465,7 +476,7 @@ expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) 
 // in the build folder, will just serve index.html. Client side routing is
 // going to make sure that the correct content will be loaded.
 expressServer.use((req: any, res: any, next: any) => {
-  if (/(.ico|.js|.css|.jpg|.png|.map|.svg|.ttf)$/i.test(req.path) || req.path.startsWith('/api/')) {
+  if (/(.ico|.js|.css|.jpg|.png|.map|.svg|.ttf)$/i.test(req.path)) {
     next();
   } else {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');

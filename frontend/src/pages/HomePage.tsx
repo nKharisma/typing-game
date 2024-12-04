@@ -1,6 +1,16 @@
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+
+import { AuthContext } from '../contexts/AuthContext';
 import '../css/HomePage.css'
 
 export default function HomePage() {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  if (isAuthenticated) {
+    return <Navigate to='/dashboard' />;
+  }
+
   return (
     <div className='home-page__container'>
       <div className='home-page'>
