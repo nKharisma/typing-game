@@ -28,9 +28,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             CircleAvatar(
               radius: 50,
-              foregroundImage: NetworkImage(
-                'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
-              ),
+              foregroundImage: AssetImage('fonts/tile022_scaled.png'),
             ),
             SizedBox(height: 100),
             Padding(
@@ -58,7 +56,11 @@ class _LoginPageState extends State<LoginPage> {
                   Expanded(
                     child: TextFormField(
                       controller: emailController, // Attach the controller
-                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'VCR',
+                        fontSize: 14,
+                      ),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.person_outline, color: Colors.grey),
@@ -69,7 +71,11 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Colors.white),
                         ),
                         hintText: 'Enter your email',
-                        hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'VCR',
+                          fontSize: 14,
+                        ),
                       ),
                       keyboardType: TextInputType.text,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -83,7 +89,9 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 30),
             Row(
               children: [
-                SizedBox(width: 27,),
+                SizedBox(
+                  width: 27,
+                ),
                 Text(
                   "Don't have an account? ",
                   style: TextStyle(
@@ -108,10 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                     }),
               ],
             ),
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             BottomButton(
-              buttonTitle: 'Login',
-              /*onTap:() {
+                buttonTitle: 'Login',
+                /*onTap:() {
                 Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -120,57 +130,76 @@ class _LoginPageState extends State<LoginPage> {
               );
               },*/
 
-              onTap: () async {
-                print(emailController.text);
-                print(passwordController.text);
-                final response = await http.post(
-                  Uri.parse(
-                      'https://typecode.app/api/v1/user/login'), // replace with your API URL
-                  headers: <String, String>{
-                    'Content-Type': 'application/json',
-                  },
-                  body: jsonEncode(<String, String>{
-                    'email':
-                        emailController.text.trim(), // Use the input value
-                    'password':
-                        passwordController.text.trim() // Use the input value
-                  }),
-                );
+                onTap: () async {
+                  try {
+                    print(emailController.text);
+                    print(passwordController.text);
 
-                if (response.statusCode == 200) {
-                  final user = jsonDecode(response.body);
-                  print(user);
-                  String userId = user['id'];
-                  // Login successful, navigate to the main app page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MainAppPage(userId: userId),
-                    ),
-                  );
-                } else {
-                  // Handle login failure by showing an alert dialog
-                  print(response.statusCode);
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Login Failed'),
-                        content: Text(jsonDecode(response.body)['error']),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
+                    final response = await http.post(
+                      Uri.parse(
+                          'https://typecode.app/api/v1/user/login'), // replace with your API URL
+                      headers: <String, String>{
+                        'Content-Type': 'application/json',
+                      },
+                      body: jsonEncode(<String, String>{
+                        'email': emailController.text.trim(),
+                        'password': passwordController.text.trim(),
+                      }),
+                    );
+
+                    if (response.statusCode == 200) {
+                      final user = jsonDecode(response.body);
+                      print(user);
+                      String userId = user['id'];
+                      // Login successful, navigate to the main app page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainAppPage(userId: userId),
+                        ),
                       );
-                    },
-                  );
-                }
-              },
-            ),
+                    } else {
+                      // Handle login failure by showing an alert dialog
+                      print(response.statusCode);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Login Failed'),
+                            content: Text(jsonDecode(response.body)['error']),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  } catch (e) {
+                    print('Error: $e');
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('An error occurred'),
+                          content: Text('Something went wrong: $e'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }),
           ],
         ),
       ),
@@ -245,9 +274,7 @@ class _PasswordFieldState extends State<PasswordField> {
                 prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                     color: Colors.grey,
                   ),
                   onPressed: () {
