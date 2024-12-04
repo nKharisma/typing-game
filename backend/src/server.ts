@@ -132,7 +132,7 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
   const hashedPassword = await hashPassword(password);
   // Defaults for newly registered, unverified account.
-  const emailVerified = true;
+  const emailVerified = false;
   const emailCode = "-1"
   const emailCodeTimeout = 0;
   const emailCodeAttempts = MAX_EMAIL_CODE_ATTEMPTS;
@@ -392,8 +392,69 @@ expressServer.post('/api/v1/user/update-player-data', async (req: any, res: any)
 
   const [ updateAttemptErr, _updateAttemptResult ] = await updateUserMongo(newPlayerData, objectId)
 
-  res.status(200).json({ message: 'Player data updated successfully', playerData: _updateAttemptResult.playerdata });
+  res.status(200).json({ message: `${ _updateAttemptResult.email }'s player datas updated successfully`, playerData: _updateAttemptResult.playerdata });
 });
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Get Leaderboard endpoint.
+expressServer.post('/api/v1/user/get-leaderboard', async (req: any, res: any) => {
+  // Incoming: 
+	// sortBy - string specifying what score value to rank by
+	// limit - amount of users to send back
+	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
+	const { sortBy, limit } = req.body;
+
+	// Valid sorting fields
+	const validSortingFields = [
+		'highScore',
+		'wordsPerMinute',
+		'totalWordsTyped',
+		'accuracy',
+		'levelsCompleted'
+	];
+
+	if(!validSortingFields.includes(sortBy)){
+		return res.status(400).json({
+			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
+		});
+	}
+
+	// Set the sorting options
+	const sortingOptions: { [key: string]: number } = {}
+	sortingOptions[`playerdata.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
+
+	const db = client.db("LargeProject");
+
+	const users = await db.collection('Users').find(
+		{ "playerdata": { "$exists": true }}, // Return all entries with playerdata
+		{ 
+			email: 1,
+			firstName: 1,
+			lastName: 1,
+			playerdata: 1
+		}
+	) // Return these specific values
+	.sort(sortingOptions) // Sort by
+	.limit(limit) // Limit the output to this # of entries 
+	.toArray();
+
+	// create the leaderboard
+	const leaderboard = users.map((user: { 
+		_id: any; 
+		firstName: any; 
+		lastName: any; 
+		email: any; 
+		playerdata: { toObject: () => any; }; }
+	) => ({
+		id: user._id,
+		name: `${user.firstName} ${user.lastName}`,
+		email: user.email,
+		playerdata: user.playerdata
+	}));
+
+	// Return the leaederboard
+	res.status(200).json({ leaderboard });
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Refresh tokens stored in cookies, and shorten access token length to 15m
@@ -409,25 +470,6 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-// expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
-// {
-// 	const { id } = req.body;
-//
-// 	var objectId = MongoDbObjectId.createFromHexString(id)
-//
-// 	const db = client.db("LargeProject");
-//   const user = await db.collection('Users').findOne({ _id: objectId });
-//
-// 	if (!user) {
-//     return res.status(400).json({ error: 'User with the given id does not exist' });
-//   }
-//
-// 	res.status(200).json({ 
-//     name: `${user.FirstName} ${user.LastName}`, 
-//     login: user.Login,
-//     email: user.Email
-//   });
-// })
 expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => 
 {
 	const { email, firstName, lastName } = req.token;
@@ -437,66 +479,6 @@ expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any)
         lastName: lastName, 
         email: email
   });
-})
-
-// TENTATIVE LEADERBOARD ENDPOINT
-expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) => {
-	// Incoming: 
-	// sortBy - string specifying what score value to rank by
-	// limit - amount of users to send back
-	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
-	const { sortBy, limit } = req.body;
-
-	// Valid sorting fields
-	const validSortingFields = [
-		'HighScore',
-		'WordsPerMinute',
-		'TotalWordsTyped',
-		'Accuracy',
-		'LevelsCompleted'
-	];
-
-	if(!validSortingFields.includes(sortBy)){
-		return res.status(400).json({
-			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
-		});
-	}
-
-	// Set the sorting options
-	const sortingOptions: { [key: string]: number } = {}
-	sortingOptions[`PlayerData.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
-
-	const db = client.db("LargeProject");
-
-	const users = await db.collection('Users').find(
-		{}, // Return all entries
-		{ 
-			email: 1,
-			firstName: 1,
-			lastName: 1,
-			playerdata: 1
-		}
-	) // Return these specific values
-	.sort(sortingOptions) // Sort by
-	.limit(limit) // Limit the output to this # of entries 
-	.toArray();
-
-	// create the leaderboard
-	const leaderboard = users.map((user: { 
-		_id: any; 
-		FirstName: any; 
-		LastName: any; 
-		Login: any; 
-		PlayerData: { toObject: () => any; }; }
-	) => ({
-		id: user._id,
-		name: `${user.FirstName} ${user.LastName}`,
-		login: user.Login,
-		playerData: user.PlayerData
-	}));
-
-	// Return the leaederboard
-	res.status(200).json({ leaderboard });
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////
