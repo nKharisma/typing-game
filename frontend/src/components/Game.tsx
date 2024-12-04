@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import '../css/game.css';
 import {v4 as uuidv4} from 'uuid';
 import { miniPrograms } from '../utils/programSnippets';
@@ -24,27 +24,47 @@ function Game() {
   });
   const [gameOver, setGameOver] = useState(false);
   const [bugsReachedBottom, setBugsReachedBottom] = useState(0);
+  const [initialWaveStarted, setInitialWaveStarted] = useState(false);
+  const [initialWaveCompleted, setInitialWaveCompleted] = useState(false);
   const [waveCleared, setWaveCleared] = useState(false);
-  /*
-  const [totalWords, setTotalWords] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [correctChars, setCorrectChars] = useState(0);
-  const [totalChars, setTotalChars] = useState(0);
+  const [totalWords, setTotalWords] = useState(() => {
+    const savedTotalWords = localStorage.getItem('totalWords');
+    return savedTotalWords ? parseInt(savedTotalWords, 10) : 0;
+  });
+  const [highScore, setHighScore] = useState(() => {
+    const savedHighScore = localStorage.getItem('highScore');
+    return savedHighScore ? parseInt(savedHighScore, 10) : 0;
+  });
+  const [correctChars, setCorrectChars] = useState(() => {
+    const savedCorrectChars = localStorage.getItem('correctChars');
+    return savedCorrectChars ? parseInt(savedCorrectChars, 10) : 0;
+  });
+  const [totalChars, setTotalChars] = useState(() => {
+    const savedTotalChars = localStorage.getItem('totalChars');
+    return savedTotalChars ? parseInt(savedTotalChars, 10) : 0;
+  });
+  const [wavesCompleted, setWavesCompleted] = useState(() => {
+    const savedWavesCompleted = localStorage.getItem('wavesCompleted');
+    return savedWavesCompleted ? parseInt(savedWavesCompleted, 10) : 0;
+  });
   const [startTime, setStartTime] = useState<Date | null>(null);
-*/
 
 	useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus(); // Focus the input element when the component mounts
     }
     
+    const initialWaveDelay = 1000; // Adjust the delay as needed
+  setTimeout(() => {
     startWaves();
+    setInitialWaveStarted(true);
+    }, initialWaveDelay);
     
     const checkBugsInterval = setInterval(() => {
       const gameContainer = gameContainerRef.current;
       if(gameContainer) {
         const bugsInContainer = gameContainer.getElementsByClassName('bug').length;
-        if(bugsInContainer === 0 && !waveCleared) {
+        if(bugsInContainer === 0 && !waveCleared && initialWaveStarted) {
           setWaveCleared(true);
         }
       }
@@ -63,7 +83,21 @@ function Game() {
 	
 	useEffect(() => {
 	  if(gameOver) {
-	    alert('Game Over!');
+	    const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
+	    
+	    const endTime = new Date();
+	    const elapsedTime = startTime ? (endTime.getTime() - startTime.getTime()) / 1000 : 0;
+	    const wpm = elapsedTime > 0 ? (totalWords / elapsedTime) * 60 : 0;
+	    
+	    if(score > highScore) {
+	      setHighScore(score);
+	      localStorage.setItem('highScore', score.toString());
+	    }
+	    
+	    localStorage.setItem('accuracy', accuracy.toFixed(2));
+	    localStorage.setItem('wpm', wpm.toString());
+	  
+	    alert('Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}');
 	    navigate('/dashboard');
 	  }
 	}, [gameOver]);
@@ -76,23 +110,33 @@ function Game() {
 	}, [bugsReachedBottom])
 	
 	useEffect(() => {
-    if(waveCleared && !gameOver) {
-      const waveDelay = 4000;
+    if (waveCleared && !gameOver) {
+      if (initialWaveStarted && initialWaveCompleted) {
+        setWavesCompleted(prev => {
+          const newWavesCompleted = prev + 1;
+          localStorage.setItem('wavesCompleted', newWavesCompleted.toString());
+          return newWavesCompleted;
+        });
+      } else if (initialWaveStarted && !initialWaveCompleted) {
+        setInitialWaveCompleted(true);
+      }
+  
+      const waveDelay = 3500;
       setTimeout(startWaves, waveDelay);
     }
-	}, [waveCleared, gameOver]);
+  }, [waveCleared, gameOver, initialWaveStarted, initialWaveCompleted]);
 	
 	const startWaves = () => {
     const spawnNextWave = () => {
     if(!gameOver) {
-	        const gameContainer = gameContainerRef.current;
-	        if(!gameContainer) return;
-	        
-	        const currentBugs = gameContainer.getElementsByClassName('bug').length;
-	        const maxBugs = 10;
-	        const bugsToSpawn = Math.min(maxBugs - currentBugs, Math.floor(Math.random() * 10) + 1);
-	        
-	        if(bugsToSpawn > 0) {
+        const gameContainer = gameContainerRef.current;
+        if(!gameContainer) return;
+        
+        const currentBugs = gameContainer.getElementsByClassName('bug').length;
+        const maxBugs = 10;
+	      const bugsToSpawn = Math.min(maxBugs - currentBugs, Math.floor(Math.random() * 10) + 1);
+
+        if(bugsToSpawn > 0) {
           setWaveCleared(false);
           spawnWave(bugsToSpawn);
           }
@@ -112,7 +156,7 @@ function Game() {
       } else {
         clearInterval(interval);
       }
-    }, 5000); // 5 seconds
+    }, 3500); // 3.5 seconds
   };
 	
 	const spawnBug = (line: string) => {
@@ -120,14 +164,11 @@ function Game() {
     if (!gameContainer) return;
   
     const gameContainerWidth = gameContainer.offsetWidth;
-    const bugWidth = 100; // Assuming each bug has a width of 50px
-    const minLeft = 150;
-    const maxLeft = gameContainerWidth - bugWidth;
+    const minLeft = 0;
   
     let leftPosition;
     let isOverlapping;
   
-    // Create a temporary element to measure the text width
     const tempBugText = document.createElement('div');
     tempBugText.className = 'bug-text';
     tempBugText.style.position = 'absolute';
@@ -138,6 +179,8 @@ function Game() {
     const textWidth = tempBugText.offsetWidth;
     document.body.removeChild(tempBugText);
   
+    const maxLeft = gameContainerWidth - textWidth;
+  
     do {
       leftPosition = Math.random() * (maxLeft - minLeft) + minLeft;
       isOverlapping = false;
@@ -147,12 +190,16 @@ function Game() {
       for (let i = 0; i < existingBugs.length; i++) {
         const existingBug = existingBugs[i] as HTMLElement;
         const existingBugLeft = parseFloat(existingBug.style.left);
-        if (Math.abs(existingBugLeft - leftPosition) < bugWidth) {
+        const existingBugWidth = existingBug.offsetWidth;
+        if (
+          (leftPosition < existingBugLeft + existingBugWidth && leftPosition + textWidth > existingBugLeft) ||
+          (existingBugLeft < leftPosition + textWidth && existingBugLeft + existingBugWidth > leftPosition)
+        ) {
           isOverlapping = true;
           break;
         }
       }
-    } while (isOverlapping || leftPosition + textWidth > gameContainerWidth);
+    } while (isOverlapping);
   
     const bugElement = document.createElement('div');
     bugElement.className = 'bug';
@@ -182,7 +229,6 @@ function Game() {
       bugElement.addEventListener('animationend', () => {
           gameContainer.removeChild(bugElement);
           setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
-          setBugsReachedBottom(prevBugsReachedBottom => prevBugsReachedBottom + 1);
       });
       
 	};
@@ -281,20 +327,6 @@ function Game() {
   
     requestAnimationFrame(updateTargetPosition);
   };
-  
-	
-	/*
-	useEffect(() => {
-	  const gameLoop = () => {
-	    requestAnimationFrame(gameLoop);
-	  };
-	});
-	
-	const updateStatsInDatabase = async () => {
-	  try {
-	    const response = await fetch()
-	  }
-	}*/
 	
   const handleBackspace = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Backspace') {
@@ -302,9 +334,13 @@ function Game() {
     }
   };
 
-  const handleTyping = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTyping = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
   const input = event.target.value;
   setTypedWord(input);
+  
+  if(startTime === null) {
+    setStartTime(new Date());
+  }
 
   const gameContainer = gameContainerRef.current;
   if (!gameContainer) return;
@@ -352,7 +388,14 @@ function Game() {
 
     while (inputIndex < input.length && currentIndex < spans.length) {
       if (input[inputIndex] === spans[currentIndex].textContent) {
-        spans[currentIndex].classList.add('correct');
+        if (!spans[currentIndex].classList.contains('correct')) {
+          spans[currentIndex].classList.add('correct');
+          setCorrectChars(prev => {
+            const newCorrectChars = prev + 1;
+            localStorage.setItem('correctChars', newCorrectChars.toString());
+            return newCorrectChars;
+          });
+        }
         currentIndex++;
       } else {
         spans[currentIndex].classList.remove('correct');
@@ -362,6 +405,11 @@ function Game() {
 
     if (currentIndex === spans.length) {
       shootProjectile(activeBugElement);
+      setTotalWords(prev => {
+        const newTotalWords = prev + 1;
+        localStorage.setItem('totalWords', newTotalWords.toString());
+        return newTotalWords;
+      })
       setTypedWord('');
       setScore(prevScore => {
         const newScore = prevScore + 10;
@@ -376,9 +424,15 @@ function Game() {
         return updatedBugs;
       });
       setActiveBug(null);
+      
+      setTotalChars(prev => {
+        const newTotalChars = prev + ((bugText.textContent?.length) || 0);
+        localStorage.setItem('totalChars', newTotalChars.toString());
+        return newTotalChars;
+      });
     }
   }
-};
+}, [activeBug, startTime, setCorrectChars, ]);
 
 	const generateRandomCode = () => {
     const languages = Object.keys(miniPrograms);
@@ -392,6 +446,11 @@ function Game() {
     <div className="game-container" ref={gameContainerRef}>
     <div className="stats">
       <div>Score: {score}</div>
+      <div>Correct Characters: {correctChars}</div>
+      <div>Total Characters: {totalChars}</div>
+      <div>Total Words: {totalWords}</div>
+      <div>Waves Completed: {wavesCompleted}</div>
+      
     </div>
     <div className='player-ship' ref={playerShipRef}></div>
     <input

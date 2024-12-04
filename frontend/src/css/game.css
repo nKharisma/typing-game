@@ -28,7 +28,7 @@
 	height: 24px;
 	background: url('/assets/tile007_scaled.png') no-repeat center center;
 	background-size: contain;
-	animation: moveDown 150s linear;
+	animation: moveDown 120s linear;
 }
 
 .player-ship {
@@ -55,7 +55,7 @@
 }
 @keyframes moveDown {
 	0% {
-		transform: translateY(0);
+		transform: translateY(0vh);
 	}
 	100% {
 		transform: translateY(100vh);
