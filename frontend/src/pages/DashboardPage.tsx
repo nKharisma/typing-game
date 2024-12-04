@@ -56,8 +56,8 @@ export default function DashboardPage()
 	
 	const menuOptions = [
 		{ option: 'new game', description: '1', text: 'new game' },
-		{ option: 'settings', description: '2', text: 'settings' },
-		{ option: 'about us', description: '3', text: 'about us' },
+		{ option: 'profile', description: '2', text: 'profile' },
+		{ option: 'about', description: '3', text: 'about' },
 		{ option: 'logout', description: '4', text: 'logout' }
 	];
 	
@@ -84,7 +84,7 @@ export default function DashboardPage()
 				navigate('/dashboard/profile');
 				break;
       case '3':
-			case 'about us':
+			case 'about':
 				setOutput(['Navigating to about us...']);
 				navigate('/about');
 				break;
