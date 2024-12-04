@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../contexts/AuthContext";
@@ -8,6 +8,7 @@ import '../css/ProfilePage.css'
 export default function ProfilePage() {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const deleteAccount = async () => {
     const authToken = localStorage.getItem('authToken');
@@ -26,20 +27,13 @@ export default function ProfilePage() {
       });
 
       if (response.ok) {
-        // Use AuthContext to mark user as logged out and delete the JWT token in localStorage.
         logout();
         navigate('/');
       } else {
-        // Handle server response if it's not 200 range OK.
         const data = await response.json();
-        if (data.error === 'ACCOUNT_NOT_VERIFIED') {
-          // Save email for access in VerifyEmailPage.
-          console.log('Account not verified yet... can\'t delete');
-        }
         console.log(data.message || 'Server connection error, try again later...');
       }
     } catch (error) {
-      // Handle fetch errors.
       console.log('Server connection error, try again later...');
     }
   };
@@ -47,9 +41,22 @@ export default function ProfilePage() {
   return (
     <div className='profile-page'>
       <button className='profile-page__logout-button' onClick={logout}>Log out</button>
-      <button className='profile-page__delete-button' onClick={deleteAccount}>
+      <button 
+        className='profile-page__delete-button' 
+        onClick={() => setShowConfirm(true)}
+      >
         Delete Account
       </button>
+
+      {showConfirm && (
+        <div className="overlay">
+          <div className="confirm-popup">
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <button className="confirm-popup__yes" onClick={deleteAccount}>Yes</button>
+            <button className="confirm-popup__no" onClick={() => setShowConfirm(false)}>No</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

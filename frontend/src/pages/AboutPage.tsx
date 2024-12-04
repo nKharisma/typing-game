@@ -7,7 +7,7 @@ export default function AboutPage() {
         <h1>About Us</h1>
         <p>
           Welcome to the TypeCode website!
-          This platform is designed to help you manage build coding muscle memory efficiently and with fun.
+          This platform is designed to help you build coding muscle memory efficiently and while having fun.
         </p>
         <h2>Our Team</h2>
         <ul>
