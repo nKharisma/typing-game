@@ -112,8 +112,8 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const { firstName, lastName, email, password } = req.body;
 
   // Validate account with email does not already exist.
-  const [ getUserErr, _getUserResult ] = await getUserFromEmail(email);
-  const accountExists: boolean = Boolean(getUserErr) && !_getUserResult;
+  const [ getUserErr, getUserResult ] = await getUserFromEmail(email);
+  const accountExists: boolean = !(getUserErr) && Boolean(getUserResult);
   if (respondIf(accountExists, res, 400, 'Account already exists with that email. Please try logging in.', getUserErr)) return;
   // Validate password requirements.
   if (respondIf(!isValidPassword(password), res, 400, 'Password does not meet requirements')) return;
