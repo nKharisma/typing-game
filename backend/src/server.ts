@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { addUser, updateUser, getUserFromEmail, deleteUser } from './database';
+import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -138,7 +138,15 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const emailCodeAttempts = MAX_EMAIL_CODE_ATTEMPTS;
 
   // Save user to the database.
-  const [ err, _result ] = await addUser(formattedFirstName, formattedLastName, email, hashedPassword, emailVerified, emailCode, emailCodeTimeout, emailCodeAttempts);
+  const [ err, _result ] = await addUser(
+    formattedFirstName, 
+    formattedLastName, 
+    email, 
+    hashedPassword, 
+    emailVerified, 
+    emailCode,
+    emailCodeTimeout, 
+    emailCodeAttempts);
   if (respondIf(Boolean(err), res, 500, 'Server error, try again later...', 'Failed addUser: ' + err)) return;
 
   res.status(201).json({ message: 'User registered successfully.' });
@@ -346,6 +354,139 @@ expressServer.post('/api/v1/user/delete-user', authenticateToken, async (req: an
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+// Get player data endpoint.
+expressServer.post('/api/v1/user/get-player-data', async (req: any, res: any) => {
+  const { id } = req.body;
+
+  var objectId = MongoDbObjectId.createFromHexString(id);
+
+  const [getUserErr, getUserResult] = await getUserFromId(objectId);
+  
+  // Check if there was a database error fetching the user
+  if (getUserErr) {
+    return res.status(500).json({ message: 'Failed to get user', error: getUserErr });
+  }
+
+  // If no user is found for the given id
+  if (!getUserResult) {
+    return res.status(404).json({ error: 'User with the given id does not exist' });
+  }
+
+  // If user exists but playerdata is not defined for some reason
+  if (!getUserResult.playerdata) {
+    return res.status(404).json({ error: 'Player data not found for the given user' });
+  }
+
+  res.status(200).json({ 
+    score: getUserResult.playerdata.score, 
+    highScore: getUserResult.playerdata.score,
+    wordsPerMinute: getUserResult.playerdata.wordsPerMinute,
+    totalWordsTyped: getUserResult.playerdata.totalWordsTyped,
+    accuracy: getUserResult.playerdata.accuracy,
+    levelsCompleted: getUserResult.playerdata.levelsCompleted})
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Update player data endpoint.
+expressServer.post('/api/v1/user/update-player-data', async (req: any, res: any) => {
+  const { id, score, highScore, wordsPerMinute, totalWordsTyped, accuracy, levelsCompleted } = req.body;
+
+  var objectId = MongoDbObjectId.createFromHexString(id);
+
+  const newPlayerData = {
+    playerdata: {
+      score,
+      highScore,
+      wordsPerMinute,
+      totalWordsTyped,
+      accuracy,
+      levelsCompleted
+    }
+  }
+
+  const [ updateAttemptErr, updateAttemptResult ] = await updateUserMongo(newPlayerData, objectId)
+
+  // Check for database errors
+  if (updateAttemptErr) {
+    return res.status(500).json({ message: 'Failed to update player data', error: updateAttemptErr });
+  }
+
+  // Check if user was found and updated
+  if (!updateAttemptResult) {
+    return res.status(404).json({ message: 'User not found or playerdata not updated' });
+  }
+
+  // Check if the user actually has playerdata after update
+  if (!updateAttemptResult.playerdata) {
+    return res.status(404).json({ message: 'Player data not found in updated user document' });
+  }
+
+
+  res.status(200).json({ message: `${ updateAttemptResult.email }'s player datas updated successfully`, playerData: updateAttemptResult.playerdata });
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Get Leaderboard endpoint.
+expressServer.post('/api/v1/user/get-leaderboard', async (req: any, res: any) => {
+  // Incoming: 
+	// sortBy - string specifying what score value to rank by
+	// limit - amount of users to send back
+	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
+	const { sortBy, limit } = req.body;
+
+	// Valid sorting fields
+	const validSortingFields = [
+		'highScore',
+		'wordsPerMinute',
+		'totalWordsTyped',
+		'accuracy',
+		'levelsCompleted'
+	];
+
+	if(!validSortingFields.includes(sortBy)){
+		return res.status(400).json({
+			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
+		});
+	}
+
+	// Set the sorting options
+	const sortingOptions: { [key: string]: number } = {}
+	sortingOptions[`playerdata.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
+
+	const db = client.db("LargeProject");
+
+	const users = await db.collection('Users').find(
+		{ "playerdata": { "$exists": true }}, // Return all entries with playerdata
+		{ 
+			email: 1,
+			firstName: 1,
+			lastName: 1,
+			playerdata: 1
+		}
+	) // Return these specific values
+	.sort(sortingOptions) // Sort by
+	.limit(limit) // Limit the output to this # of entries 
+	.toArray();
+
+	// create the leaderboard
+	const leaderboard = users.map((user: { 
+		_id: any; 
+		firstName: any; 
+		lastName: any; 
+		email: any; 
+		playerdata: { toObject: () => any; }; }
+	) => ({
+		id: user._id,
+		name: `${user.firstName} ${user.lastName}`,
+		email: user.email,
+		playerdata: user.playerdata
+	}));
+
+	// Return the leaederboard
+	res.status(200).json({ leaderboard });
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Refresh tokens stored in cookies, and shorten access token length to 15m
 
 
@@ -359,25 +500,6 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-// expressServer.post('/api/getUser', async (req: any, res: any, next: any) => 
-// {
-// 	const { id } = req.body;
-//
-// 	var objectId = MongoDbObjectId.createFromHexString(id)
-//
-// 	const db = client.db("LargeProject");
-//   const user = await db.collection('Users').findOne({ _id: objectId });
-//
-// 	if (!user) {
-//     return res.status(400).json({ error: 'User with the given id does not exist' });
-//   }
-//
-// 	res.status(200).json({ 
-//     name: `${user.FirstName} ${user.LastName}`, 
-//     login: user.Login,
-//     email: user.Email
-//   });
-// })
 expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => 
 {
 	const { email, firstName, lastName } = req.token;
@@ -387,88 +509,6 @@ expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any)
         lastName: lastName, 
         email: email
   });
-})
-
-expressServer.post('/api/getPlayerData', async (req: any, res: any, next: any) => {
-	const { id } = req.body;
-
-	var objectId = MongoDbObjectId.createFromHexString(id)
-
-	const db = client.db("LargeProject");
-  const user = await db.collection('PlayerData').findOne({ _id: objectId });
-
-	if (!user) {
-    return res.status(400).json({ error: 'User with the given id does not exist' });
-  }
-
-	res.status(200).json({
-		score: user.score,
-		highscore: user.highScore,
-		wordsPerMinute: user.wordsPerMinute,
-		totalWordsTyped: user.totalWordsTyped,
-		accuracy: user.accuracy,
-		levelsCompleted: user.levelsCompleted
-	});
-})
-
-// TENTATIVE LEADERBOARD ENDPOINT
-expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) => {
-	// Incoming: 
-	// sortBy - string specifying what score value to rank by
-	// limit - amount of users to send back
-	// Outgoing: list of entries from the 'TestUsers' collection sorted by 'sortby'
-	const { sortBy, limit } = req.body;
-
-	// Valid sorting fields
-	const validSortingFields = [
-		'HighScore',
-		'WordsPerMinute',
-		'TotalWordsTyped',
-		'Accuracy',
-		'LevelsCompleted'
-	];
-
-	if(!validSortingFields.includes(sortBy)){
-		return res.status(400).json({
-			error: `'${sortBy}' is an an invalid sortBy field. Valid sorting fields are: ${validSortingFields.toString()}`
-		});
-	}
-
-	// Set the sorting options
-	const sortingOptions: { [key: string]: number } = {}
-	sortingOptions[`PlayerData.${sortBy}`] = -1 // -1 indicates sort by descending order in MongoDB
-
-	const db = client.db("LargeProject");
-
-	const users = await db.collection('TestUsers').find(
-		{}, // Return all entries
-		{ 
-			Login: 1,
-			FirstName: 1,
-			LastName: 1,
-			PlayerData: 1
-		}
-	) // Return these specific values
-	.sort(sortingOptions) // Sort by
-	.limit(limit) // Limit the output to this # of entries 
-	.toArray();
-
-	// create the leaderboard
-	const leaderboard = users.map((user: { 
-		_id: any; 
-		FirstName: any; 
-		LastName: any; 
-		Login: any; 
-		PlayerData: { toObject: () => any; }; }
-	) => ({
-		id: user._id,
-		name: `${user.FirstName} ${user.LastName}`,
-		login: user.Login,
-		playerData: user.PlayerData
-	}));
-
-	// Return the leaederboard
-	res.status(200).json({ leaderboard });
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////
