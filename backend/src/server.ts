@@ -250,7 +250,7 @@ expressServer.post('/api/v1/user/login', async (req: any, res: any) => {
     { expiresIn: "24h" }
   );
 
-  res.status(200).json({ message: 'Login successful', id: getUserResult._id });
+  res.status(200).json({ message: 'Login successful', token: token, id: getUserResult._id });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
