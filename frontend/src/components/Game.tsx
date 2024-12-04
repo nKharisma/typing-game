@@ -512,22 +512,19 @@ function Game() {
 
     while (inputIndex < input.length && currentIndex < spans.length) {
       if (input[inputIndex] === spans[currentIndex].textContent) {
-        if (!spans[currentIndex].classList.contains('correct')) {
           spans[currentIndex].classList.add('correct');
-          setCorrectChars(prev => prev + 1);
-        }
-        currentIndex++;
+          currentIndex++;
       } else {
         spans[currentIndex].classList.remove('correct');
       }
       inputIndex++;
     }
-    
-    setTotalChars(prev => prev + input.length);
 
     if (currentIndex === spans.length) {
       shootProjectile(activeBugElement);
       setTotalWords(prev => prev + 1);
+      setCorrectChars(prev => prev + spans.length);
+      setTotalChars(prev => prev + inputIndex);
       setTypedWord('');
       setScore(prev => prev + 10);
       setBugs(prevBugs => {
