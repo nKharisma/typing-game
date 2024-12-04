@@ -22,11 +22,21 @@ connectToDatabase();
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Define User schema and model
 
+const playerData = new mongoose.Schema({
+  score: { type: Number, default: 0 },
+  highScore: { type: Number, default: 0 },
+  wordsPerMinute: { type: Number, default: 0 },
+  totalWordsTyped: { type: Number, default: 0 },
+  accuracy: { type: Number, default: 0 },
+  levelsCompleted: { type: Number, default: 0 },
+})
+
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true, maxlength: maxStringLength },
   lastName: { type: String, required: true, maxlength: maxStringLength },
   email: { type: String, required: true, maxlength: maxStringLength, unique: true },
   password: { type: String, required: true, maxlength: maxStringLength },
+  playerdata: { type: playerData, default: () => ({}) },
   emailVerified: { type: Boolean, default: false },
   emailCode: { type: String, required: true, maxlength: maxStringLength },
   emailCodeTimeout: { type: Number, required: true },
@@ -81,7 +91,7 @@ async function addUser(
     emailVerified,
     emailCode,
     emailCodeTimeout,
-    emailCodeAttempts,
+    emailCodeAttempts
   });
 
   try {
@@ -91,6 +101,15 @@ async function addUser(
     return [err.message, null];
   }
 }
+
+type PlayerDataUpdateParams = {
+  score?: number;
+  highScore?: number;
+  wordsPerMinute?: number;
+  totalWordsTyped?: number;
+  accuracy?: number;
+  levelsCompleted?: number;
+};
 
 // Update user in the Users collection.
 type UpdateUserParams = {
@@ -102,7 +121,23 @@ type UpdateUserParams = {
   emailCode?: string;
   emailCodeTimeout?: number;
   emailCodeAttempts?: number;
+  playerdata?: PlayerDataUpdateParams;
 };
+
+function flattenUpdateParams(updateParams: any, parentKey = '', result: any = {}) {
+  for (const key in updateParams) {
+    if (updateParams.hasOwnProperty(key)) {
+      const value = updateParams[key];
+      const newKey = parentKey ? `${parentKey}.${key}` : key;
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        flattenUpdateParams(value, newKey, result);
+      } else {
+        result[newKey] = value;
+      }
+    }
+  }
+  return result;
+}
 
 async function updateUser(
   updateParams: UpdateUserParams,
@@ -119,8 +154,11 @@ async function updateUser(
     return [validationError, null];
   }
 
+  // Flatten the updateParams object to handle nested fields
+  const updateObject = flattenUpdateParams(updateParams);
+
   try {
-    const result = await User.findByIdAndUpdate(_id, updateParams, { new: true });
+    const result = await User.findByIdAndUpdate(_id, { $set: updateObject }, { new: true });
     return [null, result];
   } catch (err: any) {
     return [err.message, null];

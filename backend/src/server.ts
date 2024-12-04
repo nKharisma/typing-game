@@ -138,7 +138,15 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const emailCodeAttempts = MAX_EMAIL_CODE_ATTEMPTS;
 
   // Save user to the database.
-  const [ err, _result ] = await addUser(formattedFirstName, formattedLastName, email, hashedPassword, emailVerified, emailCode, emailCodeTimeout, emailCodeAttempts);
+  const [ err, _result ] = await addUser(
+    formattedFirstName, 
+    formattedLastName, 
+    email, 
+    hashedPassword, 
+    emailVerified, 
+    emailCode,
+    emailCodeTimeout, 
+    emailCodeAttempts);
   if (respondIf(Boolean(err), res, 500, 'Server error, try again later...', 'Failed addUser: ' + err)) return;
 
   res.status(201).json({ message: 'User registered successfully.' });
@@ -346,6 +354,56 @@ expressServer.post('/api/v1/user/delete-user', authenticateToken, async (req: an
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+// Update player data endpoint.
+expressServer.post('/api/v1/user/update-player-data', authenticateToken, async (req: any, res: any) => {
+  const { score, highScore, wordsPerMinute, totalWordsTyped, accuracy, levelsCompleted } = req.body;
+  const _id: ObjectId = req.token._id;
+
+  // Build the updateParams object
+  const updateParams = {
+    playerdata: {}
+  };
+
+  // Assign the fields if they are provided and validate that they are numbers
+  if (score !== undefined) {
+    if (typeof score !== 'number') return res.status(400).json({ message: 'Score must be a number' });
+    updateParams.playerdata!.score = score;
+  }
+  if (highScore !== undefined) {
+    if (typeof highScore !== 'number') return res.status(400).json({ message: 'HighScore must be a number' });
+    updateParams.playerdata!.highScore = highScore;
+  }
+  if (wordsPerMinute !== undefined) {
+    if (typeof wordsPerMinute !== 'number') return res.status(400).json({ message: 'WordsPerMinute must be a number' });
+    updateParams.playerdata!.wordsPerMinute = wordsPerMinute;
+  }
+  if (totalWordsTyped !== undefined) {
+    if (typeof totalWordsTyped !== 'number') return res.status(400).json({ message: 'TotalWordsTyped must be a number' });
+    updateParams.playerdata!.totalWordsTyped = totalWordsTyped;
+  }
+  if (accuracy !== undefined) {
+    if (typeof accuracy !== 'number') return res.status(400).json({ message: 'Accuracy must be a number' });
+    updateParams.playerdata!.accuracy = accuracy;
+  }
+  if (levelsCompleted !== undefined) {
+    if (typeof levelsCompleted !== 'number') return res.status(400).json({ message: 'LevelsCompleted must be a number' });
+    updateParams.playerdata!.levelsCompleted = levelsCompleted;
+  }
+
+  // Validate that at least one field is being updated
+  if (Object.keys(updateParams.playerdata!).length === 0) {
+    return res.status(400).json({ message: 'No valid player data fields provided to update.' });
+  }
+
+  // Update the user in the database
+  const [err, result] = await updateUser(updateParams, _id);
+
+  if (respondIf(Boolean(err), res, 500, 'Failed to update player data', err)) return;
+
+  res.status(200).json({ message: 'Player data updated successfully', playerData: result.playerdata });
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Refresh tokens stored in cookies, and shorten access token length to 15m
 
 
@@ -389,28 +447,6 @@ expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any)
   });
 })
 
-expressServer.post('/api/getPlayerData', async (req: any, res: any, next: any) => {
-	const { id } = req.body;
-
-	var objectId = MongoDbObjectId.createFromHexString(id)
-
-	const db = client.db("LargeProject");
-  const user = await db.collection('PlayerData').findOne({ _id: objectId });
-
-	if (!user) {
-    return res.status(400).json({ error: 'User with the given id does not exist' });
-  }
-
-	res.status(200).json({
-		score: user.score,
-		highscore: user.highScore,
-		wordsPerMinute: user.wordsPerMinute,
-		totalWordsTyped: user.totalWordsTyped,
-		accuracy: user.accuracy,
-		levelsCompleted: user.levelsCompleted
-	});
-})
-
 // TENTATIVE LEADERBOARD ENDPOINT
 expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) => {
 	// Incoming: 
@@ -440,13 +476,13 @@ expressServer.post('/api/getLeaderboard', async (req: any, res: any, next: any) 
 
 	const db = client.db("LargeProject");
 
-	const users = await db.collection('TestUsers').find(
+	const users = await db.collection('Users').find(
 		{}, // Return all entries
 		{ 
-			Login: 1,
-			FirstName: 1,
-			LastName: 1,
-			PlayerData: 1
+			email: 1,
+			firstName: 1,
+			lastName: 1,
+			playerdata: 1
 		}
 	) // Return these specific values
 	.sort(sortingOptions) // Sort by
