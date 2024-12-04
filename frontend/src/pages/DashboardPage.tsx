@@ -25,15 +25,6 @@ export default function DashboardPage()
 	
 	useEffect(() => {
 		const getUsername = async () => {
-			// const userData = localStorage.getItem('user_data');
-			// if (!userData) {
-			// 	console.error('User data not found');
-			// 	return;
-			// }
-			// 
-			// const user = JSON.parse(userData);
-			// const userId = user.id;
-    
       const authToken = localStorage.getItem('authToken');
 			if (!authToken) {
 				console.error('Auth token not found');
@@ -41,13 +32,6 @@ export default function DashboardPage()
 			}
 			
 			try {
-				// const response = await fetch(buildPath('api/getUser'), {
-				// 	method: 'POST',
-				// 	headers: {
-				// 	'Content-Type': 'application/json',
-				// 	},
-				// 	body: JSON.stringify({ id: userId }),
-				// });
 				const response = await fetch(buildPath('api/getUser'), {
 					method: 'POST',
 					headers: {
@@ -95,14 +79,14 @@ export default function DashboardPage()
 				navigate('/dashboard/new-game');
 				break;
       case '2':
-			case 'settings':
+			case 'profile':
 				setOutput(['Navigating to settings...']);
-				navigate('/settings');
+				navigate('/dashboard/profile');
 				break;
       case '3':
 			case 'about us':
 				setOutput(['Navigating to about us...']);
-				navigate('/about-us');
+				navigate('/about');
 				break;
       case '4':
 			case 'logout':
