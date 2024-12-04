@@ -3,12 +3,38 @@ import '../css/game.css';
 import {v4 as uuidv4} from 'uuid';
 import { miniPrograms } from '../utils/programSnippets';
 import { useNavigate } from 'react-router-dom';
+import '../css/GameOverModel.css';
 
 interface Bug {
   id: string;
   text: string;
   element: HTMLElement;
 }
+
+interface GameOverModel {
+  score: number;
+  highScore: number;
+  accuracy: number;
+  wpm: number;
+  onClose: () => void;
+}
+
+const GameOverModel: React.FC<GameOverModel> = ({ score, highScore, accuracy, wpm, onClose }) => {
+  return (
+    <div className="game-over-modal">
+      <div className="model-content">
+      <h2>Game Over!</h2>
+      <div>Score: {score}</div>
+      <div>High Score: {highScore}</div>
+      <div>Accuracy: {accuracy.toFixed(2)}%</div>
+      <div>WPM: {wpm}</div>
+      <button onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+};
+
+//export { GameOverModel };
 
 function Game() {
   const navigate = useNavigate();
@@ -18,10 +44,7 @@ function Game() {
   const playerShipRef = useRef<HTMLDivElement>(null);
   const setBugs = useState<Bug[]>([])[1];
   const [activeBug, setActiveBug] = useState<string | null>(null);
-  const [score, setScore] = useState(() => {
-    const savedScore = localStorage.getItem('score');
-    return savedScore ? parseInt(savedScore, 10) : 0;
-  });
+  const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [bugsReachedBottom, setBugsReachedBottom] = useState(0);
   const [initialWaveStarted, setInitialWaveStarted] = useState(false);
@@ -48,6 +71,7 @@ function Game() {
     return savedWavesCompleted ? parseInt(savedWavesCompleted, 10) : 0;
   });
   const [startTime, setStartTime] = useState<Date | null>(null);
+  const [isGameOverModalVisible, setIsGameOverModalVisible] = useState(false);
 
 	useEffect(() => {
     if (inputRef.current) {
@@ -83,11 +107,8 @@ function Game() {
 	
 	useEffect(() => {
 	  if(gameOver) {
-	    const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
-	    
-	    const endTime = new Date();
-	    const elapsedTime = startTime ? (endTime.getTime() - startTime.getTime()) / 1000 : 0;
-	    const wpm = elapsedTime > 0 ? (totalWords / elapsedTime) * 60 : 0;
+	    const accuracy = calculateAccuracy();
+	    const wpm = calculateWPM();
 	    
 	    if(score > highScore) {
 	      setHighScore(score);
@@ -97,8 +118,9 @@ function Game() {
 	    localStorage.setItem('accuracy', accuracy.toFixed(2));
 	    localStorage.setItem('wpm', wpm.toString());
 	  
-	    alert(`Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}`);
-	    navigate('/dashboard');
+	    //alert(`Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}`);
+	    setIsGameOverModalVisible(true);
+	    //navigate('/dashboard');
 	  }
 	}, [gameOver]);
 	
@@ -466,6 +488,21 @@ function Game() {
   }
 }, [activeBug, startTime, setCorrectChars, ]);
 
+  const handleCloseModel = () => {
+    setIsGameOverModalVisible(false);
+      navigate('/dashboard');
+  }
+  
+  const calculateAccuracy = () => {
+    return totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
+  }
+  
+  const calculateWPM = () => {
+    const endTime = new Date();
+    const elapsedTime = startTime ? (endTime.getTime() - startTime.getTime()) / 1000 : 0;
+    return elapsedTime > 0 ? (totalWords / elapsedTime) * 60 : 0;
+  }
+
 	const generateRandomCode = () => {
     const languages = Object.keys(miniPrograms);
     const randomLanguage = languages[Math.floor(Math.random() * languages.length)] as keyof typeof miniPrograms;
@@ -496,6 +533,15 @@ function Game() {
         ref={inputRef}
         onBlur={() => inputRef.current?.focus()}
     />
+    {isGameOverModalVisible && (
+      <GameOverModel
+        score={score}
+        highScore={highScore}
+        accuracy={calculateAccuracy()}
+        wpm={calculateWPM()}
+        onClose={handleCloseModel}
+      />
+    )}
     </div>
 	);
 }
