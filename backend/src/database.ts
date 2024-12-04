@@ -166,6 +166,32 @@ async function updateUser(
   }
 }
 
+async function updateUserMongo(
+  updateParams: UpdateUserParams,
+  _id: MongoDbObjectId
+): Promise<[string | null, any]> {
+  // Validate string fields to be correct length.
+  const fieldsToValidate = Object.fromEntries(
+    Object.entries(updateParams).filter(
+      ([_, value]) => typeof value === 'string' && value !== undefined
+    )
+  );
+  const validationError = validateStringFieldLengths(fieldsToValidate);
+  if (validationError) {
+    return [validationError, null];
+  }
+
+  // Flatten the updateParams object to handle nested fields
+  const updateObject = flattenUpdateParams(updateParams);
+
+  try {
+    const result = await User.findByIdAndUpdate(_id, { $set: updateObject }, { new: true });
+    return [null, result];
+  } catch (err: any) {
+    return [err.message, null];
+  }
+}
+
 // Get user based on email and return their info.
 async function getUserFromEmail(email: string): Promise<[string | null, any]> {
   // Validate string fields to be correct length.
@@ -209,4 +235,4 @@ async function deleteUser(_id: ObjectId): Promise<[string | null, any]> {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Function exports for 'database.ts'.
-export { addUser, updateUser, getUserFromEmail, getUserFromId, deleteUser };
+export { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser };

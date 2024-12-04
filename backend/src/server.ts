@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { addUser, updateUser, getUserFromEmail, getUserFromId, deleteUser } from './database';
+import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -132,7 +132,7 @@ expressServer.post('/api/v1/user/register', async (req: any, res: any) => {
   const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
   const hashedPassword = await hashPassword(password);
   // Defaults for newly registered, unverified account.
-  const emailVerified = false;
+  const emailVerified = true;
   const emailCode = "-1"
   const emailCodeTimeout = 0;
   const emailCodeAttempts = MAX_EMAIL_CODE_ATTEMPTS;
@@ -374,9 +374,25 @@ expressServer.post('/api/v1/user/get-player-data', async (req: any, res: any) =>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Update player data endpoint.
-expressServer.post('/api/v1/user/update-player-data', authenticateToken, async (req: any, res: any) => {
-  const { score, highScore, wordsPerMinute, totalWordsTyped, accuracy, levelsCompleted } = req.body;
-  const _id: ObjectId = req.token._id;
+expressServer.post('/api/v1/user/update-player-data', async (req: any, res: any) => {
+  const { id, score, highScore, wordsPerMinute, totalWordsTyped, accuracy, levelsCompleted } = req.body;
+
+  var objectId = MongoDbObjectId.createFromHexString(id);
+
+  const newPlayerData = {
+    playerdata: {
+      score,
+      highScore,
+      wordsPerMinute,
+      totalWordsTyped,
+      accuracy,
+      levelsCompleted
+    }
+  }
+
+  const [ updateAttemptErr, _updateAttemptResult ] = await updateUserMongo(newPlayerData, objectId)
+
+  res.status(200).json({ message: 'Player data updated successfully', playerData: _updateAttemptResult.playerdata });
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////
