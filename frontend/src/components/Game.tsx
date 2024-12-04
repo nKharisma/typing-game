@@ -522,6 +522,8 @@ function Game() {
       }
       inputIndex++;
     }
+    
+    setTotalChars(prev => prev + input.length);
 
     if (currentIndex === spans.length) {
       shootProjectile(activeBugElement);
@@ -536,8 +538,6 @@ function Game() {
         return updatedBugs;
       });
       setActiveBug(null);
-      
-      setTotalChars(prev => prev + (bugText.textContent?.length || 0));
     }
   }
 }, [activeBug, startTime, setCorrectChars, ]);
