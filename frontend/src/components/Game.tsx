@@ -50,6 +50,7 @@ function Game() {
   const [totalChars, setTotalChars] = useState(0);
   const [totalWords, setTotalWords] = useState(0);
   const [wavesCompleted, setWavesCompleted] = useState(0);
+  const [staticWPM, setStaticWPM] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [bugsReachedBottom, setBugsReachedBottom] = useState(0);
   const [initialWaveStarted, setInitialWaveStarted] = useState(false);
@@ -101,7 +102,7 @@ function Game() {
           setWaveCleared(true);
         }
       }
-    }, 1000);
+    }, 3500);
     
     return () => clearInterval(checkBugsInterval);
 	}, []);
@@ -135,9 +136,12 @@ function Game() {
 	}, [score]);
 	
 	useEffect(() => {
-	  if(gameOver) {
-	    const sessionWpm = calculateWPM();
-	    
+	  if(gameOver && staticWPM === 0) {
+	  
+	    const endTime = new Date();
+	    const elapsedTime = startTime ? (endTime.getTime() - startTime.getTime()) / 1000 : 0;
+	    const sessionWPM = elapsedTime > 0 ? (totalWords / elapsedTime) * 60 : 0;
+	    setStaticWPM(sessionWPM);
 	    if(score > highScore) {
 	      setHighScore(score);
 	      localStorage.setItem('highScore', score.toString());
@@ -168,9 +172,9 @@ function Game() {
       });
       
       const overallAccuracy = (overallCorrectChars + correctChars) / (overallTotalChars + totalChars) * 100;
-      if(sessionWpm > highestWpm) {
-        setHighestWpm(sessionWpm);
-        localStorage.setItem('highestWpm', sessionWpm.toString());
+      if(sessionWPM > highestWpm) {
+        setHighestWpm(sessionWPM);
+        localStorage.setItem('highestWpm', sessionWPM.toString());
       }
 
       fetch('/api/v1/user/update-player-data', {
@@ -251,6 +255,34 @@ function Game() {
       }
     }, 3500); // 3.5 seconds
   };
+  
+  const createIntersectionObserver = (bugElement: HTMLElement) => {
+    const gameContainer = gameContainerRef.current;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          // Bug has gone off-screen
+          if (gameContainer) {
+            gameContainer.removeChild(bugElement);
+          }
+          setBugsReachedBottom(prev => {
+            const newBugsReachedBottom = prev + 1;
+            if (newBugsReachedBottom >= 5) {
+              setGameOver(true);
+            }
+            return newBugsReachedBottom;
+          });
+          setBugs(prevBugs => prevBugs.filter(b => b.element !== bugElement));
+          observer.unobserve(bugElement); // Stop observing the bug element
+        }
+      });
+    }, {
+      root: null, // Use the viewport as the root
+      threshold: 0.0 // Trigger when the bug is completely out of view
+    });
+  
+    observer.observe(bugElement);
+  };
 	
 	const spawnBug = (line: string) => {
     const gameContainer = gameContainerRef.current;
@@ -330,6 +362,8 @@ function Game() {
   
     bugElement.appendChild(bugText);
     gameContainer.appendChild(bugElement);
+    
+    createIntersectionObserver(bugElement);
   
     // Add the bug to the state
     const bug: Bug = {
@@ -548,11 +582,6 @@ function Game() {
     return totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
   }
   
-  const calculateWPM = () => {
-    const endTime = new Date();
-    const elapsedTime = startTime ? (endTime.getTime() - startTime.getTime()) / 1000 : 0;
-    return elapsedTime > 0 ? (totalWords / elapsedTime) * 60 : 0;
-  }
 
 	const generateRandomCode = () => {
     const languages = Object.keys(miniPrograms);
@@ -589,7 +618,7 @@ function Game() {
         score={score}
         highScore={highScore}
         accuracy={calculateAccuracy()}
-        wpm={parseFloat(calculateWPM().toFixed(2))}
+        wpm={parseFloat(staticWPM.toFixed(2))}
         onClose={handleCloseModel}
       />
     )}
