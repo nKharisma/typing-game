@@ -1,5 +1,6 @@
 .profile-page {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 60vh;
@@ -12,9 +13,26 @@
 	font-style: normal;
 }
 
-.profile-page__button {
+.profile-page__logout-button {
 	background-color: rgba(255, 255, 255, 1);
 	background: transparent;
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+	border: 2px solid rgba(255, 255, 255, .25);
+	border-radius: 12px;
+
+  color: #FFF;
+  font-size: 40px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  box-sizing: border-box;
+  font-family: 'Better-VCR';
+}
+
+.profile-page__delete-button {
+  margin-top: 60px;
+	background-color: rgba(255, 0, 0, 0.10);
 	-webkit-backdrop-filter: blur(5px);
 	backdrop-filter: blur(5px);
 	border: 2px solid rgba(255, 255, 255, .25);

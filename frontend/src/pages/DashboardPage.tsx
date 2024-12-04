@@ -35,6 +35,10 @@ export default function DashboardPage()
 			// const userId = user.id;
     
       const authToken = localStorage.getItem('authToken');
+			if (!authToken) {
+				console.error('Auth token not found');
+				return;
+			}
 			
 			try {
 				// const response = await fetch(buildPath('api/getUser'), {
