@@ -15,7 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // Create TextEditingController instances
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
@@ -57,8 +57,8 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
                   Expanded(
                     child: TextFormField(
-                      controller: usernameController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
+                      controller: emailController, // Attach the controller
+                      style: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       decoration: InputDecoration(
                         prefixIcon:
                             Icon(Icons.person_outline, color: Colors.grey),
@@ -68,8 +68,8 @@ class _LoginPageState extends State<LoginPage> {
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        hintText: 'Enter your username',
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintText: 'Enter your email',
+                        hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR', fontSize: 14,),
                       ),
                       keyboardType: TextInputType.text,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -79,35 +79,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1),
-              child: Row(
-                children: [
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
-                    child: TextFormField(
-                      controller: passwordController, // Attach the controller
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.lock_outline, color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        hintText: 'Enter your password',
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                      //obscureText: true, // Mask the password input
-                      keyboardType: TextInputType.text,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            PasswordField(passwordController: passwordController),
             SizedBox(height: 30),
             Row(
               children: [
@@ -143,23 +115,23 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MainAppPage(),
+                  builder: (context) => MainAppPage(userId: '5'),
                 )
               );
               },*/
 
               onTap: () async {
-                print(usernameController.text);
+                print(emailController.text);
                 print(passwordController.text);
                 final response = await http.post(
                   Uri.parse(
-                      'https://typecode.app/api/login'), // replace with your API URL
+                      'https://typecode.app/api/v1/user/login'), // replace with your API URL
                   headers: <String, String>{
                     'Content-Type': 'application/json',
                   },
                   body: jsonEncode(<String, String>{
-                    'login':
-                        usernameController.text.trim(), // Use the input value
+                    'email':
+                        emailController.text.trim(), // Use the input value
                     'password':
                         passwordController.text.trim() // Use the input value
                   }),
@@ -239,6 +211,74 @@ class BottomButton extends StatelessWidget {
     );
   }
 }
+
+class PasswordField extends StatefulWidget {
+  final TextEditingController passwordController;
+
+  const PasswordField({Key? key, required this.passwordController})
+      : super(key: key);
+
+  @override
+  _PasswordFieldState createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool isPasswordVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1),
+      child: Row(
+        children: [
+          const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          Expanded(
+            child: TextFormField(
+              controller: widget.passwordController, // Attach the controller
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'VCR',
+                fontSize: 14,
+              ),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                ),
+                enabledBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                hintText: 'Enter your password',
+                hintStyle: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'VCR',
+                  fontSize: 14,
+                ),
+              ),
+              obscureText: !isPasswordVisible, // Toggle masking
+              keyboardType: TextInputType.text,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 /*labelText: 'Username',
                         labelStyle: TextStyle(
