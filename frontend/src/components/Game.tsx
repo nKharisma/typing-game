@@ -44,13 +44,18 @@ function Game() {
   const playerShipRef = useRef<HTMLDivElement>(null);
   const setBugs = useState<Bug[]>([])[1];
   const [activeBug, setActiveBug] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [score, setScore] = useState(0);
+  const [correctChars, setCorrectChars] = useState(0);
+  const [totalChars, setTotalChars] = useState(0);
+  const [totalWords, setTotalWords] = useState(0);
+  const [wavesCompleted, setWavesCompleted] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [bugsReachedBottom, setBugsReachedBottom] = useState(0);
   const [initialWaveStarted, setInitialWaveStarted] = useState(false);
   const [initialWaveCompleted, setInitialWaveCompleted] = useState(false);
   const [waveCleared, setWaveCleared] = useState(false);
-  const [totalWords, setTotalWords] = useState(() => {
+  const [overallTotalWords,  setOverallTotalWords] = useState(() => {
     const savedTotalWords = localStorage.getItem('totalWords');
     return savedTotalWords ? parseInt(savedTotalWords, 10) : 0;
   });
@@ -58,15 +63,19 @@ function Game() {
     const savedHighScore = localStorage.getItem('highScore');
     return savedHighScore ? parseInt(savedHighScore, 10) : 0;
   });
-  const [correctChars, setCorrectChars] = useState(() => {
+  const [highestWpm, setHighestWpm] = useState(() => {
+    const savedHighestWpm = localStorage.getItem('highestWpm');
+    return savedHighestWpm ? parseFloat(savedHighestWpm) : 0;
+  });
+  const [overallCorrectChars, setOverallCorrectCharacters] = useState(() => {
     const savedCorrectChars = localStorage.getItem('correctChars');
     return savedCorrectChars ? parseInt(savedCorrectChars, 10) : 0;
   });
-  const [totalChars, setTotalChars] = useState(() => {
+  const [overallTotalChars, setOverallTotalChars] = useState(() => {
     const savedTotalChars = localStorage.getItem('totalChars');
     return savedTotalChars ? parseInt(savedTotalChars, 10) : 0;
   });
-  const [wavesCompleted, setWavesCompleted] = useState(() => {
+  const [overallWavesCompleted, setOverallWavesCompleted] = useState(() => {
     const savedWavesCompleted = localStorage.getItem('wavesCompleted');
     return savedWavesCompleted ? parseInt(savedWavesCompleted, 10) : 0;
   });
@@ -98,6 +107,26 @@ function Game() {
 	}, []);
 	
 	useEffect(() => {
+    const fetchUserID = async () => {
+      try {
+        const response = await fetch('/api/v1/user/getUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+      const data = await response.json();
+      setUserId(data.id);
+    } catch (error) {
+      console.error('Failed to fetch user data', error);
+    }
+	};
+	
+	fetchUserID();
+}, []);
+	
+	useEffect(() => {
     console.log('Active Bug ID:', activeBug);
 	}, [activeBug]);
 	
@@ -107,22 +136,64 @@ function Game() {
 	
 	useEffect(() => {
 	  if(gameOver) {
-	    const accuracy = calculateAccuracy();
-	    const wpm = calculateWPM();
+	    const sessionWpm = calculateWPM();
 	    
 	    if(score > highScore) {
 	      setHighScore(score);
 	      localStorage.setItem('highScore', score.toString());
 	    }
 	    
-	    localStorage.setItem('accuracy', accuracy.toFixed(2));
-	    localStorage.setItem('wpm', wpm.toString());
-	  
+	    setOverallCorrectCharacters(prev => {
+        const newOverallCorrectChars = prev + correctChars;
+        localStorage.setItem('correctChars', newOverallCorrectChars.toString());
+        return newOverallCorrectChars;
+	    });
+	    
+	    setOverallTotalChars(prev => {
+        const newOverallTotalChars = prev + totalChars;
+        localStorage.setItem('totalChars', newOverallTotalChars.toString());
+        return newOverallTotalChars;
+      });
+      
+      setOverallTotalWords(prev => {
+        const newOverallTotalWords = prev + totalWords;
+        localStorage.setItem('totalWords', newOverallTotalWords.toString());
+        return newOverallTotalWords;
+      });
+      
+      setOverallWavesCompleted(prev => {
+        const newOverallWavesCompleted = prev + wavesCompleted;
+        localStorage.setItem('wavesCompleted', newOverallWavesCompleted.toString());
+        return newOverallWavesCompleted;
+      });
+      
+      const overallAccuracy = (overallCorrectChars + correctChars) / (overallTotalChars + totalChars) * 100;
+      if(sessionWpm > highestWpm) {
+        setHighestWpm(sessionWpm);
+        localStorage.setItem('highestWpm', sessionWpm.toString());
+      }
+
+      fetch('/api/v1/user/update-player-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: userId,
+            score: score,
+            highScore,
+            wordsPerMinute: highestWpm,
+            totalWordsTyped: overallTotalWords,
+            accuracy: overallAccuracy,
+            levelsCompleted: overallWavesCompleted,
+        }),
+      });
+
 	    //alert(`Game Over!\nHigh Score: ${highScore}\nScore: ${score}\nAccuracy: ${accuracy.toFixed(2)}%\nWPM: ${wpm}`);
 	    setIsGameOverModalVisible(true);
 	    //navigate('/dashboard');
 	  }
-	}, [gameOver]);
+	}, [gameOver, overallCorrectChars, overallTotalChars]);
 	
 	useEffect(() => {
 	  const maxBugsReachedBottom = 5;
@@ -198,7 +269,6 @@ function Game() {
     let leftPosition;
     let isOverlapping;
   
-    // Measure text width for proper placement
     const tempBugText = document.createElement('div');
     tempBugText.className = 'bug-text';
     tempBugText.style.position = 'absolute';
@@ -444,11 +514,7 @@ function Game() {
       if (input[inputIndex] === spans[currentIndex].textContent) {
         if (!spans[currentIndex].classList.contains('correct')) {
           spans[currentIndex].classList.add('correct');
-          setCorrectChars(prev => {
-            const newCorrectChars = prev + 1;
-            localStorage.setItem('correctChars', newCorrectChars.toString());
-            return newCorrectChars;
-          });
+          setCorrectChars(prev => prev + 1);
         }
         currentIndex++;
       } else {
@@ -459,17 +525,9 @@ function Game() {
 
     if (currentIndex === spans.length) {
       shootProjectile(activeBugElement);
-      setTotalWords(prev => {
-        const newTotalWords = prev + 1;
-        localStorage.setItem('totalWords', newTotalWords.toString());
-        return newTotalWords;
-      })
+      setTotalWords(prev => prev + 1);
       setTypedWord('');
-      setScore(prevScore => {
-        const newScore = prevScore + 10;
-        localStorage.setItem('score', newScore.toString());
-        return newScore;
-      });
+      setScore(prev => prev + 10);
       setBugs(prevBugs => {
         const updatedBugs = prevBugs.filter(b => b.id !== (activeBugElement as HTMLElement).dataset.id);
         if (updatedBugs.length === 0) {
@@ -479,11 +537,7 @@ function Game() {
       });
       setActiveBug(null);
       
-      setTotalChars(prev => {
-        const newTotalChars = prev + ((bugText.textContent?.length) || 0);
-        localStorage.setItem('totalChars', newTotalChars.toString());
-        return newTotalChars;
-      });
+      setTotalChars(prev => prev + (bugText.textContent?.length || 0));
     }
   }
 }, [activeBug, startTime, setCorrectChars, ]);
@@ -538,7 +592,7 @@ function Game() {
         score={score}
         highScore={highScore}
         accuracy={calculateAccuracy()}
-        wpm={calculateWPM()}
+        wpm={parseFloat(calculateWPM().toFixed(2))}
         onClose={handleCloseModel}
       />
     )}
