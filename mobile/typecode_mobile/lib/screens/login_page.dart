@@ -196,6 +196,7 @@ class BottomButton extends StatelessWidget {
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Colors.black,
+              fontFamily: 'VCR',
             ),
           ),
         ),

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'login_page.dart';
 
 String user = 'haha';
 
@@ -357,48 +358,28 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
   ),
 ),
 
-
-        // Settings page
-        ListView.builder(
-          reverse: true,
-          itemCount: 2,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    'Hello',
-                    style: theme.textTheme.bodyLarge!
-                        .copyWith(color: theme.colorScheme.onPrimary),
-                  ),
-                ),
+Container(
+  color: Colors.black,
+  child: SafeArea(
+    child: Column(
+      children: [
+        SizedBox(height: 100,),
+        BottomButton(
+          onTap:() {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                )
               );
-            }
-            return Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: const EdgeInsets.all(8.0),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  'Hi!',
-                  style: theme.textTheme.bodyLarge!
-                      .copyWith(color: theme.colorScheme.onPrimary),
-                ),
-              ),
-            );
           },
-        ),
+        buttonTitle: 'LOGOUT')
+      ],
+    ) 
+  ),
+),
+
+
       ][currentPageIndex],
     );
   }
