@@ -40,13 +40,13 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
   bool isLeaderboardLoading = true;
   String? leaderboardErrorMessage;
 
-  String selectedSortBy = 'HighScore';
+  String selectedSortBy = 'highScore';
   final List<String> sortByOptions = [
-    'HighScore',
-    'WordsPerMinute',
-    'TotalWordsTyped',
-    'Accuracy',
-    'LevelsCompleted',
+    'highScore',
+    'wordsPerMinute',
+    'totalWordsTyped',
+    'accuracy',
+    'levelsCompleted',
   ];
 
   @override
@@ -59,7 +59,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
   Future<void> fetchUserStats() async {
     try {
       final response = await http.post(
-        Uri.parse('https://typecode.app/api/getPlayerData'),
+        Uri.parse('https://typecode.app/api/v1/user/get-player-data'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -96,7 +96,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://typecode.app/api/getLeaderboard'),
+        Uri.parse('https://typecode.app/api/v1/user/get-leaderboard'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -334,11 +334,11 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                                 children: [
                                   const SizedBox(height: 4),
                                   Text(
-                                    'High Score: ${entry['playerData']['HighScore']}\n'
-                                    'Words Per Minute: ${entry['playerData']['WordsPerMinute']}\n'
-                                    'Total Words Typed: ${entry['playerData']['TotalWordsTyped']}\n'
-                                    'Accuracy: ${entry['playerData']['Accuracy']}\n'
-                                    'Levels Completed: ${entry['playerData']['LevelsCompleted']}',
+                                    'High Score: ${entry['playerdata']['highScore']}\n'
+                                    'Words Per Minute: ${entry['playerdata']['wordsPerMinute']}\n'
+                                    'Total Words Typed: ${entry['playerdata']['totalWordsTyped']}\n'
+                                    'Accuracy: ${entry['playerdata']['accuracy']}\n'
+                                    'Levels Completed: ${entry['playerdata']['levelsCompleted']}',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'VCR',
