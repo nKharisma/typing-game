@@ -43,7 +43,7 @@ export default function DashboardPage()
 	}, []);
 	
 	const menuOptions = [
-		{ option: 'new game', description: '1', text: 'new game', location: '/dashboard/new-game' },
+		{ option: 'play game', description: '1', text: 'play game', location: '/dashboard/pre-game' },
 		{ option: 'leaderboard', description: '2', text: 'leaderboard', location: '/leaderboard' },
 		{ option: 'profile', description: '3', text: 'profile', location: '/dashboard/profile' },
 		{ option: 'about', description: '4', text: 'about', location: '/about' },
@@ -62,9 +62,9 @@ export default function DashboardPage()
 	const handleOption = (option: string) => {
 		switch (option) {
       case '1':
-			case 'new game':
+			case 'play game':
 				setOutput([...output, 'Starting a new game...']);
-				navigate('/dashboard/new-game');
+				navigate('/dashboard/pre-game');
 				break;
       case '2':
 			case 'leaderboard':
