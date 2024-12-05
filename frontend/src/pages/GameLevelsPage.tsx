@@ -25,7 +25,7 @@ export default function PreGamePage() {
         <div className='game-levels-page__block'>
           <div className='game-levels-page__block-text-container'>
             <h1>Loops</h1>
-            <p>Learn to use conditionals to make decisions and control the flow of your code!</p>
+            <p>Learn to use loops to repeat actions and process data sets effortlessly!</p>
             <button onClick={() => navigate('/dashboard/game-level-3')}>Start Game</button>
           </div>
         </div>
