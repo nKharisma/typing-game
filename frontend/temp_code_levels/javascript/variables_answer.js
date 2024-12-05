@@ -29,6 +29,7 @@ function main() {
         // --- User Submission Area ---
         // Update the closest ship if the current one is closer
         // Feel free to modify the logic below to determine the closest ship
+        // Answer!!
         if (distance < closestDistance) {
             closestDistance = distance;
             closestShipName = shipName;
