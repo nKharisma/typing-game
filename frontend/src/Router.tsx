@@ -16,6 +16,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import NewGamePage from './pages/NewGamePage'
 import NotFoundPage from './pages/NotFoundPage'
+import Settings from './pages/Settings'
 
 // CSS Imports
 import './index.css'
@@ -41,6 +42,7 @@ export default function createRouter() {
               { path: '/dashboard', element: <DashboardPage /> },
               { path: '/dashboard/profile', element: <ProfilePage /> },
               { path: '/dashboard/new-game', element: <NewGamePage /> },
+              { path: '/dashboard/settings', element: <Settings/> },
             ]
           },
           { path: '/*', element: <NotFoundPage />},
