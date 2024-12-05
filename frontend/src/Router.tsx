@@ -15,6 +15,7 @@ import ValidatePasswordResetPage from './pages/ValidatePasswordResetPage'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import NewGamePage from './pages/NewGamePage'
+import LeaderboardPage from './pages/LeaderboardPage'
 import NotFoundPage from './pages/NotFoundPage'
 import Settings from './pages/Settings'
 
@@ -30,6 +31,7 @@ export default function createRouter() {
         children: [
           { path: '/', element: <HomePage /> },
           { path: '/about', element: <AboutPage /> },
+          { path: '/leaderboard', element: <LeaderboardPage />},
           { path: '/login', element: <LoginPage /> },
           { path: '/register', element: <RegisterPage /> },
           { path: '/verify-email', element: <VerifyEmailPage /> },

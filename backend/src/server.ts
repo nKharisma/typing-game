@@ -1,11 +1,12 @@
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
-import express from 'express';
+import express, { response } from 'express';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import axios from 'axios';
 
 import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser } from './database';
 import { devServerPort } from './config';
@@ -486,11 +487,40 @@ expressServer.post('/api/v1/user/get-leaderboard', async (req: any, res: any) =>
 	res.status(200).json({ leaderboard });
 })
 
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // TODO: Refresh tokens stored in cookies, and shorten access token length to 15m
 
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// Compile endpoint.
+expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
+  const { language, version, code, stdin } = req.body;
 
+  if(!language || !code)
+  {
+    res.status(400).json({error: "Invalid input: language and code are required"});
+  }
+
+  // Try to call Piston's API for compilation
+  try{
+    const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
+      language: language,
+      version: version || '*',
+      files: [{
+        content: code
+      }],
+      stdin: stdin || ""
+    });
+
+    res.status(200).json(response.data);
+  }catch(error)
+  {
+    console.log(error);
+    res.status(400).json({error: "Error while trying to compile the code"});
+  }
+})
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////

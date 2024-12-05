@@ -20,6 +20,7 @@ export default function HeaderLayout() {
         </div>
         <div className='header-options-container'>
           <Link className='header-about' to='/about'>About</Link>
+          <Link className='header-leaderboard' to='/leaderboard'>Leaderboard</Link>
           { isAuthenticated ?
               (<>
                 <Link className='header-dashboard' to='/dashboard'>Dashboard</Link>

@@ -1,27 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AuthContext } from '../contexts/AuthContext';
+import getBackendUrl from "../utils/getBackendUrl";
 import '../css/dashboard.css';
 
 export default function DashboardPage()
 {
-	function buildPath(route:string) : string
-  {
-    const { hostname } = window.location;
-
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:5000/' + route; // Set to your localhost backend URL
-    } else {
-      return 'https://typecode.app/' + route; // Set to your production backend URL
-    }
-  }
-
 	const [input, setInput] = useState('');
 	const [output, setOutput] = useState<string[]>([]);
 	const [userName, setUserName] = useState('');
 	const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
 	
 	useEffect(() => {
 		const getUsername = async () => {
@@ -32,7 +20,7 @@ export default function DashboardPage()
 			}
 			
 			try {
-				const response = await fetch(buildPath('api/getUser'), {
+				const response = await fetch(`${getBackendUrl()}/api/getUser`, {
 					method: 'POST',
 					headers: {
             'Content-Type': 'application/json',
@@ -55,10 +43,10 @@ export default function DashboardPage()
 	}, []);
 	
 	const menuOptions = [
-		{ option: 'new game', description: '1', text: 'new game' },
-		{ option: 'profile', description: '2', text: 'profile' },
-		{ option: 'about', description: '3', text: 'about' },
-		{ option: 'logout', description: '4', text: 'logout' }
+		{ option: 'new game', description: '1', text: 'new game', location: '/dashboard/new-game' },
+		{ option: 'leaderboard', description: '2', text: 'leaderboard', location: '/leaderboard' },
+		{ option: 'profile', description: '3', text: 'profile', location: '/dashboard/profile' },
+		{ option: 'about', description: '4', text: 'about', location: '/about' },
 	];
 	
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,20 +67,19 @@ export default function DashboardPage()
 				navigate('/dashboard/new-game');
 				break;
       case '2':
-			case 'profile':
-				setOutput(['Navigating to settings...']);
-				navigate('/dashboard/profile');
+			case 'leaderboard':
+				setOutput(['Navigating to leaderboard...']);
+				navigate('/leaderboard');
 				break;
       case '3':
-			case 'about':
-				setOutput(['Navigating to about us...']);
-				navigate('/about');
+			case 'profile':
+				setOutput(['Navigating to profile...']);
+				navigate('/dashboard/profile');
 				break;
       case '4':
-			case 'logout':
-				setOutput(['Logging out...']);
-        logout();
-				navigate('/');
+			case 'about':
+				setOutput(['Navigating to about ...']);
+				navigate('/about');
 				break;
 			default:
 				setOutput(['Invalid option']);
@@ -104,22 +91,22 @@ export default function DashboardPage()
 		<div className='container'>
         <div className='terminal-wrapper'>
 	        <div className='terminal-container'>
-	        <span className='welcome-message'>{userName}:~$ type an option below to start</span>
+	        <span className='welcome-message'>{userName}:~$ click or type an option below to start</span>
 			  <div className='terminal-header'>main.tsx</div>
 			  <div className="menuOptions">
         {menuOptions.map((option) => (
-          <div key={option.option}>
+          <div className="menu-option" onClick={() => navigate(option.location)} key={option.option}>
             <span className="menu-number">{option.description}</span>
             <span className="menu-text">{option.text}</span>
           </div>
         ))}
       </div>
-	          <div className='output-results'>
-	            {output.map((line, index) => (
-	              <div key={index}>{line}</div>
-	            ))}
-	          </div>
-	          <form onSubmit={handleInputSubmit} className='terminal-form'>
+      <div className='output-results'>
+        {output.map((line, index) => (
+          <div key={index}>{line}</div>
+        ))}
+      </div>
+      <form onSubmit={handleInputSubmit} className='terminal-form'>
 			  <img  className="terminal-dash" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAALFJREFUSEvt1MERwjAMBMBTJ5QSOoFKSCeUAp1AJxc0k0ceYSLpPJiH88kjnqznfLKh02OdXAz4Z8mPqP83apITgDuAs5m9qztNnTHJE4DXijlaxlOwgyTnz+um4mm4FV6CW+BlWMUlWMFbwD5al03Zrmb2PBozCSZZQn1TZVhBy7CKluAWaBpe7+lHtkh7RUufMUlvsF+ZofZ+a3caPhqT6PcBR5OS142o5QijP+gW9QIRTVIf9c6pFgAAAABJRU5ErkJggg==" alt="dash"/>
 				<input className='terminal-input'
 				  type="text"

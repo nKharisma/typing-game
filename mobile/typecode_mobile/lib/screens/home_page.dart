@@ -70,6 +70,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
       );
 
       if (response.statusCode == 200) {
+        print(jsonDecode(response.body));
         setState(() {
           userStats = jsonDecode(response.body); // Parse the JSON response
           isLoading = false;
@@ -169,41 +170,9 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                 SizedBox(
                   height: 150,
                 ),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      foregroundImage: NetworkImage(
-                        'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Username will go here soon',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          'Level will go here soon',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          'Level progress bar will go here soon',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                CircleAvatar(
+                  radius: 50,
+                  foregroundImage: AssetImage('fonts/tile022_scaled.png'),
                 ),
                 SizedBox(
                   height: 50,
@@ -213,6 +182,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
+                    fontFamily: 'VCR',
                   ),
                 ),
                 isLoading
@@ -225,34 +195,58 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                           ))
                         : Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Score: ${userStats!['score']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Highscore: ${userStats!['highscore']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Words Per Minute: ${userStats!['wordsPerMinute']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Total Words Typed: ${userStats!['totalWordsTyped']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Accuracy: ${userStats!['accuracy']}%',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Levels Completed: ${userStats!['levelsCompleted']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Score: ${userStats!['score']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Highscore: ${userStats!['highScore']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Words Per Minute: ${userStats!['wordsPerMinute']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Total Words Typed: ${userStats!['totalWordsTyped']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Accuracy: ${userStats!['accuracy']}%',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Levels Completed: ${userStats!['levelsCompleted']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontFamily: 'VCR'),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
               ],
@@ -262,124 +256,129 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
 
         /// Leaderboard page
         Container(
-  color: Colors.black, // Background color for the entire screen
-  child: SafeArea(
-    child: Column(
-      children: [
-        const SizedBox(height: 20),
-        const Text(
-          'Leaderboard',
-          style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'VCR'),
-        ),
-        const SizedBox(height: 10),
-        DropdownButton<String>(
-          value: selectedSortBy,
-          dropdownColor: Colors.grey[800],
-          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-          underline: Container(height: 1, color: Colors.white),
-          style: const TextStyle(color: Colors.white, fontFamily: 'VCR'),
-          items: sortByOptions.map((String option) {
-            return DropdownMenuItem<String>(
-              value: option,
-              child: Text(option),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              setState(() {
-                selectedSortBy = newValue;
-              });
-              fetchLeaderboard();
-            }
-          },
-        ),
-        const SizedBox(height: 20),
-        isLeaderboardLoading
-            ? const Center(child: CircularProgressIndicator())
-            : leaderboardErrorMessage != null
-                ? Center(
-                    child: Text(
-                      leaderboardErrorMessage!,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: leaderboardData!.length,
-                      itemBuilder: (context, index) {
-                        final entry = leaderboardData![index];
-                        final rank = index + 1; // Calculate rank
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, // Add vertical spacing
-                            horizontal: 8.0, // Add horizontal spacing
-                          ),
-                          child: Material(
-                            color: Colors.white, // Background color for the tile
-                            borderRadius: BorderRadius.circular(8.0), // Optional: rounded corners
-                            elevation: 2.0, // Optional: adds shadow for a card effect
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              title: Text(
-                                '#$rank: ${entry['name']}',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'VCR',
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'High Score: ${entry['playerdata']['highScore']}\n'
-                                    'Words Per Minute: ${entry['playerdata']['wordsPerMinute']}\n'
-                                    'Total Words Typed: ${entry['playerdata']['totalWordsTyped']}\n'
-                                    'Accuracy: ${entry['playerdata']['accuracy']}\n'
-                                    'Levels Completed: ${entry['playerdata']['levelsCompleted']}',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'VCR',
+          color: Colors.black, // Background color for the entire screen
+          child: SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'Leaderboard',
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 24, fontFamily: 'VCR'),
+                ),
+                const SizedBox(height: 10),
+                DropdownButton<String>(
+                  value: selectedSortBy,
+                  dropdownColor: Colors.grey[800],
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                  underline: Container(height: 1, color: Colors.white),
+                  style:
+                      const TextStyle(color: Colors.white, fontFamily: 'VCR'),
+                  items: sortByOptions.map((String option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        selectedSortBy = newValue;
+                      });
+                      fetchLeaderboard();
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                isLeaderboardLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : leaderboardErrorMessage != null
+                        ? Center(
+                            child: Text(
+                              leaderboardErrorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: leaderboardData!.length,
+                              itemBuilder: (context, index) {
+                                final entry = leaderboardData![index];
+                                final rank = index + 1; // Calculate rank
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, // Add vertical spacing
+                                    horizontal: 8.0, // Add horizontal spacing
+                                  ),
+                                  child: Material(
+                                    color: Colors
+                                        .white, // Background color for the tile
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Optional: rounded corners
+                                    elevation:
+                                        2.0, // Optional: adds shadow for a card effect
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      title: Text(
+                                        '#$rank: ${entry['name']}',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'VCR',
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'High Score: ${entry['playerdata']['highScore']}\n'
+                                            'Words Per Minute: ${entry['playerdata']['wordsPerMinute']}\n'
+                                            'Total Words Typed: ${entry['playerdata']['totalWordsTyped']}\n'
+                                            'Accuracy: ${entry['playerdata']['accuracy']}\n'
+                                            'Levels Completed: ${entry['playerdata']['levelsCompleted']}',
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'VCR',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-      ],
-    ),
-  ),
-),
+              ],
+            ),
+          ),
+        ),
 
-Container(
-  color: Colors.black,
-  child: SafeArea(
-    child: Column(
-      children: [
-        SizedBox(height: 100,),
-        BottomButton(
-          onTap:() {
-                Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                )
-              );
-          },
-        buttonTitle: 'LOGOUT')
-      ],
-    ) 
-  ),
-),
-
-
+        Container(
+          color: Colors.black,
+          child: SafeArea(
+              child: Column(
+            children: [
+              SizedBox(
+                height: 100,
+              ),
+              BottomButton(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ));
+                  },
+                  buttonTitle: 'LOGOUT')
+            ],
+          )),
+        ),
       ][currentPageIndex],
     );
   }
