@@ -95,7 +95,7 @@ export default function DashboardPage()
 			  <div className='terminal-header'>main.tsx</div>
 			  <div className="menuOptions">
         {menuOptions.map((option) => (
-          <div onClick={() => navigate(option.location)} key={option.option}>
+          <div className="menu-option" onClick={() => navigate(option.location)} key={option.option}>
             <span className="menu-number">{option.description}</span>
             <span className="menu-text">{option.text}</span>
           </div>
