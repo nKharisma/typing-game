@@ -1,0 +1,104 @@
+.leaderboard-page__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.leaderboard-page {
+  width: 600px;
+  margin: auto;
+  color: #fff;
+}
+
+.leaderboard-page h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Style for the select element container */
+.leaderboard-page__controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  align-items: center; /* Align label and select vertically */
+}
+
+.leaderboard-page__controls label {
+  margin-right: 10px;
+  color: #fff; /* Match label color with the page's color scheme */
+}
+
+/* Wrapper for the select element to position the custom arrow */
+.custom-select {
+  position: relative;
+  display: inline-block;
+  width: 250px; /* Adjust width as needed */
+}
+
+/* Style for the select element */
+.custom-select select {
+  width: 250px;
+  padding: 8px 12px;
+  font-family: 'Better-VCR';
+  color: white;
+	background-color: rgba(0, 0, 0, 0.1);
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+  border: none;
+  border-radius: 8px; /* Rounded corners */
+  color: #fff; /* Text color */
+  font-size: 16px;
+  cursor: pointer;
+  outline: none; /* Remove default outline */
+  appearance: none; /* Remove default browser styling */
+  -webkit-appearance: none; /* For Safari/Chrome */
+  -moz-appearance: none; /* For Firefox */
+}
+
+/* Custom arrow for the select element */
+.custom-select::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #fff;
+  font-size: 12px;
+}
+
+/* Hover and focus effects */
+.custom-select select:hover,
+.custom-select select:focus {
+	background-color: rgba(40, 40, 40, 0.4);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+	background-color: rgba(0, 0, 0, 0.1);
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+	border: none;
+  border-collapse: separate; /* Use 'separate' to control borders individually */
+  border-spacing: 0; /* Remove spacing between cells */
+  border-radius: 12px; /* Add rounded corners to the table */
+  overflow: hidden; /* Ensure content doesn't overflow the rounded corners */
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  border: none;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.leaderboard-table th {
+  background-color: #121212;
+  color: white;
+}
+
+.leaderboard-table tr:hover {
+	background-color: rgba(40, 40, 40, 0.4);
+}
