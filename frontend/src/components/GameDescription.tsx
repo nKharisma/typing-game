@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import getBackendUrl from "../utils/getBackendUrl";
+import '../css/GameDescription.css'
 
 interface CodeEditorProps {
 	language: string;
@@ -8,6 +9,48 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
 	const [description, setDescription] = useState('');
+
+  const parseDataToHTML = (data: any) => {
+    // Split the string by '\n' to get individual lines
+    const lines = data.split("\n");
+
+    // Map each line into a JSX element
+    return lines.map((line: any, index: any) => {
+      if (line.startsWith("Instructions:")) {
+        return (
+          <>
+            <br />
+            <p key={index}>
+              <strong>Instructions:</strong>
+              {line.replace("Instructions:", "")}
+            </p>
+          </>
+        );
+      } else if (line.startsWith("Input:")) {
+        return (
+          <>
+            <br />
+            <p key={index}>
+              <strong>Input:</strong>
+              {line.replace("Input:", "")}
+            </p>
+          </>
+        );
+      } else if (line.startsWith("Output")) {
+        return (
+          <>
+            <br />
+            <p key={index}>
+              <strong>Output:</strong>
+              {line.replace("Output", "")}
+            </p>
+          </>
+        );
+      } else {
+        return <p key={index}>{line}</p>;
+      }
+    });
+  };
 
   const extension = language === "java" ? ".java" : language === "python" ? ".py" : ".js";
       
@@ -32,8 +75,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
   }, []); // Empty dependency array ensures this runs once on mount
 
 	return (
-		<div>
-      <p>{description}</p>
+		<div className="game-description-text">
+      {parseDataToHTML(description)}
 		</div>
 	);
 };

@@ -1,0 +1,8 @@
+.game-description-text {
+  margin: 10px;
+  font-size: 13px;
+}
+
+.game-description-text p strong {
+  font-weight: bold;
+}

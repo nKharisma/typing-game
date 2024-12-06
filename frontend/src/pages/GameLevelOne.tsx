@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import GameCanvas from '../components/GameCanvas';
 import ConsoleOutput from '../components/ConsoleOutput';
 import CodeEditor from '../components/CodeEditor';
@@ -12,7 +12,7 @@ import '../css/puzzleLayout.css';
 
 const GameLevelOne: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
-  const [gameInfo, setGameInfo] = useState('');
+  // const [gameInfo, setGameInfo] = useState('');
   // const [code, setCode] = useState('');
   // const [isGameLoopRunning, setIsGameLoopRunning] = useState(false);
  //  const [entities, setEntities] = useState<Entity[]>([
@@ -49,12 +49,12 @@ const GameLevelOne: React.FC = () => {
   //   setIsGameLoopRunning(true);
   // };
   
-  useEffect(() => {
-    // if (isGameLoopRunning) {
-        const newGameInfo = 'Game information:\n';
-        setGameInfo(newGameInfo);
-    // }
-  })
+  // useEffect(() => {
+  //   // if (isGameLoopRunning) {
+  //       const newGameInfo = 'Game information:\n';
+  //       // setGameInfo(newGameInfo);
+  //   // }
+  // })
 
   return (
     <div className="container-puzzle">
@@ -63,7 +63,7 @@ const GameLevelOne: React.FC = () => {
         <GameDescription language="javascript" filename="variables"/>
       </div>
         <div className="bottom-left">
-        <ConsoleOutput userOutput={userOutput} gameInfo={gameInfo} />
+        <ConsoleOutput userOutput={userOutput} />
       </div>
       <div className="top-right">
         <CodeEditor language="javascript" theme="monokai" filename="variables" onRunCode={handleRunCode} />
