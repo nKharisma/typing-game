@@ -16,7 +16,8 @@ const GameLevelOne: React.FC = () => {
         },
         body: JSON.stringify({
           language: 'javascript',
-          code,
+          names: "variables",
+          code: code,
         }),
       });
       const data = await response.json();
