@@ -41,7 +41,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
           <>
             <br />
             <p key={index}>
-              <strong>Output:</strong>
+              <strong>Output</strong>
               {line.replace("Output", "")}
             </p>
           </>
