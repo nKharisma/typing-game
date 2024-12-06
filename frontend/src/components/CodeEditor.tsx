@@ -57,8 +57,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
         });
         const data = await response.json();
         setCode(data.getPuzzleResult.code); // Assume `data.code` contains the code from the API response
-        console.log(data);
-        console.log(data.getPuzzleResult.code);
       } catch (error) {
         console.error("Failed to fetch initial code:", error);
       }
