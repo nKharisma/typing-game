@@ -84,6 +84,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
         height="100%"
         setOptions={{
           fontFamily: 'monospace',
+          wrap: true,
         }}
         value={code}
         onChange={setCode}
