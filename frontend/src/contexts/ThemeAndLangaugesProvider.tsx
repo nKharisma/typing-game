@@ -11,7 +11,7 @@ const ThemeAndLanguagesContext = createContext<ThemeAndLanguagesContextType | un
 
 export const ThemeAndLanguagesProvider: React.FC<{ children: ReactNode }> = ({ children}) => {
 	const [theme, setTheme] = useState<string>('monokai');
-	const [language, setLanguage] = useState<string>('javascript');
+	const [language, setLanguage] = useState<string>('java');
 	
 	return (
 		<ThemeAndLanguagesContext.Provider value={{theme, setTheme, language, setLanguage }}>

@@ -2,6 +2,7 @@ import React, { useState, } from 'react';
 import ConsoleOutput from '../components/ConsoleOutput';
 import CodeEditor from '../components/CodeEditor';
 import GameDescription from '../components/GameDescription';
+import getBackendUrl from '../utils/getBackendUrl';
 import '../css/puzzleLayout.css';
 
 const GameLevelOne: React.FC = () => {
@@ -9,14 +10,14 @@ const GameLevelOne: React.FC = () => {
 
   const handleRunCode = async (code: string) => {
     try {
-      const response = await fetch('/api/v1/user/compile', {
+      const response = await fetch(`${getBackendUrl()}/api/v1/user/compile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          language: 'javascript',
-          names: "variables",
+          language: 'java',
+          name: "variables",
           code: code,
         }),
       });
@@ -30,13 +31,13 @@ const GameLevelOne: React.FC = () => {
   return (
     <div className="container-puzzle">
       <div className="top-left">
-        <GameDescription language="javascript" filename="variables"/>
+        <GameDescription language="java" filename="Variables"/>
       </div>
         <div className="bottom-left">
         <ConsoleOutput userOutput={userOutput} />
       </div>
       <div className="right">
-        <CodeEditor language="javascript" theme="monokai" filename="variables" onRunCode={handleRunCode} />
+        <CodeEditor language="java" theme="monokai" filename="Variables" onRunCode={handleRunCode} />
       </div>
     </div>
   );
