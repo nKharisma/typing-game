@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xFF090A0F),
       body: Stack(
         children: [
           const AnimatedBackground(),
@@ -29,9 +29,12 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('fonts/tile022_scaled.png'),
+                  Image.asset(
+                    'fonts/tile022_scaled.png',
+                    width: 100, // Optional: Set width
+                    height: 100, // Optional: Set height
+                    fit: BoxFit
+                        .cover, // Adjust how the image is fitted in its box
                   ),
                   const SizedBox(height: 50),
                   Padding(
@@ -237,7 +240,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 20),
     )..repeat();
     _stars = [];
   }
@@ -292,10 +295,13 @@ class StarPainter extends CustomPainter {
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    for (final star in stars) {
-      final dx = star.dx + 10 * sin(animationValue * 2 * pi);
-      final dy = star.dy + 10 * cos(animationValue * 2 * pi);
-      canvas.drawCircle(Offset(dx, dy), 2, paint);
+    for (int i = 0; i < stars.length; i++) {
+      final star = stars[i];
+      // Move the star upward
+      final dy = star.dy - animationValue * size.height;
+      final adjustedDy =
+          dy < 0 ? dy + size.height : dy; // Wrap around to bottom
+      canvas.drawCircle(Offset(star.dx, adjustedDy), 2, paint);
     }
   }
 

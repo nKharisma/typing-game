@@ -154,9 +154,9 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
             label: 'Leaderboard',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.settings),
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            selectedIcon: Icon(Icons.document_scanner),
+            icon: Icon(Icons.document_scanner_outlined),
+            label: 'Resources',
           ),
         ],
       ),
@@ -172,19 +172,18 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                   SizedBox(
                     height: 150,
                   ),
-                  CircleAvatar(
-                    radius: 50,
-                    foregroundImage: AssetImage('fonts/tile022_scaled.png'),
-                  ),
                   SizedBox(
                     height: 50,
                   ),
-                  Text(
-                    'my_stats.tsx',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'VCR',
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'my_stats.tsx',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'VCR',
+                      ),
                     ),
                   ),
                   isLoading
@@ -198,7 +197,7 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                           : Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Align(
-                                alignment: Alignment.centerLeft,
+                                alignment: Alignment.center,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -257,6 +256,16 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                                 ),
                               ),
                             ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Image.asset(
+                    'fonts/tile022_scaled.png',
+                    width: 100, // Optional: Set width
+                    height: 100, // Optional: Set height
+                    fit: BoxFit
+                        .cover, // Adjust how the image is fitted in its box
+                  ),
                 ],
               ),
             ),
@@ -439,7 +448,6 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                   height: 100,
                 ),
                 Expanded(child: ResourcesPage()),
-                
                 BottomButton(
                     onTap: () {
                       Navigator.push(
@@ -449,7 +457,9 @@ class _MainAppNavigationState extends State<MainAppNavigation> {
                           ));
                     },
                     buttonTitle: 'LOGOUT'),
-                    SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
               ],
             )),
           ],
@@ -475,7 +485,11 @@ class ResourcesPage extends StatelessWidget {
       children: [
         Text(
           'Coding Resources',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'VCR'),
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'VCR'),
         ),
         SizedBox(height: 20),
         Expanded(
@@ -485,7 +499,12 @@ class ResourcesPage extends StatelessWidget {
               final topic = topics[index];
               return Card(
                 child: ListTile(
-                  title: Text(topic["title"]!),
+                  title: Text(
+                    topic["title"]!,
+                    style: TextStyle(
+                      fontFamily: 'VCR',
+                    ),
+                  ),
                   trailing: Icon(Icons.arrow_forward),
                   onTap: () {
                     Navigator.push(
@@ -508,114 +527,178 @@ class ResourcesPage extends StatelessWidget {
 final Map<String, Map<String, Map<String, String>>> resources = {
   "variables": {
     "Java": {
-      "explanation":
-          "Variables in Java are used to store data values. Each variable has a specific data type.",
-      "example": "int age = 25;\nString name = \"John\";"
-    },
-    "JavaScript": {
-      "explanation":
-          "Variables in JavaScript are containers for storing data values. You can use `var`, `let`, or `const`.",
-      "example": "let age = 25;\nconst name = \"John\";"
-    },
-    "Python": {
-      "explanation":
-          "Variables in Python are dynamically typed, meaning you don’t need to declare their type.",
-      "example": "age = 25\nname = \"John\""
+      "explanation": """
+Variables in Java are used to store data. Each variable has a specific data type, such as int, double, or String. 
+
+Types of variables:
+1. Local: Declared inside methods and accessible only within their scope.
+2. Instance: Declared in a class and tied to an object.
+3. Static: Declared with the static keyword and shared across all objects of a class.
+    """,
+      "example": """
+// Local variable
+void displayAge() {
+    int age = 25;
+    System.out.println("Age: " + age);
+}
+
+// Instance variable
+class Person {
+    String name;
+    int age;
+}
+
+// Static variable
+class Counter {
+    static int count = 0;
+}
+    """
     },
   },
   "conditionals": {
     "Java": {
-      "explanation":
-          "Conditional statements in Java allow you to execute different blocks of code based on conditions.",
-      "example":
-          "if (age > 18) {\n  System.out.println(\"Adult\");\n} else {\n  System.out.println(\"Minor\");\n}"
-    },
-    "JavaScript": {
-      "explanation":
-          "Conditional statements in JavaScript include `if`, `else`, and `else if`.",
-      "example":
-          "if (age > 18) {\n  console.log(\"Adult\");\n} else {\n  console.log(\"Minor\");\n}"
-    },
-    "Python": {
-      "explanation":
-          "Python uses indentation to define blocks of code for conditionals.",
-      "example": "if age > 18:\n  print(\"Adult\")\nelse:\n  print(\"Minor\")"
+      "explanation": """
+Conditional statements allow the execution of specific blocks of code based on conditions. Java supports several conditional constructs:
+1. if-else: Executes a block of code if a condition is true; otherwise, executes another block.
+2. switch: Evaluates a variable against multiple possible values (cases).
+3. Ternary Operator: A concise way to write simple conditional logic.
+
+Conditionals are essential for decision-making in programs.
+      """,
+      "example": """
+// if-else
+if (age > 18) {
+    System.out.println("Adult");
+} else if (age == 18) {
+    System.out.println("Just turned adult");
+} else {
+    System.out.println("Minor");
+}
+
+// switch
+String grade = "A";
+switch (grade) {
+    case "A":
+        System.out.println("Excellent");
+        break;
+    case "B":
+        System.out.println("Good");
+        break;
+    default:
+        System.out.println("Needs Improvement");
+}
+      """
     },
   },
   "loops": {
     "Java": {
-      "explanation":
-          "Loops in Java allow you to execute a block of code multiple times. Common loops are `for`, `while`, and `do-while`.",
-      "example":
-          "for (int i = 0; i < 5; i++) {\n  System.out.println(i);\n}\n\nint i = 0;\nwhile (i < 5) {\n  System.out.println(i);\n  i++;\n}"
-    },
-    "JavaScript": {
-      "explanation":
-          "JavaScript loops include `for`, `while`, and `do...while`. There are also enhanced loops like `for...of` and `for...in`.",
-      "example":
-          "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n\nlet i = 0;\nwhile (i < 5) {\n  console.log(i);\n  i++;\n}"
-    },
-    "Python": {
-      "explanation":
-          "Python loops include `for` and `while`. The `range()` function is commonly used in `for` loops.",
-      "example":
-          "for i in range(5):\n  print(i)\n\ni = 0\nwhile i < 5:\n  print(i)\n  i += 1"
+      "explanation": """
+Loops are constructs that allow the execution of a block of code repeatedly. Java offers three primary looping constructs:
+1. for: Ideal for when the number of iterations is known.
+2. while: Executes as long as the condition remains true.
+3. do-while: Similar to while, but guarantees the loop body executes at least once.
+
+Loops often involve counters or conditions that determine when to stop the iteration.
+      """,
+      "example": """
+// for loop
+for (int i = 0; i < 5; i++) {
+    System.out.println("Iteration: " + i);
+}
+
+// while loop
+int i = 0;
+while (i < 5) {
+    System.out.println("Iteration: " + i);
+    i++;
+}
+
+// do-while loop
+int j = 0;
+do {
+    System.out.println("Iteration: " + j);
+    j++;
+} while (j < 5);
+      """
     },
   },
   "strings": {
     "Java": {
-      "explanation":
-          "Strings in Java are objects that represent a sequence of characters. They are immutable.",
-      "example":
-          "String message = \"Hello, World!\";\nSystem.out.println(message.toUpperCase());"
-    },
-    "JavaScript": {
-      "explanation":
-          "Strings in JavaScript are used to store text and can be manipulated using various methods.",
-      "example":
-          "let message = \"Hello, World!\";\nconsole.log(message.toUpperCase());"
-    },
-    "Python": {
-      "explanation":
-          "Strings in Python are sequences of characters and support many built-in methods.",
-      "example": "message = \"Hello, World!\"\nprint(message.upper())"
+      "explanation": """
+Strings in Java are sequences of characters enclosed in double quotes. They are immutable, meaning their content cannot be changed once created. Modifying a string creates a new object.
+
+Strings offer rich methods for manipulation:
+1. Concatenation: Joining strings using + or concat().
+2. Transformation: Changing case, trimming spaces, replacing characters.
+3. Analysis: Checking length, comparing strings, finding substrings.
+      """,
+      "example": """
+String greeting = "Hello, ";
+String name = "John";
+String fullGreeting = greeting + name;
+
+System.out.println(fullGreeting); // Outputs "Hello, John"
+System.out.println(fullGreeting.length()); // Outputs 11
+System.out.println(fullGreeting.toUpperCase()); // Outputs "HELLO, JOHN"
+System.out.println(fullGreeting.contains("John")); // Outputs true
+      """
     },
   },
   "arrays": {
     "Java": {
-      "explanation":
-          "Arrays in Java are used to store multiple values of the same type in a single variable.",
-      "example":
-          "int[] numbers = {1, 2, 3, 4, 5};\nSystem.out.println(numbers[0]);"
-    },
-    "JavaScript": {
-      "explanation":
-          "Arrays in JavaScript are dynamic and can hold values of different types.",
-      "example": "let numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers[0]);"
-    },
-    "Python": {
-      "explanation":
-          "Lists in Python are used as arrays and can store values of different types.",
-      "example": "numbers = [1, 2, 3, 4, 5]\nprint(numbers[0])"
+      "explanation": """
+An array is a collection of elements of the same data type stored in contiguous memory. Arrays have a fixed size, which must be specified when creating them.
+
+Key operations include:
+1. Accessing elements: Using an index (starting at 0).
+2. Iterating through elements: Using loops.
+3. Manipulating elements: Updating values.
+      """,
+      "example": """
+int[] numbers = {1, 2, 3, 4, 5}; // Declare and initialize
+System.out.println(numbers[0]); // Access the first element
+
+// Loop through array
+for (int num : numbers) {
+    System.out.println(num);
+}
+
+// Update an element
+numbers[2] = 10; // Update the third element
+System.out.println(numbers[2]); // Outputs 10
+      """
     },
   },
   "functions": {
     "Java": {
-      "explanation":
-          "Functions (methods) in Java are blocks of code that perform specific tasks and can return values.",
-      "example":
-          "public static int add(int a, int b) {\n  return a + b;\n}\n\nSystem.out.println(add(3, 5));"
-    },
-    "JavaScript": {
-      "explanation":
-          "Functions in JavaScript are blocks of reusable code that perform a specific task.",
-      "example":
-          "function add(a, b) {\n  return a + b;\n}\n\nconsole.log(add(3, 5));"
-    },
-    "Python": {
-      "explanation":
-          "Functions in Python are defined using the `def` keyword and can return values.",
-      "example": "def add(a, b):\n  return a + b\n\nprint(add(3, 5))"
+      "explanation": """
+Functions, or methods, in Java encapsulate reusable blocks of code. A method can have parameters, return a value, or perform specific tasks.
+
+Types of methods:
+1. Static Methods: Called on the class itself without creating an object.
+2. Instance Methods: Require an object to invoke.
+3. Main Method: The entry point for every Java program.
+      """,
+      "example": """
+// Static method
+public static int add(int a, int b) {
+    return a + b;
+}
+
+// Instance method
+class Calculator {
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+}
+
+public static void main(String[] args) {
+    System.out.println(add(3, 5)); // Static method call
+
+    Calculator calc = new Calculator(); // Create an object
+    System.out.println(calc.multiply(3, 5)); // Instance method call
+}
+      """
     },
   },
 };
@@ -631,63 +714,113 @@ class ResourceDetailPage extends StatelessWidget {
     final resource = resources[topicName];
 
     return Scaffold(
+      extendBodyBehindAppBar:
+          true, // Allow the body to extend behind the AppBar
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      backgroundColor: Colors.black,
+      backgroundColor:
+          Color(0xFF090A0F), // Set background color of Scaffold to avoid purple
       body: Stack(
         children: [
-          // Ensure this renders and animates correctly
+          // Animated background
           const AnimatedBackground(),
 
-          // SafeArea to avoid overlaps with system UI
+          // Content using CustomScrollView for better control
           SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: ListView(
-                shrinkWrap: true, // Ensure ListView only takes necessary space
-                physics: BouncingScrollPhysics(), // Add smooth scrolling
-                children: resource!.entries.map((entry) {
-                  final language = entry.key;
-                  final content = entry.value;
-              
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '** $language **',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Explanation:',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      Text(content["explanation"]!, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-                      SizedBox(height: 10),
-                      Text(
-                        'Example:',
-                        style: TextStyle(fontWeight: FontWeight.normal, color: Colors.white),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(5),
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Topic name as title
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            topicName.toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'VCR',
+                            ),
+                          ),
                         ),
-                        child: Text(
-                          content["example"]!,
-                          style: TextStyle(fontFamily: 'monospace'),
-                        ),
-                      ),
-                      Divider(),
-                    ],
-                  );
-                }).toList(),
-              ),
+                        const SizedBox(height: 20),
+
+                        // ListView for resource content
+                        ...resource!.entries.map((entry) {
+                          final language = entry.key;
+                          final content = entry.value;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '** $language **',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                'Explanation:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                content["explanation"]!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                'Example:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  content["example"]!,
+                                  style:
+                                      const TextStyle(fontFamily: 'monospace'),
+                                ),
+                              ),
+                              const Divider(),
+                            ],
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -21,8 +21,6 @@ class _EmailverPageState extends State<EmailverPage> {
   bool isLoading = false;
   String? errorMessage;
 
-  
-
   void initState() {
     super.initState();
     _sendVerificationCode(forceResend: false);
@@ -118,108 +116,116 @@ class _EmailverPageState extends State<EmailverPage> {
     double width = MediaQuery.sizeOf(context).width;
     double percent = 0.85;
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack( 
-      
-      children: [
-        const AnimatedBackground(),
-        SafeArea(
-        child: Column(children: [
-          SizedBox(
-            height: 50,
-          ),
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('fonts/tile022_scaled.png'),
-          ),
-          SizedBox(
-            height: 80,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'A verification code has been sent to ${useremail}.',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'VCR',
-                            fontSize: 14),
-                      ),
-                      if (errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            errorMessage!,
-                            style: const TextStyle(color: Colors.red),
+      backgroundColor: Color(0xFF090A0F),
+      body: Stack(
+        children: [
+          const AnimatedBackground(),
+          SafeArea(
+            child: Column(children: [
+              SizedBox(
+                height: 50,
+              ),
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: AssetImage('fonts/tile022_scaled.png'),
+              ),
+              SizedBox(
+                height: 80,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'A verification code has been sent to ${useremail}.',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'VCR',
+                                fontSize: 14),
                           ),
-                        ),
-                      const SizedBox(height: 20),
-                      Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1),
-            child: Row(
-              children: [
-                Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                SizedBox(
-                  width: width * percent,
-                  child: TextFormField(
-                    controller: _codeController, // Attach the controller
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'VCR',
-                      fontSize: 14,
-                    ),
-                    decoration: InputDecoration(
-                      prefixIcon:
-                          Icon(Icons.lock_outlined, color: Colors.grey),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                          if (errorMessage != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: Row(
+                              children: [
+                                Icon(Icons.arrow_forward_ios,
+                                    color: Colors.grey),
+                                SizedBox(
+                                  width: width * percent,
+                                  child: TextFormField(
+                                    controller:
+                                        _codeController, // Attach the controller
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'VCR',
+                                      fontSize: 14,
+                                    ),
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(Icons.lock_outlined,
+                                          color: Colors.grey),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.grey),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.white),
+                                      ),
+                                      hintText: 'Enter your verification code',
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'VCR',
+                                      ),
+                                    ),
+                                    //obscureText: true, // Mask the password input
+                                    keyboardType: TextInputType.text,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: _checkVerificationCode,
+                            child: const Text(
+                              'Verify',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                  fontSize: 14),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                _sendVerificationCode(forceResend: true),
+                            child: const Text(
+                              'Resend Code',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'VCR',
+                                  fontSize: 14),
+                            ),
+                          ),
+                        ],
                       ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      hintText: 'Enter your verification code',
-                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
-                    ),
-                    //obscureText: true, // Mask the password input
-                    keyboardType: TextInputType.text,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ]),
           ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: _checkVerificationCode,
-                        child: const Text(
-                          'Verify',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'VCR',
-                              fontSize: 14),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () =>
-                            _sendVerificationCode(forceResend: true),
-                        child: const Text(
-                          'Resend Code',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'VCR',
-                              fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ]),
-      ),
-      ],
+        ],
       ),
     );
   }
