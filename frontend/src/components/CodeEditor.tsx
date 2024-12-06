@@ -71,21 +71,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
       
 	return (
 		<div>
-			<AceEditor
+			<AceEditor className="code-editor-container"
 			mode={languageMode}
 			theme={editorTheme}
 			name="code-editor"
 			editorProps={{ $blockScrolling: true}}
 			fontSize ={14}
 			width="100%"
-			height="400px"
 			setOptions={{
 				fontFamily: 'monospace',
 			}}
 			value={code}
 			onChange={setCode}
 		/>
-		<button onClick={handleRunCode}>Run</button>
+		<button className="button-container" onClick={handleRunCode}>Run</button>
 		</div>
 	);
 };
