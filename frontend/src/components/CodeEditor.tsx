@@ -4,7 +4,11 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-noconflict/theme-ambiance";
+import "ace-builds/src-noconflict/theme-chaos";
+import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-github_dark";
 import "ace-builds/src-noconflict/theme-tomorrow";
 import "ace-builds/src-noconflict/theme-kuroir";
 import "ace-builds/src-noconflict/theme-twilight";
@@ -12,39 +16,28 @@ import "ace-builds/src-noconflict/theme-xcode";
 import "ace-builds/src-noconflict/theme-solarized_dark";
 import "ace-builds/src-noconflict/theme-solarized_light";
 import "ace-builds/src-noconflict/theme-terminal";
+import "ace-builds/src-noconflict/theme-clouds_midnight";
 import '../css/CodeEditor.css'
 import getBackendUrl from "../utils/getBackendUrl";
 
 interface CodeEditorProps {
 	language: string;
-	theme: string;
+	initialTheme: string;
   filename: string;
 	onRunCode: (code: string) => void;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRunCode }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ language, initialTheme, filename, onRunCode }) => {
 	const [code, setCode] = useState('');
+	const [theme, setTheme] = useState(initialTheme);
+	
+	const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+	  setTheme(event.target.value);
+	}
 
 	const languageMode = language === "java" ? "java" : language === "python" ? "python" : "javascript";
   const extension = language === "java" ? ".java" : language === "python" ? ".py" : ".js";
-	const editorTheme =
-    theme === 'monokai'
-      ? 'monokai'
-      : theme === 'github'
-      ? 'github'
-      : theme === 'tomorrow'
-      ? 'tomorrow'
-      : theme === 'kuroir'
-      ? 'kuroir'
-      : theme === 'twilight'
-      ? 'twilight'
-      : theme === 'xcode'
-      ? 'xcode'
-      : theme === 'solarized dark'
-      ? 'solarized_dark'
-      : theme === 'solarized light'
-      ? 'solarized_light'
-      : 'terminal';
+	
       
   useEffect(() => {
     const fetchInitialCode = async () => {
@@ -64,7 +57,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
     };
 
     fetchInitialCode();
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []); 
 
   const handleRunCode = () => {
     onRunCode(code);
@@ -72,11 +65,30 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
       
 	return (
 		<div className="code-editor-container">
+		<div className="code-editor-header">
+		<div className="blue-bug"></div>
       <button className="code-editor-run-button" onClick={handleRunCode}>Run</button>
+      <label htmlFor="theme-select">Select Theme:</label>
+      <select id="theme-select" className="code-editor-theme-select" value={theme} onChange={handleThemeChange}>
+          <option value="monokai">Monokai</option>
+          <option value="ambiance">Ambiance</option>
+          <option value="chaos">Chaos</option>
+          <option value="dracula">Dracula</option>
+          <option value="github">GitHub</option>
+          <option value="tomorrow">Tomorrow</option>
+          <option value="kuroir">Kuroir</option>
+          <option value="twilight">Twilight</option>
+          <option value="xcode">Xcode</option>
+          <option value="solarized_dark">Solarized Dark</option>
+          <option value="solarized_light">Solarized Light</option>
+          <option value="terminal">Terminal</option>
+          <option value="clouds_midnight">Clouds</option>
+        </select>
+        </div>
 			<AceEditor 
         className="code-editor"
         mode={languageMode}
-        theme={editorTheme}
+        theme={theme}
         name="code-editor"
         editorProps={{ $blockScrolling: true}}
         fontSize ={14}

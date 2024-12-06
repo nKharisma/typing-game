@@ -9,7 +9,8 @@
 .code-editor-run-button {
   font-family: 'Better-VCR';
   width: fit-content;
-  padding: 12px;
+  padding: 10px;
+  margin-right: 20px;
   background-color: #4a90e2;
   color: #ffffff;
   border: none;
@@ -20,5 +21,25 @@
 }
 
 .code-editor-run-button:hover {
-  background-color: #357abd;
+  background-color: #3265ff;
+}
+
+.code-editor-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-bottom: 1px solid #ccc;
+	margin-top: 5px;
+	padding-bottom: 5px;
+}
+
+.code-editor-header label {
+  color: white;
+}
+
+.code-editor-theme-select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: monospace;
 }
