@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:typecode_mobile/screens/emailver_page.dart';
 import 'package:typecode_mobile/screens/login_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -29,14 +30,16 @@ class _SignupPageState extends State<SignupPage> {
         backgroundColor: Colors.transparent,
       ),
       backgroundColor: Colors.black,
-      body: SafeArea(
+      body: Stack(
+        
+        children: [
+      const AnimatedBackground(),
+      SafeArea(
         child: Column(children: [
-          CircleAvatar(
-            radius: 50,
-            foregroundImage: NetworkImage(
-              'https://lh3.googleusercontent.com/pw/AP1GczOcQAD9wLyYBAEt9cr-1tcNmki2EsNQj54oDdrukKsl0c44yFXx-uO-PvxT59fq1ZjZcOBanU8TZJHFzW-gesgIQj2cwwIne1WKPH74Zi09ur6HBqGa-AXmwz3U9hCiEQFQ6NcyFR-vsrXs39MAhiHaNA=w962-h1277-s-no-gm?authuser=0',
-            ),
-          ),
+          const CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('fonts/tile022_scaled.png'),
+                  ),
           SizedBox(
             height: 80,
           ),
@@ -64,7 +67,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       hintText: 'Enter your first name',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
                     ),
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -98,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       hintText: 'Enter your last name',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
                     ),
                     //obscureText: true, // Mask the password input
                     keyboardType: TextInputType.text,
@@ -132,7 +135,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       hintText: 'Enter your email',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
                     ),
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -166,7 +169,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       hintText: 'Enter your username',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
                     ),
                     //obscureText: true, // Mask the password input
                     keyboardType: TextInputType.text,
@@ -200,7 +203,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderSide: BorderSide(color: Colors.white),
                       ),
                       hintText: 'Enter your password',
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white, fontFamily: 'VCR',),
                     ),
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -215,10 +218,37 @@ class _SignupPageState extends State<SignupPage> {
           BottomButton(
             buttonTitle: 'Register',
             onTap: () async {
+              
+              if (firstnameController.text.trim().isEmpty ||
+        lastnameController.text.trim().isEmpty ||
+        emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Validation Error'),
+            content: Text('All fields are required.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return; // Stop execution if fields are empty
+    }
+
+              
               try {
+                print("Email being sent: ${emailController.text.trim()}");
                 final response = await http.post(
                   Uri.parse(
-                      'https://typecode.app/api/signup'), // replace with your API URL
+                      'https://typecode.app/api/v1/user/register'), // replace with your API URL
                   headers: <String, String>{
                     'Content-Type': 'application/json',
                   },
@@ -226,17 +256,18 @@ class _SignupPageState extends State<SignupPage> {
                     'firstName': firstnameController.text.trim(),
                     'lastName': lastnameController.text.trim(),
                     'email': emailController.text.trim(),
-                    'login': usernameController.text.trim(),
                     'password': passwordController.text.trim(),
                   }),
                 );
 
-                if (response.statusCode == 200) {
+                if (response.statusCode == 201) {
                   final user = jsonDecode(response.body);
+                  
+                  print("Email being sent inside of 200: ${emailController.text.trim()}");
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LoginPage(),
+                      builder: (context) => EmailverPage(email: emailController.text.trim(),),
                     ),
                   );
                 } else {
@@ -246,7 +277,7 @@ class _SignupPageState extends State<SignupPage> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text('Signup Failed'),
-                        content: Text(jsonDecode(response.body)['error']),
+                        content: Text(jsonDecode(response.body)['message']),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
@@ -283,6 +314,8 @@ class _SignupPageState extends State<SignupPage> {
           ),
         ]),
       ),
+        ],
+    ),
     );
 
     //throw UnimplementedError();
