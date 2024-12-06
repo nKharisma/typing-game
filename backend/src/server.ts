@@ -568,7 +568,7 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
     if(response.data.run.stdout.trim() == getTestCaseResult.expectedOutput){
       return res.status(200).json({ status: "PASS", output: response.data.run.stdout, expected: getTestCaseResult.expectedOutput });
     } 
-    else if (!response.data.run.output || response.data.run.output == '\n'){
+    else if (!response.data.run.output || response.data.run.stdout === '\n'){
       return res.status(400).json({ status: "FAIL", output: "<EMPTY_OUTPUT>", expected: getTestCaseResult.expectedOutput });
     } else {
       return res.status(400).json({ status: "FAIL", output: response.data.run.output, expected: getTestCaseResult.expectedOutput });
