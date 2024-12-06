@@ -56,7 +56,7 @@ const GameLevelOne: React.FC = () => {
   })
 
   return (
-    <div className="container">
+    <div className="container-puzzle">
       <div className="top-left">
         <GameCanvas />
         </div>
