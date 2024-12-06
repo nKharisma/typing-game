@@ -125,10 +125,13 @@ class _EmailverPageState extends State<EmailverPage> {
               SizedBox(
                 height: 50,
               ),
-              const CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('fonts/tile022_scaled.png'),
-              ),
+              Image.asset(
+                    'fonts/tile022_scaled.png',
+                    width: 100, // Optional: Set width
+                    height: 100, // Optional: Set height
+                    fit: BoxFit
+                        .cover, // Adjust how the image is fitted in its box
+                  ),
               SizedBox(
                 height: 80,
               ),
