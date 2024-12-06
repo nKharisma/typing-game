@@ -544,14 +544,14 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
 
   if(!language || !code)
   {
-    res.status(400).json({error: "Invalid input: language and code are required"});
+    return res.status(400).json({error: "Invalid input: language and code are required"});
   }
 
   const testCaseName = "testCase_" + name;
   const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
 
   if(getTestCaseErr){
-    res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
+    return res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
   }
 
   // Try to call Piston's API for compilation
@@ -566,16 +566,15 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
     });
 
     if(response.data.run.stdout.trim() == getTestCaseResult.expectedOutput){
-      res.status(200).json({ status: "PASS", output: response.data.run.stdout, expected: getTestCaseResult.expectedOutput });
+      return res.status(200).json({ status: "PASS", output: response.data.run.stdout, expected: getTestCaseResult.expectedOutput });
     } 
     else if (!response.data.run.output){
-      res.status(400).json({ status: "FAIL", output: "<EMPTY_OUTPUT>", expected: getTestCaseResult.expectedOutput });
+      return res.status(400).json({ status: "FAIL", output: "<EMPTY_OUTPUT>", expected: getTestCaseResult.expectedOutput });
     } else {
-      res.status(400).json({ status: "FAIL", output: response.data.run.output, expected: getTestCaseResult.expectedOutput });
+      return res.status(400).json({ status: "FAIL", output: response.data.run.output, expected: getTestCaseResult.expectedOutput });
     }
 
-  }catch(error)
-  {
+  } catch(error) {
     console.log(error);
     res.status(400).json({error: "Error while trying to compile the code"});
   }
@@ -589,15 +588,15 @@ expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
   const [getPuzzleErr, getPuzzleResult] = await getPuzzleDocumentFromName(filename);
   
   if(!filename) {
-    res.status(400).json({error: "Missing required field: filename"});
+    return res.status(400).json({error: "Missing required field: filename"});
   }
   
   if(getPuzzleErr) {
-    res.status(400).json({error: "Error while fetching puzzle", message: getPuzzleErr});
+    return res.status(400).json({error: "Error while fetching puzzle", message: getPuzzleErr});
   }
   
   if(!getPuzzleResult){
-    res.status(400).json({error: "Puzzle not found under given file name"});
+    return res.status(400).json({error: "Puzzle not found under given file name"});
   }
 
   res.status(200).json({ getPuzzleResult })
@@ -628,7 +627,7 @@ expressServer.post('/api/v1/user/get-expected-output', async (req: any, res: any
   const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
 
   if(getTestCaseErr){
-    res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
+    return res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
   }
 
   res.status(200).json({ expected: getTestCaseResult.expectedOutput });
