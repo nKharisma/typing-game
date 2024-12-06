@@ -8,6 +8,7 @@ import '../css/puzzleLayout.css';
 const GameLevelOne: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
   const [expectedOutput, setExpectedOutput] = useState('');
+  const [status, setStatus] = useState('FAIL');
 
   useEffect(() => {
     const getExpectedOutput = async () => {
@@ -31,6 +32,7 @@ const GameLevelOne: React.FC = () => {
   }, []);
 
   const handleRunCode = async (code: string) => {
+    setStatus('Testing...');
     try {
       const response = await fetch(`${getBackendUrl()}/api/v1/user/compile`, {
         method: 'POST',
@@ -45,7 +47,9 @@ const GameLevelOne: React.FC = () => {
       });
       const data = await response.json();
       setUserOutput(data.output || data.error);
+      setStatus(data.status);
     } catch (error) {
+      setStatus('Error...');
       setUserOutput('Error executing code');
     }
   };
@@ -56,7 +60,7 @@ const GameLevelOne: React.FC = () => {
         <GameDescription language="java" filename="Variables"/>
       </div>
         <div className="bottom-left">
-        <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} />
+        <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} status={status} />
       </div>
       <div className="right">
         <CodeEditor language="java" theme="monokai" filename="Variables" onRunCode={handleRunCode} />

@@ -4,3 +4,20 @@
   border-radius: 6px;
   background-color: #111;
 }
+
+.console-container-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.console-container-status {
+
+}
+
+.pass {
+  color: green;
+}
+
+.fail {
+  color: red;
+}
