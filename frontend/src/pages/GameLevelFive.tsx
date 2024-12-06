@@ -5,7 +5,7 @@ import GameDescription from '../components/GameDescription';
 import getBackendUrl from '../utils/getBackendUrl';
 import '../css/puzzleLayout.css';
 
-const GameLevelOne: React.FC = () => {
+const GameLevelFive: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [status, setStatus] = useState('');
@@ -69,4 +69,4 @@ const GameLevelOne: React.FC = () => {
   );
 };
 
-export default GameLevelOne;
+export default GameLevelFive;
