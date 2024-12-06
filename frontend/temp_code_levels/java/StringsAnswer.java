@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class StringsAnswer {
+public class StringsAns {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -10,8 +10,7 @@ public class StringsAnswer {
 
         // Input
         // A single string 'message', which represents the intercepted distress signal
-        System.out.print("Enter the intercepted message: ");
-        String message = scanner.nextLine();
+        String message = scanner.nextLine().trim(); // Trim any unnecessary whitespace or newlines
 
         // Initialize a StringBuilder to store the decoded message
         StringBuilder decodedMessage = new StringBuilder();
@@ -35,7 +34,8 @@ public class StringsAnswer {
         // --- End of User Submission Area ---
 
         // Output the decoded message
-        System.out.println("Decoded message: " + decodedMessage.toString());
+        String finalMessage = decodedMessage.toString().trim();
+        System.out.print(finalMessage);
 
         // Closing scanner
         scanner.close();
