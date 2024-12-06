@@ -63,7 +63,7 @@ const GameLevelOne: React.FC = () => {
         <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} status={status} />
       </div>
       <div className="right">
-        <CodeEditor language="java" initialTheme="twilight" filename="variables" onRunCode={handleRunCode} />
+        <CodeEditor language="java" initialTheme="twilight" filename="Variables" onRunCode={handleRunCode} />
       </div>
     </div>
   );
