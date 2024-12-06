@@ -4,26 +4,26 @@ import ConsoleOutput from '../components/ConsoleOutput';
 import CodeEditor from '../components/CodeEditor';
 //import RunTestCase from './RunTestCase';
 import '../css/puzzleLayout.css';
-interface Entity {
-	type: string;
-	name: string;
-}
+// interface Entity {
+// 	type: string;
+// 	name: string;
+// }
 
 const GameLevelOne: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
   const [gameInfo, setGameInfo] = useState('');
-  const [code, setCode] = useState('');
-  const [isGameLoopRunning, setIsGameLoopRunning] = useState(false);
-  const [entities, setEntities] = useState<Entity[]>([
-    { type: 'enemy', name: "X-Wing" },
-	{ type: 'enemy', name: 'TIE-Fighter'},
-	{ type: 'enemy', name: 'Star Destoryer'},
-	{ type: 'enemy', name: 'Death Star'},
-	{ type: 'enemy', name: 'AT-AT'},
-	{ type: 'enemy', name: 'Millenium Falcon'},
-	{ type: 'enemy', name: 'Nebulon-B'},
-	{ type: 'enemy', name: 'U-Wing'},
-  ]);
+  // const [code, setCode] = useState('');
+  // const [isGameLoopRunning, setIsGameLoopRunning] = useState(false);
+ //  const [entities, setEntities] = useState<Entity[]>([
+ //    { type: 'enemy', name: "X-Wing" },
+	// { type: 'enemy', name: 'TIE-Fighter'},
+	// { type: 'enemy', name: 'Star Destoryer'},
+	// { type: 'enemy', name: 'Death Star'},
+	// { type: 'enemy', name: 'AT-AT'},
+	// { type: 'enemy', name: 'Millenium Falcon'},
+	// { type: 'enemy', name: 'Nebulon-B'},
+	// { type: 'enemy', name: 'U-Wing'},
+ //  ]);
 
   const handleRunCode = async (code: string) => {
     try {
@@ -44,15 +44,15 @@ const GameLevelOne: React.FC = () => {
     }
   };
 
-  const handleRunTestCase = () => {
-    setIsGameLoopRunning(true);
-  };
+  // const handleRunTestCase = () => {
+  //   setIsGameLoopRunning(true);
+  // };
   
   useEffect(() => {
-    if (isGameLoopRunning) {
+    // if (isGameLoopRunning) {
         const newGameInfo = 'Game information:\n';
         setGameInfo(newGameInfo);
-    }
+    // }
   })
 
   return (
