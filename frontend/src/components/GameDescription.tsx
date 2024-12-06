@@ -46,6 +46,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
             </p>
           </>
         );
+      } else if (line.startsWith("Challenge Input:")) {
+        return (
+          <>
+            <br />
+            <p key={index}>
+              <strong>Challenge Input:</strong>
+              {line.replace("Challenge Input:", "")}
+            </p>
+          </>
+        );
       } else {
         return <p key={index}>{line}</p>;
       }

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/ConsoleContainer.css'
 
 interface ConsoleOutputProps {
   expectedOutput: string;
@@ -7,11 +8,11 @@ interface ConsoleOutputProps {
 
 const ConsoleOutput: React.FC<ConsoleOutputProps> = ({ expectedOutput, userOutput }) => {
 	return (
-		<div>
-			<h4>Expected Output</h4>
+		<div className='console-container'>
+			<h4>Expected Output:</h4>
 			<p>{expectedOutput}</p>
       <br/>
-			<h4>User Output</h4>
+			<h4>User Output:</h4>
 			<p>{userOutput}</p>
 		</div>
 	);

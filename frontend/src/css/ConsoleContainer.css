@@ -1,0 +1,6 @@
+.console-container p {
+  padding: 8px;
+  margin: 4px;
+  border-radius: 6px;
+  background-color: #111;
+}
