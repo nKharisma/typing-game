@@ -39,7 +39,7 @@ export default function PreGamePage() {
         <div className='game-levels-page__block'>
           <div className='game-levels-page__block-text-container'>
             <h1>Arrays</h1>
-            <p>Learn to use arrays to organize and access collections of items with ease!</p>
+            <p>Learn to use arrays to organize, access, and edit collections of elements with ease!</p>
             <button onClick={() => navigate('/dashboard/game-level-5')}>Start Game</button>
           </div>
         </div>
