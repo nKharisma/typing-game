@@ -607,8 +607,8 @@ function Game() {
         value={typedWord}
         onChange={handleTyping}
         onKeyDown={handleBackspace}
-        placeholder="Type the word"
         className="typing-input"
+        spellCheck='false'
         autoFocus
         ref={inputRef}
         onBlur={() => inputRef.current?.focus()}

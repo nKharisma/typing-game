@@ -51,8 +51,17 @@
 }
 
 .stats {
+  margin-left: 30px;
 	color: white;
 }
+
+.typing-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgb(0, 0, 0, 0.0);
+}
+
 @keyframes moveDown {
 	0% {
 		transform: translateY(0);
