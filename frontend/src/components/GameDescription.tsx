@@ -16,23 +16,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
 
     // Map each line into a JSX element
     return lines.map((line: any, index: any) => {
-      if (line.startsWith("Instructions:")) {
+      if (line.startsWith("Instructions")) {
         return (
           <>
             <br />
             <p key={index}>
-              <strong>Instructions:</strong>
-              {line.replace("Instructions:", "")}
+              <strong>Instructions</strong>
+              {line.replace("Instructions", "")}
             </p>
           </>
         );
-      } else if (line.startsWith("Input:")) {
+      } else if (line.startsWith("Input")) {
         return (
           <>
             <br />
             <p key={index}>
-              <strong>Input:</strong>
-              {line.replace("Input:", "")}
+              <strong>Input</strong>
+              {line.replace("Input", "")}
             </p>
           </>
         );
@@ -46,13 +46,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, filename }) => {
             </p>
           </>
         );
-      } else if (line.startsWith("Challenge Input:")) {
+      } else if (line.startsWith("Challenge Input")) {
         return (
           <>
             <br />
             <p key={index}>
-              <strong>Challenge Input:</strong>
-              {line.replace("Challenge Input:", "")}
+              <strong>Challenge Input</strong>
+              {line.replace("Challenge Input", "")}
             </p>
           </>
         );
