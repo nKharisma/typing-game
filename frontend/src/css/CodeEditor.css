@@ -1,4 +1,7 @@
 .code-editor-container {
-  height: calc(100% - 74px - 30px);
+  height: calc(100% - 74px - 50px);
 }
 
+.button-container {
+
+}
