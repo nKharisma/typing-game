@@ -8,7 +8,7 @@ import '../css/puzzleLayout.css';
 const GameLevelOne: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
   const [expectedOutput, setExpectedOutput] = useState('');
-  const [status, setStatus] = useState('FAIL');
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     const getExpectedOutput = async () => {
