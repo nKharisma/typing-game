@@ -12,6 +12,7 @@ import "ace-builds/src-noconflict/theme-xcode";
 import "ace-builds/src-noconflict/theme-solarized_dark";
 import "ace-builds/src-noconflict/theme-solarized_light";
 import "ace-builds/src-noconflict/theme-terminal";
+import '../css/CodeEditor.css'
 import getBackendUrl from "../utils/getBackendUrl";
 
 interface CodeEditorProps {
@@ -70,14 +71,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme, filename, onRu
   };
       
 	return (
-		<div>
-			<AceEditor className="code-editor-container"
+		<div className="code-editor-container">
+			<AceEditor 
 			mode={languageMode}
 			theme={editorTheme}
 			name="code-editor"
 			editorProps={{ $blockScrolling: true}}
 			fontSize ={14}
 			width="100%"
+      height="100%"
 			setOptions={{
 				fontFamily: 'monospace',
 			}}
