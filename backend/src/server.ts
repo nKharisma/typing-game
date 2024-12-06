@@ -599,6 +599,36 @@ expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+// Get expected output endpoint.
+expressServer.post('/api/v1/user/get-expected-output', async (req: any, res: any) => {
+  const { name } = req.body;
+
+  // Valid sorting fields
+	const validNameFields = [
+		'variables',
+		'conditionals',
+		'loops',
+		'arrays'
+	];
+
+  if(!validNameFields.includes(name)){
+		return res.status(400).json({
+			error: `'${name}' is an an invalid sortBy field. Valid naming fields are: ${validNameFields.toString()}`
+		});
+	}
+
+  const testCaseName = "testCase_" + name;
+  const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
+
+  if(getTestCaseErr){
+    res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
+  }
+
+  res.status(200).json({ expected: getTestCaseResult.expectedOutput });
+
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////
 // TypeCode endpoints.
 const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
