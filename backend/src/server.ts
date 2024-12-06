@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
-import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser } from './database';
+import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -522,6 +522,27 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
   }
 })
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// Get Puzzle endpoint.
+expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
+  const { filename } = req.body;
+
+  const [getPuzzleErr, getPuzzleResult] = await getPuzzleDocumentFromName(filename);
+
+  if(!filename) {
+    res.status(400).json({error: "Missing required field: filename"});
+  }
+
+  if(getPuzzleErr) {
+    res.status(400).json({error: "Error while fetching puzzle", message: getPuzzleErr});
+  }
+
+  if(!getPuzzleResult){
+    res.status(400).json({error: "Puzzle not found under given file name"});
+  }
+
+  res.status(200).json({ getPuzzleResult })
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // TypeCode endpoints.
