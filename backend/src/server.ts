@@ -548,6 +548,10 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
   const testCaseName = "testCase_" + name;
   const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
 
+  if(getTestCaseErr){
+    res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
+  }
+
   // Try to call Piston's API for compilation
   try{
     const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
@@ -556,12 +560,15 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
       files: [{
         content: code
       }],
-      stdin: stdin || ""
+      stdin: getTestCaseResult.stdin || ""
     });
 
-    if(response.)
+    if(response.data.run.stdout.trim() == getTestCaseResult.expectedOutput){
+      res.status(200).json({ status: "PASS" });
+    } else {
+      res.status(400).json({ status: "FAIL", output: response.data.run.stdout });
+    }
 
-    res.status(200).json(response.data);
   }catch(error)
   {
     console.log(error);
