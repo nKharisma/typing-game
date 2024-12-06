@@ -22,7 +22,7 @@ const GameLevelOne: React.FC = () => {
           }),
         });
         const data = await response.json();
-        setExpectedOutput(data.output || data.error);
+        setExpectedOutput(data.expected || data.error);
       } catch (error) {
         setExpectedOutput('Error contacting server...');
       }
