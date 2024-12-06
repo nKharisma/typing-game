@@ -531,7 +531,9 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
 		'variables',
 		'conditionals',
 		'loops',
-		'arrays'
+		'arrays',
+    'strings',
+    'functions'
 	];
 
   if(!validNameFields.includes(name)){
@@ -564,9 +566,12 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
     });
 
     if(response.data.run.stdout.trim() == getTestCaseResult.expectedOutput){
-      res.status(200).json({ status: "PASS" });
+      res.status(200).json({ status: "PASS", output: response.data.run.stdout, expected: getTestCaseResult.expectedOutput });
+    } 
+    else if (!response.data.run.output){
+      res.status(400).json({ status: "FAIL", output: "<EMPTY_OUTPUT>", expected: getTestCaseResult.expectedOutput });
     } else {
-      res.status(400).json({ status: "FAIL", output: response.data.run.stdout });
+      res.status(400).json({ status: "FAIL", output: response.data.run.output, expected: getTestCaseResult.expectedOutput });
     }
 
   }catch(error)
@@ -596,6 +601,38 @@ expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
   }
 
   res.status(200).json({ getPuzzleResult })
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Get expected output endpoint.
+expressServer.post('/api/v1/user/get-expected-output', async (req: any, res: any) => {
+  const { name } = req.body;
+
+  // Valid sorting fields
+	const validNameFields = [
+		'variables',
+		'conditionals',
+		'loops',
+		'arrays',
+    'strings',
+    'functions'
+	];
+
+  if(!validNameFields.includes(name)){
+		return res.status(400).json({
+			error: `'${name}' is an an invalid sortBy field. Valid naming fields are: ${validNameFields.toString()}`
+		});
+	}
+
+  const testCaseName = "testCase_" + name;
+  const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
+
+  if(getTestCaseErr){
+    res.status(400).json({error: "Error while fetching test cases", message: getTestCaseErr});
+  }
+
+  res.status(200).json({ expected: getTestCaseResult.expectedOutput });
+
 })
 
 ///////////////////////////////////////////////////////////////////////////////////////////

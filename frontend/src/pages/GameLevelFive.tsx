@@ -19,7 +19,7 @@ const GameLevelOne: React.FC = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: 'variables',
+            name: 'arrays',
           }),
         });
         const data = await response.json();
@@ -41,7 +41,7 @@ const GameLevelOne: React.FC = () => {
         },
         body: JSON.stringify({
           language: 'java',
-          name: 'variables',
+          name: 'arrays',
           code: code,
         }),
       });
@@ -57,13 +57,13 @@ const GameLevelOne: React.FC = () => {
   return (
     <div className="container-puzzle">
       <div className="top-left">
-        <GameDescription language="java" filename="Variables"/>
+        <GameDescription language="java" filename="Arrays"/>
       </div>
         <div className="bottom-left">
         <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} status={status} />
       </div>
       <div className="right">
-        <CodeEditor language="javascript" initialTheme="Twilight" filename="variables" onRunCode={handleRunCode} />
+        <CodeEditor language="java" theme="monokai" filename="Arrays" onRunCode={handleRunCode} />
       </div>
     </div>
   );

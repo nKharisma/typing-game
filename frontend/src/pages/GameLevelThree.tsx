@@ -5,7 +5,7 @@ import GameDescription from '../components/GameDescription';
 import getBackendUrl from '../utils/getBackendUrl';
 import '../css/puzzleLayout.css';
 
-const GameLevelOne: React.FC = () => {
+const GameLevelThree: React.FC = () => {
   const [userOutput, setUserOutput] = useState('');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [status, setStatus] = useState('');
@@ -19,7 +19,7 @@ const GameLevelOne: React.FC = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: 'variables',
+            name: 'loops',
           }),
         });
         const data = await response.json();
@@ -41,7 +41,7 @@ const GameLevelOne: React.FC = () => {
         },
         body: JSON.stringify({
           language: 'java',
-          name: 'variables',
+          name: 'loops',
           code: code,
         }),
       });
@@ -57,16 +57,16 @@ const GameLevelOne: React.FC = () => {
   return (
     <div className="container-puzzle">
       <div className="top-left">
-        <GameDescription language="java" filename="Variables"/>
+        <GameDescription language="java" filename="Loops"/>
       </div>
         <div className="bottom-left">
         <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} status={status} />
       </div>
       <div className="right">
-        <CodeEditor language="javascript" initialTheme="Twilight" filename="variables" onRunCode={handleRunCode} />
+        <CodeEditor language="java" theme="monokai" filename="Loops" onRunCode={handleRunCode} />
       </div>
     </div>
   );
 };
 
-export default GameLevelOne;
+export default GameLevelThree;
