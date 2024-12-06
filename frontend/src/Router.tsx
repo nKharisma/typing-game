@@ -26,6 +26,7 @@ import './index.css'
 import GameLevelOne from './pages/GameLevelOne'
 import GameLevelTwo from './pages/GameLevelTwo'
 import GameLevelThree from './pages/GameLevelThree'
+import GameLevelFour from './pages/GameLevelFour'
 
 export default function createRouter() {
   return createBrowserRouter(
@@ -54,7 +55,8 @@ export default function createRouter() {
               { path: '/dashboard/settings', element: <Settings/>},
               { path: '/dashboard/game-level-1', element: <GameLevelOne /> },
               { path: '/dashboard/game-level-2', element: <GameLevelTwo /> },
-              { path: '/dashboard/game-level-3', element: <GameLevelThree /> }
+              { path: '/dashboard/game-level-3', element: <GameLevelThree /> },
+              { path: '/dashboard/game-level-4', element: <GameLevelFour /> }
             ]
           },
           { path: '/*', element: <NotFoundPage />},
