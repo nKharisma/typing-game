@@ -27,6 +27,7 @@ def main():
         # --- User Submission Area ---
         # Update the closest ship if the current one is closer
         # Feel free to modify the logic below to determine the closest ship
+        # Answer!!
         if distance < closest_distance:
             closest_distance = distance
             closest_ship_name = ship_name

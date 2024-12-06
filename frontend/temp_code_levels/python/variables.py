@@ -29,7 +29,6 @@ def main():
         # Feel free to modify the logic below to determine the closest ship
 
 
-
     # --- End of User Submission Area ---
 
 if __name__ == "__main__":

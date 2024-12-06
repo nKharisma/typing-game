@@ -16,15 +16,14 @@ function main() {
     const prompt = require('prompt-sync')();
 
     // Getting the number of enemy ships
-    const n = parseInt(prompt("Enter the number of enemy ships: "));
+    const n = parseInt();
 
     let closestShipName = "";
     let closestDistance = Infinity;
 
     // Loop to get the name and distance of each enemy ship
     for (let i = 0; i < n; i++) {
-        const shipName = prompt(`Enter the name of enemy ship ${i + 1}: `);
-        const distance = parseInt(prompt(`Enter the distance of ${shipName} from your spaceship: `));
+        const distance = parseInt();
 
         // --- User Submission Area ---
         // Update the closest ship if the current one is closer

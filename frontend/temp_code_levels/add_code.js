@@ -39,61 +39,67 @@ async function addCodeFile(language, code, description, filename) {
     console.log(`${filename} added to MongoDB successfully.`);
 }
 
-// Your Java code content as a string
-const javaCode = `
-import java.util.Scanner;
+// Code content as a string
+const code = `
+// Your spaceship's radar system has detected multiple enemy ships approaching.
+// To maximize your defense, you must destroy the closest enemy ship!
 
-class VariablesAnswer {
-    public static void main(String args[]) {
-        Scanner scanner = new Scanner(System.in);
-        
-        // Your spaceship's radar system has detected multiple enemy ships approaching.
-        // To maximize your defense, you must destroy the closest enemy ship!
+// Instructions
+// Modify this program to calculate the distance of each enemy ship from your spaceship.
+// Identify and shoot the closest enemy ship by outputting its name.
 
-        // Instructions
-        // Modify this program to calculate the distance of each enemy ship from your spaceship.
-        // Identify and shoot the closest enemy ship by outputting its name.
+// Input
+// The total number of enemy ships 'N'
+// A list of ship names and their respective distances from your spaceship
 
-        // Input
-        // The total number of enemy ships 'N'
-        // A list of ship names and their respective distances from your spaceship
+// Output
+// The name of the closest ship
 
-        // Output
-        // The name of the closest ship
+function main() {
+    const prompt = require('prompt-sync')();
 
-        // Getting the number of enemy ships
-        int n = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+    // Getting the number of enemy ships
+    const n = parseInt();
 
-        String closestShipName = "";
-        int closestDistance = Integer.MAX_VALUE;
+    let closestShipName = "";
+    let closestDistance = Infinity;
 
-        // Loop to get the name and distance of each enemy ship
-        for (int i = 0; i < n; i++) {
-            String shipName = scanner.nextLine();
-            
-            int distance = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+    // Loop to get the name and distance of each enemy ship
+    for (let i = 0; i < n; i++) {
+        const distance = parseInt();
 
-            // --- User Submission Area ---
-            // Update the closest ship if the current one is closer
-            // Feel free to modify the logic below to determine the closest ship
-        }
-        
-        // --- End of User Submission Area ---
-        
-        // Closing scanner
-        scanner.close();
+        // --- User Submission Area ---
+        // Update the closest ship if the current one is closer
+        // Feel free to modify the logic below to determine the closest ship
+
     }
+
+    // --- End of User Submission Area ---
 }
+
+main();
+`;
+
+const description = `
+Your spaceship's radar system has detected multiple enemy ships approaching.
+To maximize your defense, you must destroy the closest enemy ship!
+
+Instructions
+Modify this program to calculate the distance of each enemy ship from your spaceship.
+Identify and shoot the closest enemy ship by outputting its name.
+Input
+The total number of enemy ships 'N'
+A list of ship names and their respective distances from your spaceship
+Output
+The name of the closest ship
 `;
 
 // Add the Java code to MongoDB
 addCodeFile(
-    'Java',
-    javaCode,
-    'Java program to determine and shoot the closest enemy ship.',
-    'VariablesAnswer.java'
+    'JavaScript',
+    code,
+    description,
+    'variables.js'
 ).then(() => {
     mongoose.connection.close();
 });
