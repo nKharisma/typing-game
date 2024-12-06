@@ -29,7 +29,6 @@ export default function DashboardPage()
 				});
 				const data = await response.json();
 				if(response.ok) {
-          console.log(data);
 					setUserName(data.lastName.toLowerCase() + data.firstName.toLowerCase()[0]);
 				}else {
 					console.error('Error fetching user data');
