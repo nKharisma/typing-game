@@ -531,7 +531,9 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
 		'variables',
 		'conditionals',
 		'loops',
-		'arrays'
+		'arrays',
+    'strings',
+    'functions'
 	];
 
   if(!validNameFields.includes(name)){
@@ -611,7 +613,9 @@ expressServer.post('/api/v1/user/get-expected-output', async (req: any, res: any
 		'variables',
 		'conditionals',
 		'loops',
-		'arrays'
+		'arrays',
+    'strings',
+    'functions'
 	];
 
   if(!validNameFields.includes(name)){
