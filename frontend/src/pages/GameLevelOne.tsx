@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import GameCanvas from '../components/GameCanvas';
 import ConsoleOutput from '../components/ConsoleOutput';
 import CodeEditor from '../components/CodeEditor';
+import GameDescription from '../components/GameDescription';
 //import RunTestCase from './RunTestCase';
 import '../css/puzzleLayout.css';
 // interface Entity {
@@ -59,7 +60,8 @@ const GameLevelOne: React.FC = () => {
     <div className="container-puzzle">
       <div className="top-left">
         <GameCanvas />
-        </div>
+        <GameDescription language="javascript" filename="variables"/>
+      </div>
         <div className="bottom-left">
         <ConsoleOutput userOutput={userOutput} gameInfo={gameInfo} />
       </div>
