@@ -44,7 +44,16 @@ const userSchema = new mongoose.Schema({
   emailCodeAttempts: { type: Number, required: true },
 });
 
+// Define a schema for the puzzle documents
+const puzzleSchema = new mongoose.Schema({
+  language: String,
+  code: String,
+  description: String,
+  filename: String,
+});
+
 const User = mongoose.model('User', userSchema, 'Users');
+const Puzzle = mongoose.model('Puzzle', puzzleSchema, "Puzzles");
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Utility functions
@@ -202,7 +211,7 @@ async function getUserFromEmail(email: string): Promise<[string | null, any]> {
   // Query database.
   try {
     const user = await User.findOne({ email }).select(
-      '_id firstName lastName password emailVerified emailCode emailCodeTimeout emailCodeAttempts'
+      '_id email firstName lastName password emailVerified emailCode emailCodeTimeout emailCodeAttempts'
     );
     return [null, user];
   } catch (err: any) {
@@ -233,6 +242,18 @@ async function deleteUser(_id: ObjectId): Promise<[string | null, any]> {
   }
 }
 
+// Get a puzzle document from the file name of the puzzle
+async function getPuzzleDocumentFromName(name: string): Promise<[string | null, any]> {
+  try{
+    const result = await Puzzle.findOne({filename: name}).select(
+      'language code description filename'     
+    );
+    return [null, result];
+  } catch (err: any) {
+    return [err.message, null];
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Function exports for 'database.ts'.
-export { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser };
+export { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName };

@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
-import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser } from './database';
+import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -207,8 +207,6 @@ expressServer.post('/api/v1/user/check-verification-code', async (req: any, res:
   const emailVerified: boolean = getUserResult.emailVerified;
   if (respondIf(emailVerified, res, 204, 'Account already verified', 'ACCOUNT_ALREADY_VERIFIED')) return;
   // Validate code is not timed out, else frontend will prompt user to press resend code.
-  console.log(`emailCodeTimeout: ${getUserResult.emailCodeTimeout}`)
-  console.log(`Now: ${Date.now()/1000}`)
   const isCodeTimedOut: boolean = getUserResult.emailCodeTimeout < (Date.now() / 1000);
   if (respondIf(isCodeTimedOut, res, 401, 'Email verification code timed out', 'EMAIL_CODE_TIMEOUT')) return;
   // Validate there are attempts remaining, else frontend will prompt user to press resend code.
@@ -386,6 +384,36 @@ expressServer.post('/api/v1/user/get-player-data', async (req: any, res: any) =>
     accuracy: getUserResult.playerdata.accuracy,
     levelsCompleted: getUserResult.playerdata.levelsCompleted})
 });
+expressServer.post('/api/v1/user/get-player-data-with-token', authenticateToken, async (req: any, res: any) => {
+  const { _id } = req.token;
+
+  var objectId = MongoDbObjectId.createFromHexString(_id);
+
+  const [getUserErr, getUserResult] = await getUserFromId(objectId);
+  
+  // Check if there was a database error fetching the user
+  if (getUserErr) {
+    return res.status(500).json({ message: 'Failed to get user', error: getUserErr });
+  }
+
+  // If no user is found for the given id
+  if (!getUserResult) {
+    return res.status(404).json({ error: 'User with the given id does not exist' });
+  }
+
+  // If user exists but playerdata is not defined for some reason
+  if (!getUserResult.playerdata) {
+    return res.status(404).json({ error: 'Player data not found for the given user' });
+  }
+
+  res.status(200).json({ 
+    score: getUserResult.playerdata.score, 
+    highScore: getUserResult.playerdata.score,
+    wordsPerMinute: getUserResult.playerdata.wordsPerMinute,
+    totalWordsTyped: getUserResult.playerdata.totalWordsTyped,
+    accuracy: getUserResult.playerdata.accuracy,
+    levelsCompleted: getUserResult.playerdata.levelsCompleted})
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Update player data endpoint.
@@ -522,6 +550,27 @@ expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
   }
 })
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// Get Puzzle endpoint.
+expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
+  const { filename } = req.body;
+
+  const [getPuzzleErr, getPuzzleResult] = await getPuzzleDocumentFromName(filename);
+
+  if(!filename) {
+    res.status(400).json({error: "Missing required field: filename"});
+  }
+
+  if(getPuzzleErr) {
+    res.status(400).json({error: "Error while fetching puzzle", message: getPuzzleErr});
+  }
+
+  if(!getPuzzleResult){
+    res.status(400).json({error: "Puzzle not found under given file name"});
+  }
+
+  res.status(200).json({ getPuzzleResult })
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // TypeCode endpoints.
@@ -530,11 +579,11 @@ const url = "mongodb+srv://Wesley:uhsPa6lUo63zxGqW@cluster0.6xjnj.mongodb.net/?r
 const client = new MongoClient(url);
 client.connect();
 
-expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => 
-{
-	const { email, firstName, lastName } = req.token;
+expressServer.post('/api/getUser', authenticateToken, async (req: any, res: any) => {
+	const { _id, email, firstName, lastName } = req.token;
 
 	res.status(200).json({ 
+        id: _id,
         firstName: firstName, 
         lastName: lastName, 
         email: email

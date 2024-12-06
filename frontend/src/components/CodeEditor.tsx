@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-java";
@@ -16,9 +16,12 @@ import "ace-builds/src-noconflict/theme-terminal";
 interface CodeEditorProps {
 	language: string;
 	theme: string;
+	onRunCode: (code: string) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme }) => {
+	const [code, setCode] = useState('');
+
 	const languageMode = language === "java" ? "java" : language === "python" ? "python" : "javascript";
 	const editorTheme =
     theme === 'monokai'
@@ -38,8 +41,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme }) => {
       : theme === 'solarized light'
       ? 'solarized_light'
       : 'terminal';
+      
+      const handleRunCode = () => {
+       // onRunCode(code);
+      };
+      
 	return (
-		<AceEditor
+		<div>
+			<AceEditor
 			mode={languageMode}
 			theme={editorTheme}
 			name="code-editor"
@@ -50,7 +59,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme }) => {
 			setOptions={{
 				fontFamily: 'monospace',
 			}}
+			value={code}
+			onChange={setCode}
 		/>
+		<button onClick={handleRunCode}>Run</button>
+		</div>
 	);
 };
 

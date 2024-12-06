@@ -1,4 +1,4 @@
-.profile-page {
+.profile-page__container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,7 +13,15 @@
 	font-style: normal;
 }
 
+.profile-page__title {
+  color: white;
+}
+.profile-page__user-field {
+  color: white;
+}
+
 .profile-page__logout-button {
+  margin-top: 60px;
 	background-color: rgba(255, 255, 255, 1);
 	background: transparent;
 	-webkit-backdrop-filter: blur(5px);
@@ -22,8 +30,8 @@
 	border-radius: 12px;
 
   color: #FFF;
-  font-size: 40px;
-  padding: 40px 30px;
+  font-size: 24px;
+  padding: 20px 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 300px;
   box-sizing: border-box;
@@ -39,8 +47,8 @@
 	border-radius: 12px;
 
   color: #FFF;
-  font-size: 40px;
-  padding: 40px 30px;
+  font-size: 24px;
+  padding: 20px 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 300px;
   box-sizing: border-box;

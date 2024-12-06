@@ -23,6 +23,7 @@ import Settings from './pages/Settings'
 
 // CSS Imports
 import './index.css'
+import GameLevelOne from './pages/GameLevelOne'
 
 export default function createRouter() {
   return createBrowserRouter(
@@ -48,7 +49,8 @@ export default function createRouter() {
               { path: '/dashboard/pre-game', element: <PreGamePage /> },
               { path: '/dashboard/game-levels', element: <GameLevelsPage /> },
               { path: '/dashboard/new-game', element: <NewGamePage /> },
-              { path: '/dashboard/settings', element: <Settings/> },
+              { path: '/dashboard/settings', element: <Settings/>},
+              { path: '/dashboard/game-level-1', element: <GameLevelOne /> },
             ]
           },
           { path: '/*', element: <NotFoundPage />},
