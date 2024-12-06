@@ -63,7 +63,7 @@ const GameLevelFour: React.FC = () => {
         <ConsoleOutput expectedOutput={expectedOutput} userOutput={userOutput} status={status} />
       </div>
       <div className="right">
-        <CodeEditor language="java" theme="monokai" filename="Strings" onRunCode={handleRunCode} />
+        <CodeEditor language="java" initialTheme="twilight" filename="Strings" onRunCode={handleRunCode} />
       </div>
     </div>
   );
