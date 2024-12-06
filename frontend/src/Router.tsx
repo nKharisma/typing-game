@@ -16,10 +16,14 @@ import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import NewGamePage from './pages/NewGamePage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import PreGamePage from './pages/PreGamePage'
+import GameLevelsPage from './pages/GameLevelsPage'
 import NotFoundPage from './pages/NotFoundPage'
+import Settings from './pages/Settings'
 
 // CSS Imports
 import './index.css'
+import GameLevelOne from './pages/GameLevelOne'
 
 export default function createRouter() {
   return createBrowserRouter(
@@ -42,7 +46,11 @@ export default function createRouter() {
             children: [
               { path: '/dashboard', element: <DashboardPage /> },
               { path: '/dashboard/profile', element: <ProfilePage /> },
+              { path: '/dashboard/pre-game', element: <PreGamePage /> },
+              { path: '/dashboard/game-levels', element: <GameLevelsPage /> },
               { path: '/dashboard/new-game', element: <NewGamePage /> },
+              { path: '/dashboard/settings', element: <Settings/>},
+              { path: '/dashboard/game-level-1', element: <GameLevelOne /> },
             ]
           },
           { path: '/*', element: <NotFoundPage />},

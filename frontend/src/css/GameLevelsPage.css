@@ -1,0 +1,79 @@
+.game-levels-page__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+.game-levels-page {
+  width: 800px;
+  margin: 0px auto;
+
+  color: #FFF;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-levels-page__block {
+  margin-top: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-levels-page__block-text-container {
+	background-color: rgba(255, 255, 255, 1);
+	background: transparent;
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+	border: 2px solid rgba(255, 255, 255, .25);
+	border-radius: 12px;
+
+  padding: 40px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 250px;
+  width: 250px;
+  box-sizing: border-box;
+}
+
+.game-levels-page__block-text-container h1 {
+  font-size: 20px;
+}
+
+.game-levels-page__block-text-container p {
+  font-size: 12px;
+}
+
+.game-levels-page__block-text-container button {
+  margin-top: 5px;
+  font-family: 'Better-VCR';
+  width: fit-content;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-levels-page__block-text-container button:hover {
+  background-color: #357abd;
+}
+
+.game-levels-page___block-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-right: 100px;
+}
+
+.game-levels-page___block-image {
+  margin-right: 20px;
+}

@@ -211,7 +211,7 @@ async function getUserFromEmail(email: string): Promise<[string | null, any]> {
   // Query database.
   try {
     const user = await User.findOne({ email }).select(
-      '_id firstName lastName password emailVerified emailCode emailCodeTimeout emailCodeAttempts'
+      '_id email firstName lastName password emailVerified emailCode emailCodeTimeout emailCodeAttempts'
     );
     return [null, user];
   } catch (err: any) {
