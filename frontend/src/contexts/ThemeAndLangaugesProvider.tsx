@@ -10,7 +10,7 @@ interface ThemeAndLanguagesContextType {
 const ThemeAndLanguagesContext = createContext<ThemeAndLanguagesContextType | undefined>(undefined);
 
 export const ThemeAndLanguagesProvider: React.FC<{ children: ReactNode }> = ({ children}) => {
-	const [theme, setTheme] = useState<string>('monokai');
+	const [theme, setTheme] = useState<string>('Twilight');
 	const [language, setLanguage] = useState<string>('javascript');
 	
 	return (
