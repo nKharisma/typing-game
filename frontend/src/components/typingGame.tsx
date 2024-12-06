@@ -5,6 +5,8 @@ import { miniPrograms } from '../utils/programSnippets';
 import { useNavigate } from 'react-router-dom';
 import '../css/GameOverModel.css';
 
+import getBackendUrl from '../utils/getBackendUrl';
+
 interface Bug {
   id: string;
   text: string;
@@ -110,7 +112,7 @@ function Game() {
 	useEffect(() => {
     const fetchUserID = async () => {
       try {
-        const response = await fetch('/api/v1/user/getUser', {
+        const response = await fetch(`${getBackendUrl()}/api/getUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,19 +179,19 @@ function Game() {
         localStorage.setItem('highestWpm', sessionWPM.toString());
       }
 
-      fetch('/api/v1/user/update-player-data', {
+      fetch(`${getBackendUrl()}/api/v1/user/update-player-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id: userId,
-            score: score,
-            highScore,
-            wordsPerMinute: highestWpm,
-            totalWordsTyped: overallTotalWords,
-            accuracy: overallAccuracy,
-            levelsCompleted: overallWavesCompleted,
+          score: score,
+          highScore,
+          wordsPerMinute: highestWpm,
+          totalWordsTyped: overallTotalWords,
+          accuracy: overallAccuracy,
+          levelsCompleted: overallWavesCompleted,
         }),
       });
 
@@ -607,8 +609,8 @@ function Game() {
         value={typedWord}
         onChange={handleTyping}
         onKeyDown={handleBackspace}
-        placeholder="Type the word"
         className="typing-input"
+        spellCheck='false'
         autoFocus
         ref={inputRef}
         onBlur={() => inputRef.current?.focus()}
