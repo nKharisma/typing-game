@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
-import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName } from './database';
+import { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName, getTestCaseDocumentFromName } from './database';
 import { devServerPort } from './config';
 import { ObjectId } from 'mongoose';
 import { ObjectId as MongoDbObjectId } from 'mongodb';
@@ -524,23 +524,42 @@ expressServer.post('/api/v1/user/get-leaderboard', async (req: any, res: any) =>
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Compile endpoint.
 expressServer.post('/api/v1/user/compile', async (req: any, res: any) => {
-  const { language, version, code, stdin } = req.body;
+  const { language, code, name } = req.body;
+
+  // Valid sorting fields
+	const validNameFields = [
+		'variables',
+		'conditionals',
+		'loops',
+		'arrays'
+	];
+
+  if(!validNameFields.includes(name)){
+		return res.status(400).json({
+			error: `'${name}' is an an invalid sortBy field. Valid naming fields are: ${validNameFields.toString()}`
+		});
+	}
 
   if(!language || !code)
   {
     res.status(400).json({error: "Invalid input: language and code are required"});
   }
 
+  const testCaseName = "testCase_" + name;
+  const [getTestCaseErr, getTestCaseResult] = await getTestCaseDocumentFromName(testCaseName);
+
   // Try to call Piston's API for compilation
   try{
     const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
       language: language,
-      version: version || '*',
+      version: '*',
       files: [{
         content: code
       }],
       stdin: stdin || ""
     });
+
+    if(response.)
 
     res.status(200).json(response.data);
   }catch(error)
@@ -556,15 +575,15 @@ expressServer.post('/api/v1/user/get-puzzle', async (req: any, res: any) => {
   const { filename } = req.body;
 
   const [getPuzzleErr, getPuzzleResult] = await getPuzzleDocumentFromName(filename);
-
+  
   if(!filename) {
     res.status(400).json({error: "Missing required field: filename"});
   }
-
+  
   if(getPuzzleErr) {
     res.status(400).json({error: "Error while fetching puzzle", message: getPuzzleErr});
   }
-
+  
   if(!getPuzzleResult){
     res.status(400).json({error: "Puzzle not found under given file name"});
   }

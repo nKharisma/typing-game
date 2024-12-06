@@ -52,8 +52,16 @@ const puzzleSchema = new mongoose.Schema({
   filename: String,
 });
 
+// Define a schema for the code files
+const testCaseSchema = new mongoose.Schema({
+  ident: String,
+  stdin: String,
+  expectedOutput: String,
+});
+
 const User = mongoose.model('User', userSchema, 'Users');
 const Puzzle = mongoose.model('Puzzle', puzzleSchema, "Puzzles");
+const TestCase = mongoose.model('TestCase', testCaseSchema, "Test Cases");
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Utility functions
@@ -254,6 +262,18 @@ async function getPuzzleDocumentFromName(name: string): Promise<[string | null, 
   }
 }
 
+// Get a testcase document from the name
+async function getTestCaseDocumentFromName(name: string): Promise<[string | null, any]> {
+  try{
+    const result = await TestCase.findOne({ident: name}).select(
+      'stdin expectedOutput'     
+    );
+    return [null, result];
+  } catch (err: any) {
+    return [err.message, null];
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Function exports for 'database.ts'.
-export { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName };
+export { addUser, updateUser, updateUserMongo, getUserFromEmail, getUserFromId, deleteUser, getPuzzleDocumentFromName, getTestCaseDocumentFromName };

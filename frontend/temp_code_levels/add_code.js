@@ -41,65 +41,57 @@ async function addCodeFile(language, code, description, filename) {
 
 // Code content as a string
 const code = `
-// Your spaceship's radar system has detected multiple enemy ships approaching.
-// To maximize your defense, you must destroy the closest enemy ship!
+# Your spaceship requires energy crystals to power up for the journey ahead.
+# You must mine asteroids to gather as many energy crystals as possible!
 
-// Instructions
-// Modify this program to calculate the distance of each enemy ship from your spaceship.
-// Identify and shoot the closest enemy ship by outputting its name.
+# Instructions
+# Modify this program to calculate the total number of energy crystals collected.
+# Use a loop to collect crystals from each asteroid.
 
-// Input
-// The total number of enemy ships 'N'
-// A list of ship names and their respective distances from your spaceship
+# Input
+# The total number of asteroids 'N'
+# For each asteroid, the number of energy crystals it contains
 
-// Output
-// The name of the closest ship
+# Output
+# The total number of energy crystals collected
 
-function main() {
-    const prompt = require('prompt-sync')();
+def main():
+    # Getting the number of asteroids
+    n = int(input("Enter the number of asteroids: "))
 
-    // Getting the number of enemy ships
-    const n = parseInt();
+    total_crystals = 0  # Variable to store the total number of crystals
 
-    let closestShipName = "";
-    let closestDistance = Infinity;
+    # --- User Submission Area ---
+    # Loop to get the number of crystals from each asteroid
 
-    // Loop to get the name and distance of each enemy ship
-    for (let i = 0; i < n; i++) {
-        const distance = parseInt();
+    # --- End of User Submission Area ---
 
-        // --- User Submission Area ---
-        // Update the closest ship if the current one is closer
-        // Feel free to modify the logic below to determine the closest ship
-
-    }
-
-    // --- End of User Submission Area ---
-}
-
-main();
+if __name__ == "__main__":
+    main()
 `;
 
 const description = `
-Your spaceship's radar system has detected multiple enemy ships approaching.
-To maximize your defense, you must destroy the closest enemy ship!
+Your spaceship requires energy crystals to power up for the journey ahead.
+You must mine asteroids to gather as many energy crystals as possible!
 
 Instructions
-Modify this program to calculate the distance of each enemy ship from your spaceship.
-Identify and shoot the closest enemy ship by outputting its name.
+Modify this program to calculate the total number of energy crystals collected.
+Use a loop to collect crystals from each asteroid.
+
 Input
-The total number of enemy ships 'N'
-A list of ship names and their respective distances from your spaceship
+The total number of asteroids 'N'
+For each asteroid, the number of energy crystals it contains
+
 Output
-The name of the closest ship
+The total number of energy crystals collected
 `;
 
 // Add the Java code to MongoDB
 addCodeFile(
-    'JavaScript',
+    'Python',
     code,
     description,
-    'variables.js'
+    'loops.py'
 ).then(() => {
     mongoose.connection.close();
 });
