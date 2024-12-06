@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-java";
@@ -12,6 +12,7 @@ import "ace-builds/src-noconflict/theme-xcode";
 import "ace-builds/src-noconflict/theme-solarized_dark";
 import "ace-builds/src-noconflict/theme-solarized_light";
 import "ace-builds/src-noconflict/theme-terminal";
+import getBackendUrl from "../utils/getBackendUrl";
 
 interface CodeEditorProps {
 	language: string;
@@ -21,6 +22,28 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme }) => {
 	const [code, setCode] = useState('');
+
+  useEffect(() => {
+    const fetchInitialCode = async () => {
+      try {
+        const response = await fetch(`${getBackendUrl()}/api/v1/user/get-puzzle`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({filename: 'variables.py'})
+        });
+        const data = await response.json();
+        setCode(data.getPuzzleResult.code); // Assume `data.code` contains the code from the API response
+        console.log(data);
+        console.log(data.getPuzzleResult.code);
+      } catch (error) {
+        console.error("Failed to fetch initial code:", error);
+      }
+    };
+
+    fetchInitialCode();
+  }, []); // Empty dependency array ensures this runs once on mount
 
 	const languageMode = language === "java" ? "java" : language === "python" ? "python" : "javascript";
 	const editorTheme =
@@ -53,9 +76,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language, theme }) => {
 			theme={editorTheme}
 			name="code-editor"
 			editorProps={{ $blockScrolling: true}}
-			fontSize ={16}
+			fontSize ={14}
 			width="100%"
-			height="300px"
+			height="400px"
 			setOptions={{
 				fontFamily: 'monospace',
 			}}
