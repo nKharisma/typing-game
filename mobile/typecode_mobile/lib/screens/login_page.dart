@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:typecode_mobile/screens/home_page.dart';
 import 'package:typecode_mobile/screens/signup_page.dart';
@@ -7,14 +8,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Create TextEditingController instances
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -22,106 +20,115 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              foregroundImage: AssetImage('fonts/tile022_scaled.png'),
-            ),
-            SizedBox(height: 100),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
+      body: Stack(
+        children: [
+          const AnimatedBackground(),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Login',
-                    style: TextStyle(
-                      fontFamily: 'VCR',
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                    textAlign: TextAlign.left,
+                  const CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('fonts/tile022_scaled.png'),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1),
-              child: Row(
-                children: [
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  Expanded(
-                    child: TextFormField(
-                      controller: emailController, // Attach the controller
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'VCR',
-                        fontSize: 14,
+                  const SizedBox(height: 50),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                            fontFamily: 'VCR',
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1),
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                        Expanded(
+                          child: TextFormField(
+                            controller:
+                                emailController, // Attach the controller
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'VCR',
+                              fontSize: 14,
+                            ),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.person_outline,
+                                  color: Colors.grey),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              hintText: 'Enter your email',
+                              hintStyle: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'VCR',
+                                fontSize: 14,
+                              ),
+                            ),
+                            keyboardType: TextInputType.text,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  PasswordField(passwordController: passwordController),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 27,
                       ),
-                      decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.person_outline, color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        hintText: 'Enter your email',
-                        hintStyle: TextStyle(
+                      Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
                           color: Colors.white,
-                          fontFamily: 'VCR',
-                          fontSize: 14,
+                          //decoration: TextDecoration.underline,
                         ),
                       ),
-                      keyboardType: TextInputType.text,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                    ),
+                      InkWell(
+                          child: Text(
+                            'Register here',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignupPage(),
+                                ));
+                          }),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 50),
-            PasswordField(passwordController: passwordController),
-            SizedBox(height: 30),
-            Row(
-              children: [
-                SizedBox(
-                  width: 27,
-                ),
-                Text(
-                  "Don't have an account? ",
-                  style: TextStyle(
-                    color: Colors.white,
-                    //decoration: TextDecoration.underline,
-                  ),
-                ),
-                InkWell(
-                    child: Text(
-                      'Register here',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignupPage(),
-                          ));
-                    }),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            BottomButton(
-                buttonTitle: 'Login',
-                /*onTap:() {
+                  const SizedBox(height: 10),
+                  BottomButton(
+                      buttonTitle: 'Login',
+                      /*onTap:() {
                 Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -130,81 +137,170 @@ class _LoginPageState extends State<LoginPage> {
               );
               },*/
 
-                onTap: () async {
-                  try {
-                    print(emailController.text);
-                    print(passwordController.text);
+                      onTap: () async {
+                        try {
+                          print(emailController.text);
+                          print(passwordController.text);
 
-                    final response = await http.post(
-                      Uri.parse(
-                          'https://typecode.app/api/v1/user/login'), // replace with your API URL
-                      headers: <String, String>{
-                        'Content-Type': 'application/json',
-                      },
-                      body: jsonEncode(<String, String>{
-                        'email': emailController.text.trim(),
-                        'password': passwordController.text.trim(),
-                      }),
-                    );
-
-                    if (response.statusCode == 200) {
-                      final user = jsonDecode(response.body);
-                      print(user);
-                      String userId = user['id'];
-                      // Login successful, navigate to the main app page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MainAppPage(userId: userId),
-                        ),
-                      );
-                    } else {
-                      // Handle login failure by showing an alert dialog
-                      print(response.statusCode);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Login Failed'),
-                            content: Text(jsonDecode(response.body)['error']),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
+                          final response = await http.post(
+                            Uri.parse(
+                                'https://typecode.app/api/v1/user/login'), // replace with your API URL
+                            headers: <String, String>{
+                              'Content-Type': 'application/json',
+                            },
+                            body: jsonEncode(<String, String>{
+                              'email': emailController.text.trim(),
+                              'password': passwordController.text.trim(),
+                            }),
                           );
-                        },
-                      );
-                    }
-                  } catch (e) {
-                    print('Error: $e');
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('An error occurred'),
-                          content: Text('Something went wrong: $e'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
+
+                          if (response.statusCode == 200) {
+                            final user = jsonDecode(response.body);
+                            print(user);
+                            String userId = user['id'];
+                            // Login successful, navigate to the main app page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MainAppPage(userId: userId),
+                              ),
+                            );
+                          } else {
+                            // Handle login failure by showing an alert dialog
+                            print(response.statusCode);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Login Failed'),
+                                  content:
+                                      Text(jsonDecode(response.body)['error']),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
                               },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                }),
-          ],
-        ),
+                            );
+                          }
+                        } catch (e) {
+                          print('Error: $e');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('An error occurred'),
+                                content: Text('Something went wrong: $e'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class AnimatedBackground extends StatefulWidget {
+  const AnimatedBackground({super.key});
+
+  @override
+  _AnimatedBackgroundState createState() => _AnimatedBackgroundState();
+}
+
+class _AnimatedBackgroundState extends State<AnimatedBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<Offset> _stars;
+  final int _starCount = 100;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+    _stars = [];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final size = MediaQuery.of(context).size;
+    _generateStars(size);
+  }
+
+  void _generateStars(Size size) {
+    setState(() {
+      _stars = List.generate(_starCount, (_) {
+        return Offset(
+          Random().nextDouble() * size.width,
+          Random().nextDouble() * size.height,
+        );
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: MediaQuery.of(context).size,
+          painter: StarPainter(_stars, _controller.value),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class StarPainter extends CustomPainter {
+  final List<Offset> stars;
+  final double animationValue;
+
+  StarPainter(this.stars, this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    for (final star in stars) {
+      final dx = star.dx + 10 * sin(animationValue * 2 * pi);
+      final dy = star.dy + 10 * cos(animationValue * 2 * pi);
+      canvas.drawCircle(Offset(dx, dy), 2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 class BottomButton extends StatelessWidget {
@@ -306,11 +402,3 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 }
-
-
-/*labelText: 'Username',
-                        labelStyle: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                        ),*/
-
